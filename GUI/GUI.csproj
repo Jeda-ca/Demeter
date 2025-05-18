@@ -33,8 +33,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FontAwesome.Sharp, Version=6.6.0.0, Culture=neutral, PublicKeyToken=d16d1e4e568ec10f, processorArchitecture=MSIL">
+      <HintPath>..\packages\FontAwesome.Sharp.6.6.0\lib\net472\FontAwesome.Sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,13 +50,14 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Frm_Admin.cs">
+    <Compile Include="Frm_MainAdmin.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Frm_Admin.Designer.cs">
-      <DependentUpon>Frm_Admin.cs</DependentUpon>
+    <Compile Include="Frm_MainAdmin.Designer.cs">
+      <DependentUpon>Frm_MainAdmin.cs</DependentUpon>
     </Compile>
     <Compile Include="Frm_Login.cs">
       <SubType>Form</SubType>
@@ -60,8 +67,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Frm_Admin.resx">
-      <DependentUpon>Frm_Admin.cs</DependentUpon>
+    <EmbeddedResource Include="Frm_MainAdmin.resx">
+      <DependentUpon>Frm_MainAdmin.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Frm_Login.resx">
       <DependentUpon>Frm_Login.cs</DependentUpon>
@@ -71,6 +78,7 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -90,6 +98,12 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="image\icons8-clientes-30.png" />
+    <Content Include="image\icons8-dashboard-gauge-30.png" />
+    <Content Include="image\icons8-farmer-hombre-30.png" />
+    <Content Include="image\icons8-stocks-growth-30.png" />
+    <Content Include="image\icons8-usuario-30.png" />
+    <Content Include="image\LogoDemeter-removebg-preview.png" />
     <Content Include="image\LogoDemeter.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

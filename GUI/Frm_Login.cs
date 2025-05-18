@@ -34,12 +34,22 @@ namespace GUI
 
         private void btn_Ingresar_Click(object sender, EventArgs e)
         {
-            var frmAdmin = new Frm_Admin();
-
-            frmAdmin.Show();
-            this.Hide();
-
-            frmAdmin.FormClosed += (s, args) => this.Close();
+            if (txtBx_Username.Text == "" || txtBx_Password.Text == "")
+            {
+                MessageBox.Show("No pueden quedar campos vacíos", "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+            }
+            else if (txtBx_Username.Text == "admin" && txtBx_Password.Text == "12345")
+            {
+                MessageBox.Show("Bienvenido/a " + txtBx_Username.Text, "Acceso concedido", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                var frmAdmin = new Frm_MainAdmin();
+                frmAdmin.Show();
+                this.Hide();
+                frmAdmin.FormClosed += (s, args) => this.Close();
+            }
+            else
+            {
+                MessageBox.Show("Usuario o contraseña incorrectos", "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+            }
         }
     }
 }
