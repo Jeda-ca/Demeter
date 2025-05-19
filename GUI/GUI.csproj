@@ -53,6 +53,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppContext.cs" />
     <Compile Include="Frm_MainAdmin.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -98,11 +99,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="image\icons8-clientes-30.png" />
-    <Content Include="image\icons8-dashboard-gauge-30.png" />
-    <Content Include="image\icons8-farmer-hombre-30.png" />
-    <Content Include="image\icons8-stocks-growth-30.png" />
-    <Content Include="image\icons8-usuario-30.png" />
     <Content Include="image\LogoDemeter-removebg-preview.png" />
     <Content Include="image\LogoDemeter.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

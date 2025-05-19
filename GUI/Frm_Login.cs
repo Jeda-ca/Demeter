@@ -12,44 +12,55 @@ namespace GUI
 {
     public partial class Frm_Login : Form
     {
+        public string UserRole { get; private set; }
+
         public Frm_Login()
         {
             InitializeComponent();
         }
 
-        private void Exit_Click(object sender, EventArgs e)
+        // EVENTOS
+        private void cbx_showPassword_CheckedChanged(object sender, EventArgs e)
         {
-            Application.Exit();
+            txtBx_Password.PasswordChar = cbx_showPassword.Checked ? '\0' : '●';
         }
-
-        private void Minimize_Click(object sender, EventArgs e)
+        private void btn_Ingresar_Click(object sender, EventArgs e) // Evento para iniciar sesión con valores de prueba
         {
-            this.WindowState = FormWindowState.Minimized;
-        }
-
-        private void cbx_showPass_CheckedChanged(object sender, EventArgs e)
-        {
-            txtBx_Password.PasswordChar = cbx_showPass.Checked ? '\0' : '●';
-        }
-
-        private void btn_Ingresar_Click(object sender, EventArgs e)
-        {
-            if (txtBx_Username.Text == "" || txtBx_Password.Text == "")
+            if (string.IsNullOrWhiteSpace(txtBx_Username.Text) || string.IsNullOrWhiteSpace(txtBx_Password.Text))
             {
-                MessageBox.Show("No pueden quedar campos vacíos", "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                MessageBox.Show("No pueden quedar campos vacíos", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                return;
             }
-            else if (txtBx_Username.Text == "admin" && txtBx_Password.Text == "12345")
+
+            // Credenciales de ejemplo:
+            if (txtBx_Username.Text == "admin" && txtBx_Password.Text == "12345")
             {
-                MessageBox.Show("Bienvenido/a " + txtBx_Username.Text, "Acceso concedido", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                var frmAdmin = new Frm_MainAdmin();
-                frmAdmin.Show();
-                this.Hide();
-                frmAdmin.FormClosed += (s, args) => this.Close();
+                UserRole = "Admin";
+                this.DialogResult = DialogResult.OK;
+                this.Close();
             }
+            // FUTURO: validar vendedor cuando exista Frm_Vendedor
+            // else if (txtBx_Username.Text == "vendedor" && txtBx_Password.Text == "54321")
+            // {
+            //     UserRole = "Vendedor";
+            //     this.DialogResult = DialogResult.OK;
+            //     this.Close();
+            // }
             else
             {
                 MessageBox.Show("Usuario o contraseña incorrectos", "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
             }
         }
+
+        private void ibtn_Minimized_LogIn_Click(object sender, EventArgs e) // Evento para minimizar la ventana
+        {
+            this.WindowState = FormWindowState.Minimized;
+        }
+        private void ibtn_Exit_LogIn_Click(object sender, EventArgs e) // Evento para cerrar la aplicación
+        {
+            Application.Exit();
+        }
+
     }
 }

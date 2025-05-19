@@ -30,24 +30,23 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Frm_MainAdmin));
             this.panelTitleBar = new System.Windows.Forms.Panel();
-            this.btn_Minimized = new FontAwesome.Sharp.IconButton();
-            this.btn_Maximized = new FontAwesome.Sharp.IconButton();
-            this.btn_Exit = new FontAwesome.Sharp.IconButton();
             this.label1 = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
-            this.btnMenu = new FontAwesome.Sharp.IconButton();
             this.panelMenu = new System.Windows.Forms.Panel();
-            this.ibtn_Reports = new FontAwesome.Sharp.IconButton();
             this.ibtn_Signout = new FontAwesome.Sharp.IconButton();
             this.ibtn_Users = new FontAwesome.Sharp.IconButton();
             this.ibtn_Vents = new FontAwesome.Sharp.IconButton();
             this.ibtn_Vendedores = new FontAwesome.Sharp.IconButton();
             this.ibtn_Clients = new FontAwesome.Sharp.IconButton();
             this.ibtn_Dashboard = new FontAwesome.Sharp.IconButton();
+            this.ibtn_Reports = new FontAwesome.Sharp.IconButton();
+            this.btnMenu = new FontAwesome.Sharp.IconButton();
+            this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
+            this.btn_Minimized = new FontAwesome.Sharp.IconButton();
+            this.btn_Maximized = new FontAwesome.Sharp.IconButton();
+            this.btn_Exit = new FontAwesome.Sharp.IconButton();
             this.panelTitleBar.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
             this.panelMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
             this.SuspendLayout();
             // 
             // panelTitleBar
@@ -64,57 +63,6 @@
             this.panelTitleBar.TabIndex = 0;
             this.panelTitleBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelTitleBar_MouseDown);
             // 
-            // btn_Minimized
-            // 
-            this.btn_Minimized.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
-            this.btn_Minimized.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btn_Minimized.FlatAppearance.BorderSize = 0;
-            this.btn_Minimized.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btn_Minimized.IconChar = FontAwesome.Sharp.IconChar.Minus;
-            this.btn_Minimized.IconColor = System.Drawing.Color.White;
-            this.btn_Minimized.IconFont = FontAwesome.Sharp.IconFont.Solid;
-            this.btn_Minimized.IconSize = 25;
-            this.btn_Minimized.Location = new System.Drawing.Point(1465, 0);
-            this.btn_Minimized.Name = "btn_Minimized";
-            this.btn_Minimized.Size = new System.Drawing.Size(45, 41);
-            this.btn_Minimized.TabIndex = 3;
-            this.btn_Minimized.UseVisualStyleBackColor = false;
-            this.btn_Minimized.Click += new System.EventHandler(this.btn_Minimized_Click);
-            // 
-            // btn_Maximized
-            // 
-            this.btn_Maximized.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
-            this.btn_Maximized.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btn_Maximized.FlatAppearance.BorderSize = 0;
-            this.btn_Maximized.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btn_Maximized.IconChar = FontAwesome.Sharp.IconChar.Expand;
-            this.btn_Maximized.IconColor = System.Drawing.Color.White;
-            this.btn_Maximized.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            this.btn_Maximized.IconSize = 25;
-            this.btn_Maximized.Location = new System.Drawing.Point(1510, 0);
-            this.btn_Maximized.Name = "btn_Maximized";
-            this.btn_Maximized.Size = new System.Drawing.Size(45, 41);
-            this.btn_Maximized.TabIndex = 2;
-            this.btn_Maximized.UseVisualStyleBackColor = false;
-            this.btn_Maximized.Click += new System.EventHandler(this.btn_Maximized_Click);
-            // 
-            // btn_Exit
-            // 
-            this.btn_Exit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
-            this.btn_Exit.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btn_Exit.FlatAppearance.BorderSize = 0;
-            this.btn_Exit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btn_Exit.IconChar = FontAwesome.Sharp.IconChar.X;
-            this.btn_Exit.IconColor = System.Drawing.Color.White;
-            this.btn_Exit.IconFont = FontAwesome.Sharp.IconFont.Solid;
-            this.btn_Exit.IconSize = 25;
-            this.btn_Exit.Location = new System.Drawing.Point(1555, 0);
-            this.btn_Exit.Name = "btn_Exit";
-            this.btn_Exit.Size = new System.Drawing.Size(45, 41);
-            this.btn_Exit.TabIndex = 1;
-            this.btn_Exit.UseVisualStyleBackColor = false;
-            this.btn_Exit.Click += new System.EventHandler(this.btn_Exit_Click);
-            // 
             // label1
             // 
             this.label1.Dock = System.Windows.Forms.DockStyle.Left;
@@ -126,41 +74,6 @@
             this.label1.Size = new System.Drawing.Size(347, 41);
             this.label1.TabIndex = 0;
             this.label1.Text = "Demeter - Sesión de Administrador";
-            // 
-            // panel1
-            // 
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(350, 41);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1250, 959);
-            this.panel1.TabIndex = 2;
-            // 
-            // pictureBoxLogo
-            // 
-            this.pictureBoxLogo.Image = global::GUI.Properties.Resources.LogoDemeter_removebg_preview;
-            this.pictureBoxLogo.Location = new System.Drawing.Point(0, 0);
-            this.pictureBoxLogo.Name = "pictureBoxLogo";
-            this.pictureBoxLogo.Size = new System.Drawing.Size(350, 300);
-            this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxLogo.TabIndex = 0;
-            this.pictureBoxLogo.TabStop = false;
-            // 
-            // btnMenu
-            // 
-            this.btnMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
-            this.btnMenu.FlatAppearance.BorderSize = 0;
-            this.btnMenu.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnMenu.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnMenu.IconChar = FontAwesome.Sharp.IconChar.BarsStaggered;
-            this.btnMenu.IconColor = System.Drawing.SystemColors.Control;
-            this.btnMenu.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            this.btnMenu.IconSize = 38;
-            this.btnMenu.Location = new System.Drawing.Point(0, 0);
-            this.btnMenu.Name = "btnMenu";
-            this.btnMenu.Size = new System.Drawing.Size(80, 45);
-            this.btnMenu.TabIndex = 6;
-            this.btnMenu.UseVisualStyleBackColor = false;
-            this.btnMenu.Click += new System.EventHandler(this.btnMenu_Click);
             // 
             // panelMenu
             // 
@@ -179,29 +92,6 @@
             this.panelMenu.Name = "panelMenu";
             this.panelMenu.Size = new System.Drawing.Size(350, 959);
             this.panelMenu.TabIndex = 1;
-            // 
-            // ibtn_Reports
-            // 
-            this.ibtn_Reports.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
-            this.ibtn_Reports.FlatAppearance.BorderSize = 0;
-            this.ibtn_Reports.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
-            this.ibtn_Reports.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
-            this.ibtn_Reports.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ibtn_Reports.Font = new System.Drawing.Font("Tahoma", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ibtn_Reports.ForeColor = System.Drawing.SystemColors.Control;
-            this.ibtn_Reports.IconChar = FontAwesome.Sharp.IconChar.FileInvoice;
-            this.ibtn_Reports.IconColor = System.Drawing.Color.White;
-            this.ibtn_Reports.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            this.ibtn_Reports.IconSize = 38;
-            this.ibtn_Reports.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ibtn_Reports.Location = new System.Drawing.Point(0, 659);
-            this.ibtn_Reports.Name = "ibtn_Reports";
-            this.ibtn_Reports.Size = new System.Drawing.Size(350, 65);
-            this.ibtn_Reports.TabIndex = 21;
-            this.ibtn_Reports.Tag = "REPORTES";
-            this.ibtn_Reports.Text = "REPORTES";
-            this.ibtn_Reports.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.ibtn_Reports.UseVisualStyleBackColor = false;
             // 
             // ibtn_Signout
             // 
@@ -342,24 +232,123 @@
             this.ibtn_Dashboard.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.ibtn_Dashboard.UseVisualStyleBackColor = false;
             // 
+            // ibtn_Reports
+            // 
+            this.ibtn_Reports.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
+            this.ibtn_Reports.FlatAppearance.BorderSize = 0;
+            this.ibtn_Reports.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
+            this.ibtn_Reports.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
+            this.ibtn_Reports.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ibtn_Reports.Font = new System.Drawing.Font("Tahoma", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ibtn_Reports.ForeColor = System.Drawing.SystemColors.Control;
+            this.ibtn_Reports.IconChar = FontAwesome.Sharp.IconChar.FileInvoice;
+            this.ibtn_Reports.IconColor = System.Drawing.Color.White;
+            this.ibtn_Reports.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            this.ibtn_Reports.IconSize = 38;
+            this.ibtn_Reports.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ibtn_Reports.Location = new System.Drawing.Point(0, 659);
+            this.ibtn_Reports.Name = "ibtn_Reports";
+            this.ibtn_Reports.Size = new System.Drawing.Size(350, 65);
+            this.ibtn_Reports.TabIndex = 21;
+            this.ibtn_Reports.Tag = "REPORTES";
+            this.ibtn_Reports.Text = "REPORTES";
+            this.ibtn_Reports.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.ibtn_Reports.UseVisualStyleBackColor = false;
+            // 
+            // btnMenu
+            // 
+            this.btnMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
+            this.btnMenu.FlatAppearance.BorderSize = 0;
+            this.btnMenu.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnMenu.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMenu.IconChar = FontAwesome.Sharp.IconChar.BarsStaggered;
+            this.btnMenu.IconColor = System.Drawing.SystemColors.Control;
+            this.btnMenu.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            this.btnMenu.IconSize = 38;
+            this.btnMenu.Location = new System.Drawing.Point(0, 0);
+            this.btnMenu.Name = "btnMenu";
+            this.btnMenu.Size = new System.Drawing.Size(80, 45);
+            this.btnMenu.TabIndex = 6;
+            this.btnMenu.UseVisualStyleBackColor = false;
+            this.btnMenu.Click += new System.EventHandler(this.btnMenu_Click);
+            // 
+            // pictureBoxLogo
+            // 
+            this.pictureBoxLogo.Image = global::GUI.Properties.Resources.LogoDemeter_removebg_preview;
+            this.pictureBoxLogo.Location = new System.Drawing.Point(0, 0);
+            this.pictureBoxLogo.Name = "pictureBoxLogo";
+            this.pictureBoxLogo.Size = new System.Drawing.Size(350, 300);
+            this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxLogo.TabIndex = 0;
+            this.pictureBoxLogo.TabStop = false;
+            // 
+            // btn_Minimized
+            // 
+            this.btn_Minimized.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
+            this.btn_Minimized.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btn_Minimized.FlatAppearance.BorderSize = 0;
+            this.btn_Minimized.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_Minimized.IconChar = FontAwesome.Sharp.IconChar.Minus;
+            this.btn_Minimized.IconColor = System.Drawing.Color.White;
+            this.btn_Minimized.IconFont = FontAwesome.Sharp.IconFont.Solid;
+            this.btn_Minimized.IconSize = 25;
+            this.btn_Minimized.Location = new System.Drawing.Point(1465, 0);
+            this.btn_Minimized.Name = "btn_Minimized";
+            this.btn_Minimized.Size = new System.Drawing.Size(45, 41);
+            this.btn_Minimized.TabIndex = 3;
+            this.btn_Minimized.UseVisualStyleBackColor = false;
+            this.btn_Minimized.Click += new System.EventHandler(this.btn_Minimized_Click);
+            // 
+            // btn_Maximized
+            // 
+            this.btn_Maximized.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
+            this.btn_Maximized.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btn_Maximized.FlatAppearance.BorderSize = 0;
+            this.btn_Maximized.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_Maximized.IconChar = FontAwesome.Sharp.IconChar.Expand;
+            this.btn_Maximized.IconColor = System.Drawing.Color.White;
+            this.btn_Maximized.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            this.btn_Maximized.IconSize = 25;
+            this.btn_Maximized.Location = new System.Drawing.Point(1510, 0);
+            this.btn_Maximized.Name = "btn_Maximized";
+            this.btn_Maximized.Size = new System.Drawing.Size(45, 41);
+            this.btn_Maximized.TabIndex = 2;
+            this.btn_Maximized.UseVisualStyleBackColor = false;
+            this.btn_Maximized.Click += new System.EventHandler(this.btn_Maximized_Click);
+            // 
+            // btn_Exit
+            // 
+            this.btn_Exit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
+            this.btn_Exit.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btn_Exit.FlatAppearance.BorderSize = 0;
+            this.btn_Exit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_Exit.IconChar = FontAwesome.Sharp.IconChar.X;
+            this.btn_Exit.IconColor = System.Drawing.Color.White;
+            this.btn_Exit.IconFont = FontAwesome.Sharp.IconFont.Solid;
+            this.btn_Exit.IconSize = 25;
+            this.btn_Exit.Location = new System.Drawing.Point(1555, 0);
+            this.btn_Exit.Name = "btn_Exit";
+            this.btn_Exit.Size = new System.Drawing.Size(45, 41);
+            this.btn_Exit.TabIndex = 1;
+            this.btn_Exit.UseVisualStyleBackColor = false;
+            this.btn_Exit.Click += new System.EventHandler(this.btn_Exit_Click);
+            // 
             // Frm_MainAdmin
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
             this.ClientSize = new System.Drawing.Size(1600, 1000);
-            this.Controls.Add(this.panel1);
             this.Controls.Add(this.panelMenu);
             this.Controls.Add(this.panelTitleBar);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Frm_MainAdmin";
             this.Text = "MainAdmin";
             this.Load += new System.EventHandler(this.Frm_MainAdmin_Load);
             this.Resize += new System.EventHandler(this.Frm_MainAdmin_Resize);
             this.panelTitleBar.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).EndInit();
             this.panelMenu.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -367,7 +356,6 @@
         #endregion
         private System.Windows.Forms.Panel panelTitleBar;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.PictureBox pictureBoxLogo;
         private FontAwesome.Sharp.IconButton btnMenu;
         private System.Windows.Forms.Panel panelMenu;

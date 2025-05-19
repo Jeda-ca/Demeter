@@ -8,15 +8,14 @@ namespace GUI
 {
     internal static class Program
     {
-        /// <summary>
-        /// Punto de entrada principal para la aplicación.
-        /// </summary>
         [STAThread]
         static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Frm_MainAdmin());
+
+            // Único bucle de mensajes: arrancamos nuestro contexto
+            Application.Run(new AppContext());
         }
     }
 }
