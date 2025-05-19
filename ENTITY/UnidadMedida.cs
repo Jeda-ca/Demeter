@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace ENTITY
 {
-    public class Class1
+    public class UnidadMedida
     {
+        public int IdUnidadMedida { get; set; }
+        public string Nombre { get; set; }
+
     }
 }

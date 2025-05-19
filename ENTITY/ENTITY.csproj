@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>ce5c6e22-0d54-42d3-ab02-df46c8d8e18e</ProjectGuid>
+    <ProjectGuid>{CE5C6E22-0D54-42D3-AB02-DF46C8D8E18E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ENTITY</RootNamespace>
@@ -31,24 +31,32 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System"/>
-    
-    <Reference Include="System.Core"/>
-    <Reference Include="System.Xml.Linq"/>
-    <Reference Include="System.Data.DataSetExtensions"/>
-    
-    
-    <Reference Include="Microsoft.CSharp"/>
-    
-    <Reference Include="System.Data"/>
-    
-    <Reference Include="System.Net.Http"/>
-    
-    <Reference Include="System.Xml"/>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Administrador.cs" />
+    <Compile Include="CategoriaProducto.cs" />
+    <Compile Include="Cliente.cs" />
+    <Compile Include="DetalleVenta.cs" />
+    <Compile Include="EstadoVenta.cs" />
+    <Compile Include="Persona.cs" />
+    <Compile Include="Producto.cs" />
+    <Compile Include="Reporte.cs" />
+    <Compile Include="Rol.cs" />
+    <Compile Include="TipoDocumento.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TipoReporte.cs" />
+    <Compile Include="UnidadMedida.cs" />
+    <Compile Include="Usuario.cs" />
+    <Compile Include="Vendedor.cs" />
+    <Compile Include="Venta.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
- </Project>
+</Project>
