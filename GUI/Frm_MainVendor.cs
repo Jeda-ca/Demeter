@@ -13,7 +13,7 @@ using System.Windows.Media.Animation;
 
 namespace GUI
 {
-    public partial class Frm_MainAdmin : Form
+    public partial class Frm_MainVendor : Form
     {
         private int borderSize = 1; // Tamaño de borde de la ventana
         private Size formSize;
@@ -31,20 +31,20 @@ namespace GUI
 
         private const int ICONBTN_EXPANDED_WIDTH = 350;
         private const int ICONBTN_COLLAPSED_WIDTH = PANEL_COLLAPSED_WIDTH;
-        private const int ICONBTN_HEIGHT = 65;
-        public Frm_MainAdmin()
+        private const int ICONBTN_HEIGHT = 100;
+        public Frm_MainVendor()
         {
             InitializeComponent();
             this.Padding = new Padding(borderSize); // Se le asigna el tamaño del borde a la ventana
             //CollapseMenu(); // Se colapsa el menú al iniciar la aplicación (opcional)
         }
 
-        // EVENTOS
-        private void Frm_MainAdmin_Load(object sender, EventArgs e) // Evento para cargar el formulario (Frm_MainAdmin) con el tamaño de la ventana
+        //EVENTOS
+        private void Frm_MainVendor_Load(object sender, EventArgs e) // Evento para cargar el formulario (Frm_MainAdmin) con el tamaño de la ventana
         {
             formSize = this.ClientSize;
         }
-        private void Frm_MainAdmin_Resize(object sender, EventArgs e) // Evento para ajustar la ventana del formulario (Frm_MainAdmin)
+        private void Frm_MainVendor_Resize(object sender, EventArgs e) // Evento para ajustar la ventana del formulario (Frm_MainAdmin)
         {
             AdjustForm();
         }
@@ -71,7 +71,7 @@ namespace GUI
         {
             Application.Exit();
         }
-        private void ibtn_CerrarSesion_Click(object sender, EventArgs e) // Evento para cerrar la sesion del usuario
+        private void ibtn_Signout_Click(object sender, EventArgs e) // Evento para cerrar la sesion del usuario
         {
             CerrarSesion();
         }
@@ -102,14 +102,14 @@ namespace GUI
             // 2) Ajustar logo
             if (menuIsCollapsed) // Colapsado: logo cuadrado y centrado en X, en Dock=Top
             {
-                pictureBoxLogo.Size = new Size( LOGO_COLLAPSED_WIDTH, LOGO_COLLAPSED_HEIGHT );
-                pictureBoxLogo.Location = new Point( (PANEL_COLLAPSED_WIDTH - LOGO_COLLAPSED_WIDTH) / 2, btnMenu.Bottom + 5 );
+                pictureBoxLogo.Size = new Size(LOGO_COLLAPSED_WIDTH, LOGO_COLLAPSED_HEIGHT);
+                pictureBoxLogo.Location = new Point((PANEL_COLLAPSED_WIDTH - LOGO_COLLAPSED_WIDTH) / 2, btnMenu.Bottom + 5);
                 pictureBoxLogo.Dock = DockStyle.None;
                 pictureBoxLogo.Visible = true;
             }
             else // Expandido: vuelve a diseño original
             {
-                pictureBoxLogo.Size = new Size( LOGO_EXPANDED_WIDTH, LOGO_EXPANDED_HEIGHT );
+                pictureBoxLogo.Size = new Size(LOGO_EXPANDED_WIDTH, LOGO_EXPANDED_HEIGHT);
                 pictureBoxLogo.Location = new Point(0, 0);
                 pictureBoxLogo.Dock = DockStyle.Top;
                 pictureBoxLogo.Visible = true;
@@ -127,7 +127,7 @@ namespace GUI
 
                 // Se conserva Y original, solo cambian el ancho y X=0
                 int originalY = ico.Location.Y;
-                ico.Size = new Size( menuIsCollapsed ? ICONBTN_COLLAPSED_WIDTH : ICONBTN_EXPANDED_WIDTH, ICONBTN_HEIGHT );
+                ico.Size = new Size(menuIsCollapsed ? ICONBTN_COLLAPSED_WIDTH : ICONBTN_EXPANDED_WIDTH, ICONBTN_HEIGHT);
                 ico.Location = new Point(0, originalY);
 
                 if (menuIsCollapsed)
@@ -176,11 +176,13 @@ namespace GUI
         private extern static void ReleaseCapture();
         [DllImport("user32.dll", EntryPoint = "SendMessage")]
         private extern static void SendMessage(System.IntPtr hWnd, int wMsg, int wParam, int lParam);
-        private void panelTitleBar_MouseDown(object sender, MouseEventArgs e) // Evento para mover la ventana desde el panelTitleBar
+
+        private void panelTitleBar_MouseDown(object sender, MouseEventArgs e)
         {
             ReleaseCapture();
             SendMessage(this.Handle, 0x112, 0xf012, 0);
         }
+
 
         // FORMA DE REDIMENSIONAR
         protected override void WndProc(ref Message m)
@@ -250,4 +252,3 @@ namespace GUI
         }
     }
 }
-
