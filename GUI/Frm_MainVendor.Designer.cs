@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Frm_MainVendor));
             this.label1 = new System.Windows.Forms.Label();
             this.panelMenu = new System.Windows.Forms.Panel();
@@ -41,6 +42,8 @@
             this.btn_Minimized = new FontAwesome.Sharp.IconButton();
             this.btn_Maximized = new FontAwesome.Sharp.IconButton();
             this.btn_Exit = new FontAwesome.Sharp.IconButton();
+            this.panelVendorContenido = new System.Windows.Forms.Panel();
+            this.tim_PanelMenu = new System.Windows.Forms.Timer(this.components);
             this.panelMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
             this.panelTitleBar.SuspendLayout();
@@ -259,17 +262,31 @@
             this.btn_Exit.UseVisualStyleBackColor = false;
             this.btn_Exit.Click += new System.EventHandler(this.btn_Exit_Click);
             // 
+            // panelVendorContenido
+            // 
+            this.panelVendorContenido.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelVendorContenido.Location = new System.Drawing.Point(350, 41);
+            this.panelVendorContenido.Name = "panelVendorContenido";
+            this.panelVendorContenido.Size = new System.Drawing.Size(1250, 959);
+            this.panelVendorContenido.TabIndex = 4;
+            // 
+            // tim_PanelMenu
+            // 
+            this.tim_PanelMenu.Interval = 10;
+            this.tim_PanelMenu.Tick += new System.EventHandler(this.tim_PanelMenu_Tick);
+            // 
             // Frm_MainVendor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
             this.ClientSize = new System.Drawing.Size(1600, 1000);
+            this.Controls.Add(this.panelVendorContenido);
             this.Controls.Add(this.panelMenu);
             this.Controls.Add(this.panelTitleBar);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Frm_MainVendor";
-            this.Text = "Frm_MainVendor";
+            this.Text = "MainVendor";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Frm_MainVendor_Load);
             this.Resize += new System.EventHandler(this.Frm_MainVendor_Resize);
@@ -294,5 +311,7 @@
         private FontAwesome.Sharp.IconButton btnMenu;
         private System.Windows.Forms.PictureBox pictureBoxLogo;
         private System.Windows.Forms.Panel panelTitleBar;
+        private System.Windows.Forms.Panel panelVendorContenido;
+        private System.Windows.Forms.Timer tim_PanelMenu;
     }
 }

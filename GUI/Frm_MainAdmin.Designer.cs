@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Frm_MainAdmin));
             this.panelTitleBar = new System.Windows.Forms.Panel();
             this.btn_Minimized = new FontAwesome.Sharp.IconButton();
@@ -44,6 +45,8 @@
             this.ibtn_Reportes = new FontAwesome.Sharp.IconButton();
             this.btnMenu = new FontAwesome.Sharp.IconButton();
             this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
+            this.panelAdminContenido = new System.Windows.Forms.Panel();
+            this.tim_PanelMenu = new System.Windows.Forms.Timer(this.components);
             this.panelTitleBar.SuspendLayout();
             this.panelMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
@@ -334,12 +337,26 @@
             this.pictureBoxLogo.TabIndex = 0;
             this.pictureBoxLogo.TabStop = false;
             // 
+            // panelAdminContenido
+            // 
+            this.panelAdminContenido.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelAdminContenido.Location = new System.Drawing.Point(350, 41);
+            this.panelAdminContenido.Name = "panelAdminContenido";
+            this.panelAdminContenido.Size = new System.Drawing.Size(1250, 959);
+            this.panelAdminContenido.TabIndex = 2;
+            // 
+            // tim_PanelMenu
+            // 
+            this.tim_PanelMenu.Interval = 10;
+            this.tim_PanelMenu.Tick += new System.EventHandler(this.tim_PanelMenu_Tick);
+            // 
             // Frm_MainAdmin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
             this.ClientSize = new System.Drawing.Size(1600, 1000);
+            this.Controls.Add(this.panelAdminContenido);
             this.Controls.Add(this.panelMenu);
             this.Controls.Add(this.panelTitleBar);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -371,5 +388,7 @@
         private FontAwesome.Sharp.IconButton btn_Maximized;
         private FontAwesome.Sharp.IconButton btn_Exit;
         private FontAwesome.Sharp.IconButton btn_Minimized;
+        private System.Windows.Forms.Panel panelAdminContenido;
+        private System.Windows.Forms.Timer tim_PanelMenu;
     }
 }

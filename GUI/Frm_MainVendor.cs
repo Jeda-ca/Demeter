@@ -9,7 +9,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Media.Animation;
 
 namespace GUI
 {
@@ -50,7 +49,36 @@ namespace GUI
         }
         private void btnMenu_Click(object sender, EventArgs e) // Evento para colapsar el menú (btnMenu)
         {
-            CollapseMenu();
+            menuIsCollapsed = !menuIsCollapsed; // Toggle del estado
+            tim_PanelMenu.Start(); // Inicia la animación
+        }
+        private void tim_PanelMenu_Tick(object sender, EventArgs e) // Evento de animación del menú (tim_PanelMenu)
+        {
+            btnMenu.Enabled = false;
+            int targetWidth = menuIsCollapsed ? PANEL_COLLAPSED_WIDTH : PANEL_EXPANDED_WIDTH;
+            int step = 15; // Ajusta este valor para velocidad
+
+            if (panelMenu.Width < targetWidth) // Se asegura que no se pase del tamaño expandido
+            {
+                panelMenu.Width += step;
+                if (panelMenu.Width >= targetWidth)
+                {
+                    panelMenu.Width = targetWidth;
+                    tim_PanelMenu.Stop();
+                    AdjustControls(); // Ajustar controles al finalizar
+                }
+            }
+            else // Si el menú está colapsado, se reduce el tamaño
+            {
+                panelMenu.Width -= step;
+                if (panelMenu.Width <= targetWidth) // Se asegura que no se pase del tamaño colapsado
+                {
+                    panelMenu.Width = targetWidth;
+                    tim_PanelMenu.Stop();
+                    AdjustControls();
+                }
+            }
+            if (tim_PanelMenu.Enabled == false) btnMenu.Enabled = true; // Habilita el botón hamburguesa al finalizar la animación
         }
         private void btn_Minimized_Click(object sender, EventArgs e) // Evento para minimizar la ventana (btn_Maximized)
         {
@@ -92,61 +120,42 @@ namespace GUI
                     break;
             }
         }
-        private void CollapseMenu() // Colapsa el menú (panelMenu) y ajusta el tamaño de los controles dentro de él
+        private void AdjustControls()
         {
-            menuIsCollapsed = !menuIsCollapsed; // Flag del estado del menú (colapsado o expandido)
-
-            // 1) Aplica anchos constantes según el flag
-            panelMenu.Width = menuIsCollapsed ? PANEL_COLLAPSED_WIDTH : PANEL_EXPANDED_WIDTH;
-
-            // 2) Ajustar logo
-            if (menuIsCollapsed) // Colapsado: logo cuadrado y centrado en X, en Dock=Top
+            // 2) Ajustar logo (tu código original)
+            if (menuIsCollapsed)
             {
                 pictureBoxLogo.Size = new Size(LOGO_COLLAPSED_WIDTH, LOGO_COLLAPSED_HEIGHT);
                 pictureBoxLogo.Location = new Point((PANEL_COLLAPSED_WIDTH - LOGO_COLLAPSED_WIDTH) / 2, btnMenu.Bottom + 5);
                 pictureBoxLogo.Dock = DockStyle.None;
-                pictureBoxLogo.Visible = true;
             }
-            else // Expandido: vuelve a diseño original
+            else
             {
                 pictureBoxLogo.Size = new Size(LOGO_EXPANDED_WIDTH, LOGO_EXPANDED_HEIGHT);
                 pictureBoxLogo.Location = new Point(0, 0);
                 pictureBoxLogo.Dock = DockStyle.Top;
-                pictureBoxLogo.Visible = true;
             }
 
-            // 3) Ajustar hamburguesa (btnMenu)
-            btnMenu.Size = new Size(80, 45);
-            btnMenu.Location = new Point(0, 0);
-            btnMenu.Dock = menuIsCollapsed ? DockStyle.Top : DockStyle.None; // Se deja en la esquina superior izquierda
+            // 3) Ajustar botón hamburguesa
+            btnMenu.Dock = menuIsCollapsed ? DockStyle.Top : DockStyle.None;
 
-            // 4) Ajustar cada IconButton
+            // 4) Ajustar IconButtons (tu código original)
             foreach (IconButton ico in panelMenu.Controls.OfType<IconButton>())
             {
                 if (ico == btnMenu) continue;
 
-                // Se conserva Y original, solo cambian el ancho y X=0
-                int originalY = ico.Location.Y;
                 ico.Size = new Size(menuIsCollapsed ? ICONBTN_COLLAPSED_WIDTH : ICONBTN_EXPANDED_WIDTH, ICONBTN_HEIGHT);
-                ico.Location = new Point(0, originalY);
 
                 if (menuIsCollapsed)
                 {
-                    // Muestra solo el icono centrado
-                    ico.TextImageRelation = TextImageRelation.Overlay;
                     ico.Text = "";
-                    int pad = (PANEL_COLLAPSED_WIDTH - ico.IconSize) / 2;
-                    ico.Padding = new Padding(pad, 0, 0, 0);
+                    ico.Padding = new Padding((PANEL_COLLAPSED_WIDTH - ico.IconSize) / 2, 0, 0, 0);
                 }
                 else
                 {
-                    // Muestra el icono junto al texto alineado a la izquierda
-                    ico.TextImageRelation = TextImageRelation.ImageBeforeText;
                     ico.Text = "  " + ico.Tag;
                     ico.Padding = new Padding(10, 0, 0, 0);
                 }
-
-                ico.Refresh();
             }
         }
         private void CerrarSesion()
@@ -182,7 +191,6 @@ namespace GUI
             ReleaseCapture();
             SendMessage(this.Handle, 0x112, 0xf012, 0);
         }
-
 
         // FORMA DE REDIMENSIONAR
         protected override void WndProc(ref Message m)
