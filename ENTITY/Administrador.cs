@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 namespace ENTITY
-{ 
+{
     public class Administrador : Usuario
     {
         public int IdAdministrador { get; set; } // PK de la tabla administrador
@@ -20,3 +20,4 @@ namespace ENTITY
             ReportesGenerados = new HashSet<Reporte>();
         }
     }
+}
