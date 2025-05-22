@@ -14,7 +14,7 @@ namespace BLL.Interfaces
         Vendedor ObtenerVendedorPorCodigo(string codigoVendedor);
         IEnumerable<Vendedor> BuscarVendedoresPorNombreOApellido(string searchTerm);
         Vendedor ObtenerVendedorPorDocumento(int tipoDocumentoId, string numeroDocumento);
-        string ModificarVendedor(Vendedor vendedor); // El admin modifica
-        string CambiarEstadoActividadVendedor(int idVendedor, bool estaActivo); // Para "eliminar" 
+        string ModificarVendedor(Vendedor vendedor, int idAdminQueModifica); // El admin modifica
+        string CambiarEstadoActividadVendedor(int idVendedor, bool estaActivo, int idAdminQueModifica); // Para "eliminar" 
     }
 }

@@ -1,17 +1,17 @@
--- Script para crear la Vista v_product_details
+-- Script para crear y actualizar Vistas
 -- Ejecutar en DEMETER_DB
 
 USE DEMETER_DB;
 GO
 
+-- Vista para Detalles de Producto
 IF OBJECT_ID('v_product_details', 'V') IS NOT NULL
     DROP VIEW v_product_details;
 GO
-
 CREATE VIEW v_product_details AS
 SELECT 
     p.id_product, 
-    p.name AS product_name_alias, -- Usar alias para las columnas de la tabla principal si es necesario
+    p.name AS product_name_alias,
     p.description AS product_description_alias,
     p.price AS product_price_alias,
     p.measurement_unit_id, 
@@ -20,22 +20,23 @@ SELECT
     p.creation_date AS product_creation_date_alias, 
     p.last_stock_update_date AS product_last_stock_update_date_alias, 
     p.seller_id, 
-    p.is_active AS product_is_active_alias,
-    mu.name AS measurement_unit_name,       -- Columna de la tabla unida
-    pc.name AS category_name,               -- Columna de la tabla unida
-    s.seller_code,                          -- Columna de la tabla unida
-    s.user_id AS seller_user_id,            -- Columna de la tabla unida
-    u.username AS seller_username,          -- Columna de la tabla unida
-    u.role_id AS seller_role_id,            -- Columna de la tabla unida
-    u.person_id AS seller_person_id,        -- Columna de la tabla unida
-    pe.first_name AS seller_first_name,     -- Columna de la tabla unida
-    pe.last_name AS seller_last_name,       -- Columna de la tabla unida
-    pe.document_type_id AS seller_document_type_id, -- Columna de la tabla unida
-    pe.document_number AS seller_document_number,   -- Columna de la tabla unida
-    pe.registration_date AS seller_person_registration_date, -- Columna de la tabla unida
-    pe.phone_number AS seller_phone_number, -- Columna de la tabla unida
-    dt_pe.name AS seller_document_type_name, -- Columna de la tabla unida
-    r_u.name AS seller_role_name             -- Columna de la tabla unida
+    p.is_active AS product_is_active_alias, -- Estado del producto
+    mu.name AS measurement_unit_name,
+    pc.name AS category_name,
+    s.seller_code,
+    s.user_id AS seller_user_id,
+    u.username AS seller_username,
+    u.role_id AS seller_role_id,
+    u.is_active AS seller_user_is_active, -- Estado del usuario vendedor
+    u.person_id AS seller_person_id,
+    pe.first_name AS seller_first_name,
+    pe.last_name AS seller_last_name,
+    pe.document_type_id AS seller_document_type_id,
+    pe.document_number AS seller_document_number,
+    pe.registration_date AS seller_person_registration_date,
+    pe.phone_number AS seller_phone_number,
+    dt_pe.name AS seller_document_type_name,
+    r_u.name AS seller_role_name
 FROM 
     products p
 INNER JOIN 
@@ -53,23 +54,19 @@ INNER JOIN
 INNER JOIN 
     roles r_u ON u.role_id = r_u.id_role;
 GO
+PRINT 'View v_product_details created/updated.';
 
--- --------------------------------------------------------------------------------
--- Script para crear la Vista v_client_full_details
--- Ejecutar en DEMETER_DB
--- --------------------------------------------------------------------------------
-
+-- Vista para Detalles Completos de Cliente
 IF OBJECT_ID('v_client_full_details', 'V') IS NOT NULL
     DROP VIEW v_client_full_details;
 GO
-
 CREATE VIEW v_client_full_details AS
 SELECT 
     c.id_client, 
     c.client_code, 
     c.last_purchase_date, 
-    c.email AS client_email, -- Alias para evitar colisión si persona tuviera email
-    c.is_active AS client_is_active,
+    c.email AS client_email,
+    c.is_active AS client_is_active, -- Estado del cliente
     p.id_person, 
     p.first_name AS person_first_name, 
     p.last_name AS person_last_name, 
@@ -85,20 +82,12 @@ INNER JOIN
 INNER JOIN 
     document_types dt ON p.document_type_id = dt.id_document_type;
 GO
+PRINT 'View v_client_full_details created/updated.';
 
--- Para probar la vista:
--- SELECT * FROM v_client_full_details WHERE id_client = 1;
--- SELECT * FROM v_client_full_details WHERE person_first_name LIKE N'Ana%';
-
--- --------------------------------------------------------------------------------
--- Script para crear la Vista v_sales_summary
--- Ejecutar en DEMETER_DB
--- --------------------------------------------------------------------------------
-
+-- Vista para Resumen de Ventas
 IF OBJECT_ID('v_sales_summary', 'V') IS NOT NULL
     DROP VIEW v_sales_summary;
 GO
-
 CREATE VIEW v_sales_summary AS
 SELECT 
     s.id_sale, 
@@ -112,22 +101,23 @@ SELECT
     s.client_id, 
     c_p.first_name AS client_first_name, 
     c_p.last_name AS client_last_name, 
-    c.client_code,
-    c.person_id AS client_person_id, 
+    cli.client_code, 
+    cli.person_id AS client_person_id, 
     s.seller_id, 
     s_p.first_name AS seller_first_name, 
     s_p.last_name AS seller_last_name, 
     sel.seller_code,
     sel.user_id AS seller_user_id,   
-    sel_u.person_id AS seller_person_id 
+    sel_u.person_id AS seller_person_id,
+    sel_u.is_active AS seller_user_is_active 
 FROM 
     sales s
 INNER JOIN 
     sale_statuses ss ON s.status_id = ss.id_status
 INNER JOIN 
-    clients c ON s.client_id = c.id_client
+    clients cli ON s.client_id = cli.id_client 
 INNER JOIN 
-    persons c_p ON c.person_id = c_p.id_person
+    persons c_p ON cli.person_id = c_p.id_person
 INNER JOIN 
     sellers sel ON s.seller_id = sel.id_seller
 INNER JOIN 
@@ -135,15 +125,7 @@ INNER JOIN
 INNER JOIN 
     persons s_p ON sel_u.person_id = s_p.id_person;
 GO
-
--- Para probar la vista:
--- SELECT * FROM v_sales_summary WHERE id_sale = 1;
--- SELECT * FROM v_sales_summary WHERE client_first_name LIKE N'Ana%';
-
--- --------------------------------------------------------------------------------
--- Script para crear Vistas Adicionales en DEMETER_DB
--- Ejecutar en DEMETER_DB
--- --------------------------------------------------------------------------------
+PRINT 'View v_sales_summary created/updated.';
 
 -- Vista para Administradores con detalles completos
 IF OBJECT_ID('v_administrator_details', 'V') IS NOT NULL
@@ -156,6 +138,7 @@ SELECT
     u.username, 
     u.password_hash, 
     u.role_id,
+    u.is_active AS user_is_active, 
     p.id_person, 
     p.first_name AS person_first_name, 
     p.last_name AS person_last_name, 
@@ -176,6 +159,7 @@ INNER JOIN
 INNER JOIN 
     document_types dt ON p.document_type_id = dt.id_document_type;
 GO
+PRINT 'View v_administrator_details created/updated.';
 
 -- Vista para Vendedores con detalles completos
 IF OBJECT_ID('v_seller_details', 'V') IS NOT NULL
@@ -189,6 +173,7 @@ SELECT
     u.username, 
     u.password_hash, 
     u.role_id,
+    u.is_active AS user_is_active, 
     p.id_person, 
     p.first_name AS person_first_name, 
     p.last_name AS person_last_name, 
@@ -209,8 +194,9 @@ INNER JOIN
 INNER JOIN 
     document_types dt ON p.document_type_id = dt.id_document_type;
 GO
+PRINT 'View v_seller_details created/updated.';
 
--- Vista para Detalles de Venta Enriquecidos con información del Producto
+-- Vista para Detalles de Venta Enriquecidos
 IF OBJECT_ID('v_sale_line_items_enriched', 'V') IS NOT NULL
     DROP VIEW v_sale_line_items_enriched;
 GO
@@ -224,7 +210,8 @@ SELECT
     sd.line_total,
     p.name AS product_name, 
     p.description AS product_description,
-    p.price AS product_current_price, -- Precio actual del producto en la tabla 'products'
+    p.price AS product_current_price,
+    p.is_active AS product_is_active, 
     p.measurement_unit_id AS product_measurement_unit_id,
     mu.name AS product_measurement_unit_name,
     p.category_id AS product_category_id,
@@ -238,6 +225,7 @@ INNER JOIN
 INNER JOIN 
     product_categories pc ON p.category_id = pc.id_category;
 GO
+PRINT 'View v_sale_line_items_enriched created/updated.';
 
 -- Vista para Metadata de Reportes Enriquecida
 IF OBJECT_ID('v_report_metadata_details', 'V') IS NOT NULL
@@ -247,6 +235,8 @@ CREATE VIEW v_report_metadata_details AS
 SELECT 
     r.id_report, 
     r.administrator_id, 
+    adm_u.username AS admin_username, 
+    adm_u.is_active AS admin_user_is_active, 
     r.generation_date, 
     r.report_type_id, 
     r.period_start_date, 
@@ -256,14 +246,14 @@ SELECT
     rt.name AS report_type_name,
     adm_p.first_name AS admin_first_name, 
     adm_p.last_name AS admin_last_name, 
-    -- Información del vendedor filtrado (si aplica)
     s.seller_code AS filter_seller_code,
     sell_p.first_name AS filter_seller_first_name, 
     sell_p.last_name AS filter_seller_last_name, 
-    -- Información del cliente filtrado (si aplica)
+    sell_u.is_active AS filter_seller_user_is_active, 
     c.client_code AS filter_client_code,
     cli_p.first_name AS filter_client_first_name, 
-    cli_p.last_name AS filter_client_last_name 
+    cli_p.last_name AS filter_client_last_name,
+    c.is_active AS filter_client_is_active -- CORREGIDO: de cli.is_active a c.is_active
 FROM 
     reports r
 INNER JOIN 
@@ -281,7 +271,10 @@ LEFT JOIN
 LEFT JOIN 
     persons sell_p ON sell_u.person_id = sell_p.id_person
 LEFT JOIN 
-    clients c ON r.filter_client_id = c.id_client
+    clients c ON r.filter_client_id = c.id_client -- Alias 'c' para clients
 LEFT JOIN 
-    persons cli_p ON c.person_id = cli_p.id_person;
+    persons cli_p ON c.person_id = cli_p.id_person; -- cli_p es para la persona del cliente
 GO
+PRINT 'View v_report_metadata_details created/updated.';
+
+PRINT 'All views created/updated successfully.';

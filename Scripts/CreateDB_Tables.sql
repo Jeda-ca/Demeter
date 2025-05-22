@@ -1,4 +1,3 @@
-
 -- Create the database if it does not exist
 USE master;
 GO
@@ -16,6 +15,8 @@ GO
 -- Use the DEMETER_DB database
 USE DEMETER_DB;
 GO
+
+-- Drop tables in reverse order of creation due to foreign key constraints
 
 IF OBJECT_ID('sale_details', 'U') IS NOT NULL
 BEGIN
@@ -62,7 +63,7 @@ BEGIN
     DROP TABLE IF EXISTS persons;
 END
 
--- Catalog tables (usually dropped after tables that use them)
+-- tablas catalogo
 IF OBJECT_ID('document_types', 'U') IS NOT NULL
 BEGIN
     DROP TABLE IF EXISTS document_types;
@@ -94,8 +95,8 @@ BEGIN
 END
 GO
 
--- Block to create tables
--- 1. Catalog Tables
+-- Bloque para crear las tablas
+-- 1. Tablas catalogo
 CREATE TABLE document_types (
     id_document_type INT IDENTITY(1,1) PRIMARY KEY,
     name NVARCHAR(50) NOT NULL UNIQUE
@@ -113,20 +114,20 @@ CREATE TABLE measurement_units (
 
 CREATE TABLE product_categories (
     id_category INT IDENTITY(1,1) PRIMARY KEY,
-    name NVARCHAR(100) NOT NULL UNIQUE -- E.g., FRUITS, VEGETABLES
+    name NVARCHAR(100) NOT NULL UNIQUE -- E.g., FRUTAS, VERDURAS
 );
 
 CREATE TABLE sale_statuses (
     id_status INT IDENTITY(1,1) PRIMARY KEY,
-    name NVARCHAR(50) NOT NULL UNIQUE -- E.g., PENDING, COMPLETED, CANCELLED
+    name NVARCHAR(50) NOT NULL UNIQUE -- E.g., PENDIENTE, COMPLETADA, CANCELADA
 );
 
 CREATE TABLE report_types (
     id_report_type INT IDENTITY(1,1) PRIMARY KEY,
-    name NVARCHAR(100) NOT NULL UNIQUE -- E.g., GENERAL_SALES, SALES_BY_SELLER
+    name NVARCHAR(100) NOT NULL UNIQUE -- E.g., VENTAS GENERALES, VENTAS POR VENDEDOR
 );
 
--- 2. Main Tables
+-- 2. Tablas de dominio
 CREATE TABLE persons (
     id_person INT IDENTITY(1,1) PRIMARY KEY,
     first_name NVARCHAR(100) NOT NULL,
@@ -143,24 +144,26 @@ CREATE INDEX ix_persons_name ON persons(last_name, first_name);
 
 CREATE TABLE users (
     id_user INT IDENTITY(1,1) PRIMARY KEY,
-    person_id INT NOT NULL UNIQUE, -- For 1-to-0..1 relationship with persons
+    person_id INT NOT NULL UNIQUE, 
     username NVARCHAR(100) NOT NULL UNIQUE,
     password_hash NVARCHAR(256) NOT NULL, 
     role_id INT NOT NULL,
+    is_active BIT NOT NULL DEFAULT 1, 
     CONSTRAINT fk_users_person FOREIGN KEY (person_id) REFERENCES persons(id_person),
     CONSTRAINT fk_users_role FOREIGN KEY (role_id) REFERENCES roles(id_role)
 );
 CREATE INDEX ix_users_role_id ON users(role_id);
+CREATE INDEX ix_users_is_active ON users(is_active);
 
 CREATE TABLE administrators (
     id_administrator INT IDENTITY(1,1) PRIMARY KEY,
-    user_id INT NOT NULL UNIQUE, -- For 1-to-0..1 relationship with users
+    user_id INT NOT NULL UNIQUE, 
     CONSTRAINT fk_administrators_user FOREIGN KEY (user_id) REFERENCES users(id_user)
 );
 
 CREATE TABLE sellers (
     id_seller INT IDENTITY(1,1) PRIMARY KEY,
-    user_id INT NOT NULL UNIQUE, -- For 1-to-0..1 relationship with users
+    user_id INT NOT NULL UNIQUE, 
     seller_code NVARCHAR(20) NOT NULL UNIQUE,
     CONSTRAINT fk_sellers_user FOREIGN KEY (user_id) REFERENCES users(id_user)
 );
@@ -168,11 +171,11 @@ CREATE INDEX ix_sellers_seller_code ON sellers(seller_code);
 
 CREATE TABLE clients (
     id_client INT IDENTITY(1,1) PRIMARY KEY,
-    person_id INT NOT NULL UNIQUE, -- For 1-to-0..1 relationship with persons
+    person_id INT NOT NULL UNIQUE, 
     client_code NVARCHAR(20) NOT NULL UNIQUE,
     last_purchase_date DATETIME2 NULL,
     email NVARCHAR(255) NULL UNIQUE,
-    is_active BIT NOT NULL DEFAULT 1, -- 1 for active, 0 for inactive
+    is_active BIT NOT NULL DEFAULT 1, 
     CONSTRAINT fk_clients_person FOREIGN KEY (person_id) REFERENCES persons(id_person)
 );
 CREATE INDEX ix_clients_client_code ON clients(client_code);
@@ -188,8 +191,8 @@ CREATE TABLE products (
     stock_quantity INT NOT NULL DEFAULT 0,
     creation_date DATETIME2 NOT NULL DEFAULT GETDATE(),
     last_stock_update_date DATETIME2 NOT NULL DEFAULT GETDATE(),
-    seller_id INT NOT NULL, -- Who registered/owns this product
-    is_active BIT NOT NULL DEFAULT 1,
+    seller_id INT NOT NULL, 
+    is_active BIT NOT NULL DEFAULT 1, 
     CONSTRAINT fk_products_measurement_unit FOREIGN KEY (measurement_unit_id) REFERENCES measurement_units(id_measurement_unit),
     CONSTRAINT fk_products_category FOREIGN KEY (category_id) REFERENCES product_categories(id_category),
     CONSTRAINT fk_products_seller FOREIGN KEY (seller_id) REFERENCES sellers(id_seller),
@@ -230,7 +233,7 @@ CREATE TABLE sale_details (
     quantity INT NOT NULL,
     unit_price DECIMAL(18, 2) NOT NULL, -- Price at the moment of sale
     line_total DECIMAL(18, 2) NOT NULL,
-    CONSTRAINT fk_sale_details_sale FOREIGN KEY (sale_id) REFERENCES sales(id_sale),
+    CONSTRAINT fk_sale_details_sale FOREIGN KEY (sale_id) REFERENCES sales(id_sale) ON DELETE CASCADE, -- Consider ON DELETE CASCADE
     CONSTRAINT fk_sale_details_product FOREIGN KEY (product_id) REFERENCES products(id_product),
     CONSTRAINT ck_sale_details_quantity CHECK (quantity > 0),
     CONSTRAINT ck_sale_details_unit_price CHECK (unit_price >= 0),
@@ -241,7 +244,7 @@ CREATE INDEX ix_sale_details_product_id ON sale_details(product_id);
 
 CREATE TABLE reports (
     id_report INT IDENTITY(1,1) PRIMARY KEY,
-    administrator_id INT NOT NULL, -- Who generated the report
+    administrator_id INT NOT NULL,
     generation_date DATETIME2 NOT NULL DEFAULT GETDATE(),
     report_type_id INT NOT NULL,
     period_start_date DATE NULL,
@@ -258,5 +261,3 @@ CREATE INDEX ix_reports_report_type_id ON reports(report_type_id);
 CREATE INDEX ix_reports_filter_seller_id ON reports(filter_seller_id);
 CREATE INDEX ix_reports_filter_client_id ON reports(filter_client_id);
 CREATE INDEX ix_reports_generation_date ON reports(generation_date);
-
-GO

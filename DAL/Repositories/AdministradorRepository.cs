@@ -14,18 +14,14 @@ namespace DAL.Repositories
     public class AdministradorRepository : IAdministradorRepository
     {
         private readonly IPersonaRepository _personaRepository;
-        private readonly IUsuarioRepository _usuarioRepositoryInternal;
+        private readonly IUsuarioRepository _usuarioRepositoryInternal; // Usado para validaciones
 
         public AdministradorRepository()
         {
-            // Estas dependencias se usan para validaciones en Add.
-            // En un sistema con DI, se inyectarían.
             _personaRepository = new PersonaRepository();
             _usuarioRepositoryInternal = new UsuarioRepository();
         }
 
-        // Los métodos Add, Update, Delete no cambian, operan sobre las tablas base.
-        // (Se mantienen como en el Canvas DAL_Principal_Repositories_EN)
         public Administrador Add(Administrador entity)
         {
             if (entity == null || string.IsNullOrWhiteSpace(entity.Nombre)
@@ -79,8 +75,8 @@ namespace DAL.Repositories
                         }
 
                         string usuarioQuery = @"
-                            INSERT INTO users (person_id, username, password_hash, role_id)
-                            OUTPUT INSERTED.id_user
+                            INSERT INTO users (person_id, username, password_hash, role_id) 
+                            OUTPUT INSERTED.id_user, INSERTED.is_active
                             VALUES (@PersonId, @Username, @PasswordHash, @RoleId);";
                         using (SqlCommand usuarioCommand = new SqlCommand(usuarioQuery, connection, transaction))
                         {
@@ -89,12 +85,15 @@ namespace DAL.Repositories
                             usuarioCommand.Parameters.AddWithValue("@PasswordHash", entity.HashContrasena);
                             usuarioCommand.Parameters.AddWithValue("@RoleId", entity.RolId);
 
-                            var newUserId = usuarioCommand.ExecuteScalar();
-                            if (newUserId != null && newUserId != DBNull.Value)
+                            using (SqlDataReader reader = usuarioCommand.ExecuteReader())
                             {
-                                entity.IdUsuario = Convert.ToInt32(newUserId);
+                                if (reader.Read())
+                                {
+                                    entity.IdUsuario = Convert.ToInt32(reader["id_user"]);
+                                    entity.Activo = Convert.ToBoolean(reader["is_active"]); // Asignar el estado activo
+                                }
+                                else { transaction.Rollback(); throw new DataException("Error al insertar en users para Administrador."); }
                             }
-                            else { transaction.Rollback(); throw new DataException("Error al insertar en users para Administrador."); }
                         }
 
                         string adminQuery = @"
@@ -126,7 +125,6 @@ namespace DAL.Repositories
 
         public bool Update(Administrador entity)
         {
-            // (Implementación sin cambios, opera sobre las tablas base)
             if (entity == null || entity.IdAdministrador == 0 || entity.IdUsuario == 0 || entity.IdPersona == 0)
             {
                 throw new ArgumentException("IDs son requeridos para la actualización de Administrador.");
@@ -156,17 +154,19 @@ namespace DAL.Repositories
 
                         string usuarioQuery = @"
                             UPDATE users SET 
-                                username = @Username, password_hash = @PasswordHash, role_id = @RoleId
+                                username = @Username, password_hash = @PasswordHash, role_id = @RoleId, is_active = @IsActive
                             WHERE id_user = @IdUser AND person_id = @IdPerson;";
                         using (SqlCommand usuarioCommand = new SqlCommand(usuarioQuery, connection, transaction))
                         {
                             usuarioCommand.Parameters.AddWithValue("@Username", entity.NombreUsuario);
-                            usuarioCommand.Parameters.AddWithValue("@PasswordHash", entity.HashContrasena);
+                            usuarioCommand.Parameters.AddWithValue("@PasswordHash", entity.HashContrasena); 
                             usuarioCommand.Parameters.AddWithValue("@RoleId", entity.RolId);
+                            usuarioCommand.Parameters.AddWithValue("@IsActive", entity.Activo); 
                             usuarioCommand.Parameters.AddWithValue("@IdUser", entity.IdUsuario);
                             usuarioCommand.Parameters.AddWithValue("@IdPerson", entity.IdPersona);
                             usuarioCommand.ExecuteNonQuery();
                         }
+
 
                         transaction.Commit();
                         return true;
@@ -182,7 +182,7 @@ namespace DAL.Repositories
 
         public bool Delete(int idAdministrador)
         {
-            // (Implementación sin cambios, opera sobre las tablas base)
+           
             using (SqlConnection connection = ConnectionHelper.GetConnection())
             {
                 connection.Open();
@@ -190,80 +190,63 @@ namespace DAL.Repositories
                 {
                     try
                     {
-                        int userIdToDelete = 0;
-                        int personaIdToDelete = 0;
+                        int userIdToInactivate = 0;
 
-                        string getIdsQuery = @"
-                            SELECT u.id_user, u.person_id 
-                            FROM administrators adm 
-                            INNER JOIN users u ON adm.user_id = u.id_user
-                            WHERE adm.id_administrator = @IdAdministrator;";
-                        using (SqlCommand cmdGetIds = new SqlCommand(getIdsQuery, connection, transaction))
+                        string getUserIdQuery = "SELECT user_id FROM administrators WHERE id_administrator = @IdAdministrator;";
+                        using (SqlCommand cmdGetUserId = new SqlCommand(getUserIdQuery, connection, transaction))
                         {
-                            cmdGetIds.Parameters.AddWithValue("@IdAdministrator", idAdministrador);
-                            using (SqlDataReader reader = cmdGetIds.ExecuteReader())
+                            cmdGetUserId.Parameters.AddWithValue("@IdAdministrator", idAdministrador);
+                            var result = cmdGetUserId.ExecuteScalar();
+                            if (result != null && result != DBNull.Value)
                             {
-                                if (reader.Read())
-                                {
-                                    userIdToDelete = Convert.ToInt32(reader["id_user"]);
-                                    personaIdToDelete = Convert.ToInt32(reader["person_id"]);
-                                }
-                                else
-                                {
-                                    transaction.Rollback(); return false;
-                                }
+                                userIdToInactivate = Convert.ToInt32(result);
                             }
-                        }
-
-                        string checkReportsQuery = "SELECT COUNT(*) FROM reports WHERE administrator_id = @IdAdministrator";
-                        using (SqlCommand checkCmd = new SqlCommand(checkReportsQuery, connection, transaction))
-                        {
-                            checkCmd.Parameters.AddWithValue("@IdAdministrator", idAdministrador);
-                            if ((int)checkCmd.ExecuteScalar() > 0)
+                            else
                             {
-                                transaction.Rollback();
+                                transaction.Rollback(); // Administrador no encontrado
                                 return false;
                             }
                         }
 
-                        string adminQuery = "DELETE FROM administrators WHERE id_administrator = @IdAdministrator";
-                        using (SqlCommand cmd = new SqlCommand(adminQuery, connection, transaction))
+                        if (userIdToInactivate > 0)
                         {
-                            cmd.Parameters.AddWithValue("@IdAdministrator", idAdministrador);
-                            cmd.ExecuteNonQuery();
-                        }
-                        if (userIdToDelete > 0)
-                        {
-                            string userQuery = "DELETE FROM users WHERE id_user = @IdUser";
-                            using (SqlCommand cmd = new SqlCommand(userQuery, connection, transaction))
+                            // Inactivar el usuario
+                            string updateUserQuery = "UPDATE users SET is_active = 0 WHERE id_user = @IdUser;";
+                            using (SqlCommand cmdUpdateUser = new SqlCommand(updateUserQuery, connection, transaction))
                             {
-                                cmd.Parameters.AddWithValue("@IdUser", userIdToDelete);
-                                cmd.ExecuteNonQuery();
+                                cmdUpdateUser.Parameters.AddWithValue("@IdUser", userIdToInactivate);
+                                int rowsAffected = cmdUpdateUser.ExecuteNonQuery();
+                                if (rowsAffected == 0)
+                                {
+                                    transaction.Rollback(); // Usuario no encontrado o ya inactivo 
+                                    return false;
+                                }
                             }
                         }
-                        if (personaIdToDelete > 0)
+                        else
                         {
-                            string personQuery = "DELETE FROM persons WHERE id_person = @IdPerson";
-                            using (SqlCommand cmd = new SqlCommand(personQuery, connection, transaction))
-                            {
-                                cmd.Parameters.AddWithValue("@IdPerson", personaIdToDelete);
-                                cmd.ExecuteNonQuery();
-                            }
+                            transaction.Rollback(); // No se encontró user_id para el admin
+                            return false;
                         }
+
                         transaction.Commit();
                         return true;
                     }
-                    catch (SqlException ex) when (ex.Number == 547)
+                    catch (SqlException ex) when (ex.Number == 547) 
                     {
-                        transaction.Rollback(); return false;
+                        transaction.Rollback();
+
+                        return false;
                     }
                     catch (Exception)
                     {
-                        transaction.Rollback(); throw;
+                        transaction.Rollback();
+                        throw;
                     }
                 }
             }
         }
+
 
         public Administrador GetById(int idAdministrador)
         {
@@ -335,7 +318,7 @@ namespace DAL.Repositories
             var list = new List<Administrador>();
             using (SqlConnection connection = ConnectionHelper.GetConnection())
             {
-                string query = "SELECT * FROM v_administrator_details WHERE person_first_name LIKE @SearchTerm OR person_last_name LIKE @SearchTerm ORDER BY person_last_name, person_first_name;";
+                string query = "SELECT * FROM v_administrator_details WHERE (person_first_name LIKE @SearchTerm OR person_last_name LIKE @SearchTerm) ORDER BY person_last_name, person_first_name;";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@SearchTerm", "%" + searchTerm + "%");
@@ -377,10 +360,8 @@ namespace DAL.Repositories
 
         private Administrador MapFromView(SqlDataReader reader)
         {
-            // Mapea desde las columnas de la vista v_administrator_details
             var admin = new Administrador
             {
-                // Propiedades de Persona
                 IdPersona = Convert.ToInt32(reader["id_person"]),
                 Nombre = reader["person_first_name"].ToString(),
                 Apellido = reader["person_last_name"].ToString(),
@@ -393,19 +374,16 @@ namespace DAL.Repositories
                     IdTipoDocumento = Convert.ToInt32(reader["document_type_id"]),
                     Nombre = reader["document_type_name"].ToString()
                 },
-
-                // Propiedades de Usuario
                 IdUsuario = Convert.ToInt32(reader["id_user"]),
                 NombreUsuario = reader["username"].ToString(),
-                HashContrasena = reader["password_hash"].ToString(), // Considerar si se debe exponer el hash aquí
+                HashContrasena = reader["password_hash"].ToString(),
                 RolId = Convert.ToInt32(reader["role_id"]),
                 Rol = new Rol
                 {
                     IdRol = Convert.ToInt32(reader["role_id"]),
                     Nombre = reader["role_name"].ToString()
                 },
-
-                // Propiedades de Administrador
+                Activo = Convert.ToBoolean(reader["user_is_active"]),
                 IdAdministrador = Convert.ToInt32(reader["id_administrator"])
             };
             return admin;

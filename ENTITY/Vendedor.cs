@@ -9,8 +9,7 @@ namespace ENTITY
 {
     public class Vendedor : Usuario
     {
-        public int IdVendedor { get; set; } // PK de la tabla vendedor
-        // IdUsuario, IdPersona y demás propiedades de Usuario y Persona se heredan.
+        public int IdVendedor { get; set; } 
         public string CodigoVendedor { get; set; }
 
         public ICollection<Producto> ProductosRegistrados { get; set; }

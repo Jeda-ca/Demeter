@@ -24,7 +24,6 @@ namespace DAL.Repositories
 
         public Vendedor Add(Vendedor entity)
         {
-            // (Implementación sin cambios, opera sobre las tablas 'persons', 'users', 'sellers')
             if (entity == null || string.IsNullOrWhiteSpace(entity.Nombre)
                 || string.IsNullOrWhiteSpace(entity.Apellido) || entity.TipoDocumentoId == 0
                 || string.IsNullOrWhiteSpace(entity.NumeroDocumento)
@@ -42,7 +41,7 @@ namespace DAL.Repositories
             {
                 throw new InvalidOperationException($"Una persona con el documento tipo '{entity.TipoDocumentoId}' y número '{entity.NumeroDocumento}' ya existe.");
             }
-            // Se asume que GetByCodigoVendedor se implementará usando la vista, pero para Add, verificamos la tabla.
+
             using (SqlConnection conn = ConnectionHelper.GetConnection())
             {
                 conn.Open();
@@ -65,7 +64,6 @@ namespace DAL.Repositories
                 {
                     try
                     {
-                        // 1. Insertar en persons
                         string personaQuery = @"
                             INSERT INTO persons (first_name, last_name, document_type_id, document_number, registration_date, phone_number)
                             OUTPUT INSERTED.id_person, INSERTED.registration_date
@@ -90,11 +88,9 @@ namespace DAL.Repositories
                                 else { transaction.Rollback(); throw new DataException("Error al insertar en persons para Vendedor."); }
                             }
                         }
-
-                        // 2. Insertar en users
                         string usuarioQuery = @"
                             INSERT INTO users (person_id, username, password_hash, role_id)
-                            OUTPUT INSERTED.id_user
+                            OUTPUT INSERTED.id_user, INSERTED.is_active
                             VALUES (@PersonId, @Username, @PasswordHash, @RoleId);";
                         using (SqlCommand usuarioCommand = new SqlCommand(usuarioQuery, connection, transaction))
                         {
@@ -103,15 +99,17 @@ namespace DAL.Repositories
                             usuarioCommand.Parameters.AddWithValue("@PasswordHash", entity.HashContrasena);
                             usuarioCommand.Parameters.AddWithValue("@RoleId", entity.RolId);
 
-                            var newUserId = usuarioCommand.ExecuteScalar();
-                            if (newUserId != null && newUserId != DBNull.Value)
+                            using (SqlDataReader reader = usuarioCommand.ExecuteReader())
                             {
-                                entity.IdUsuario = Convert.ToInt32(newUserId);
+                                if (reader.Read())
+                                {
+                                    entity.IdUsuario = Convert.ToInt32(reader["id_user"]);
+                                    entity.Activo = Convert.ToBoolean(reader["is_active"]);
+                                }
+                                else { transaction.Rollback(); throw new DataException("Error al insertar en users para Vendedor."); }
                             }
-                            else { transaction.Rollback(); throw new DataException("Error al insertar en users para Vendedor."); }
                         }
 
-                        // 3. Insertar en sellers
                         string sellerQuery = @"
                             INSERT INTO sellers (user_id, seller_code)
                             OUTPUT INSERTED.id_seller
@@ -152,7 +150,6 @@ namespace DAL.Repositories
                 {
                     try
                     {
-                        // 1. Actualizar persons
                         string personaQuery = @"
                             UPDATE persons SET 
                                 first_name = @FirstName, last_name = @LastName, document_type_id = @DocumentTypeId, 
@@ -169,22 +166,21 @@ namespace DAL.Repositories
                             personaCommand.ExecuteNonQuery();
                         }
 
-                        // 2. Actualizar users
                         string usuarioQuery = @"
                             UPDATE users SET 
-                                username = @Username, password_hash = @PasswordHash, role_id = @RoleId
+                                username = @Username, password_hash = @PasswordHash, role_id = @RoleId, is_active = @IsActive
                             WHERE id_user = @IdUser AND person_id = @IdPerson;";
                         using (SqlCommand usuarioCommand = new SqlCommand(usuarioQuery, connection, transaction))
                         {
                             usuarioCommand.Parameters.AddWithValue("@Username", entity.NombreUsuario);
                             usuarioCommand.Parameters.AddWithValue("@PasswordHash", entity.HashContrasena);
                             usuarioCommand.Parameters.AddWithValue("@RoleId", entity.RolId);
+                            usuarioCommand.Parameters.AddWithValue("@IsActive", entity.Activo);
                             usuarioCommand.Parameters.AddWithValue("@IdUser", entity.IdUsuario);
                             usuarioCommand.Parameters.AddWithValue("@IdPerson", entity.IdPersona);
                             usuarioCommand.ExecuteNonQuery();
                         }
 
-                        // 3. Actualizar sellers
                         string sellerQuery = @"
                             UPDATE sellers SET seller_code = @SellerCode
                             WHERE id_seller = @IdSeller AND user_id = @IdUser;";
@@ -216,78 +212,56 @@ namespace DAL.Repositories
                 {
                     try
                     {
-                        int userIdToDelete = 0;
-                        int personaIdToDelete = 0;
+                        int userIdToInactivate = 0;
 
-                        string getIdsQuery = @"
-                            SELECT u.id_user, u.person_id 
-                            FROM sellers s 
-                            INNER JOIN users u ON s.user_id = u.id_user
-                            WHERE s.id_seller = @IdSeller;";
-                        using (SqlCommand cmdGetIds = new SqlCommand(getIdsQuery, connection, transaction))
+                        string getUserIdQuery = "SELECT user_id FROM sellers WHERE id_seller = @IdSeller;";
+                        using (SqlCommand cmdGetUserId = new SqlCommand(getUserIdQuery, connection, transaction))
                         {
-                            cmdGetIds.Parameters.AddWithValue("@IdSeller", idVendedor);
-                            using (SqlDataReader reader = cmdGetIds.ExecuteReader())
+                            cmdGetUserId.Parameters.AddWithValue("@IdSeller", idVendedor);
+                            var result = cmdGetUserId.ExecuteScalar();
+                            if (result != null && result != DBNull.Value)
                             {
-                                if (reader.Read())
+                                userIdToInactivate = Convert.ToInt32(result);
+                            }
+                            else
+                            {
+                                transaction.Rollback(); // Vendedor no encontrado
+                                return false;
+                            }
+                        }
+
+                        if (userIdToInactivate > 0)
+                        {
+                            string updateUserQuery = "UPDATE users SET is_active = 0 WHERE id_user = @IdUser;";
+                            using (SqlCommand cmdUpdateUser = new SqlCommand(updateUserQuery, connection, transaction))
+                            {
+                                cmdUpdateUser.Parameters.AddWithValue("@IdUser", userIdToInactivate);
+                                int rowsAffected = cmdUpdateUser.ExecuteNonQuery();
+                                if (rowsAffected == 0)
                                 {
-                                    userIdToDelete = Convert.ToInt32(reader["id_user"]);
-                                    personaIdToDelete = Convert.ToInt32(reader["person_id"]);
-                                }
-                                else
-                                {
-                                    transaction.Rollback(); return false;
+                                    transaction.Rollback();
+                                    return false;
                                 }
                             }
                         }
-
-                        string checkProductsQuery = "SELECT COUNT(*) FROM products WHERE seller_id = @IdSeller";
-                        using (SqlCommand checkCmd = new SqlCommand(checkProductsQuery, connection, transaction))
+                        else
                         {
-                            checkCmd.Parameters.AddWithValue("@IdSeller", idVendedor);
-                            if ((int)checkCmd.ExecuteScalar() > 0) { transaction.Rollback(); return false; }
-                        }
-                        string checkSalesQuery = "SELECT COUNT(*) FROM sales WHERE seller_id = @IdSeller";
-                        using (SqlCommand checkCmd = new SqlCommand(checkSalesQuery, connection, transaction))
-                        {
-                            checkCmd.Parameters.AddWithValue("@IdSeller", idVendedor);
-                            if ((int)checkCmd.ExecuteScalar() > 0) { transaction.Rollback(); return false; }
+                            transaction.Rollback();
+                            return false;
                         }
 
-                        string sellerQuery = "DELETE FROM sellers WHERE id_seller = @IdSeller";
-                        using (SqlCommand cmd = new SqlCommand(sellerQuery, connection, transaction))
-                        {
-                            cmd.Parameters.AddWithValue("@IdSeller", idVendedor);
-                            cmd.ExecuteNonQuery();
-                        }
-                        if (userIdToDelete > 0)
-                        {
-                            string userQuery = "DELETE FROM users WHERE id_user = @IdUser";
-                            using (SqlCommand cmd = new SqlCommand(userQuery, connection, transaction))
-                            {
-                                cmd.Parameters.AddWithValue("@IdUser", userIdToDelete);
-                                cmd.ExecuteNonQuery();
-                            }
-                        }
-                        if (personaIdToDelete > 0)
-                        {
-                            string personQuery = "DELETE FROM persons WHERE id_person = @IdPerson";
-                            using (SqlCommand cmd = new SqlCommand(personQuery, connection, transaction))
-                            {
-                                cmd.Parameters.AddWithValue("@IdPerson", personaIdToDelete);
-                                cmd.ExecuteNonQuery();
-                            }
-                        }
                         transaction.Commit();
                         return true;
                     }
                     catch (SqlException ex) when (ex.Number == 547)
                     {
-                        transaction.Rollback(); return false;
+                        transaction.Rollback();
+                        return false;
                     }
                     catch (Exception)
                     {
-                        transaction.Rollback(); throw;
+                        transaction.Rollback();
+                        throw;
                     }
                 }
             }
@@ -320,6 +294,7 @@ namespace DAL.Repositories
             using (SqlConnection connection = ConnectionHelper.GetConnection())
             {
                 string query = "SELECT * FROM v_seller_details ORDER BY person_last_name, person_first_name;";
+                // Si se quiere buscar solo activos: WHERE user_is_active = 1
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     connection.Open();
@@ -381,7 +356,8 @@ namespace DAL.Repositories
             var list = new List<Vendedor>();
             using (SqlConnection connection = ConnectionHelper.GetConnection())
             {
-                string query = "SELECT * FROM v_seller_details WHERE person_first_name LIKE @SearchTerm OR person_last_name LIKE @SearchTerm ORDER BY person_last_name, person_first_name;";
+                string query = "SELECT * FROM v_seller_details WHERE (person_first_name LIKE @SearchTerm OR person_last_name LIKE @SearchTerm) ORDER BY person_last_name, person_first_name;";
+                // Si se quiere buscar solo activos: AND user_is_active = 1
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@SearchTerm", "%" + searchTerm + "%");
@@ -446,6 +422,7 @@ namespace DAL.Repositories
                     IdRol = Convert.ToInt32(reader["role_id"]),
                     Nombre = reader["role_name"].ToString()
                 },
+                Activo = Convert.ToBoolean(reader["user_is_active"]), // Mapear el estado activo
 
                 IdVendedor = Convert.ToInt32(reader["id_seller"]),
                 CodigoVendedor = reader["seller_code"].ToString()

@@ -14,12 +14,12 @@ namespace ENTITY
         public decimal Descuento { get; set; }
         public decimal Total { get; set; }
         public int EstadoId { get; set; }
-        public string Observaciones { get; set; } // Nullable
+        public string Observaciones { get; set; } 
         public int ClienteId { get; set; }
-        public int VendedorId { get; set; } // FK al Vendedor que realizó la venta
+        public int VendedorId { get; set; } 
         public EstadoVenta EstadoVenta { get; set; }
         public Cliente Cliente { get; set; }
-        public Vendedor Vendedor { get; set; } // El vendedor que realizó esta venta
+        public Vendedor Vendedor { get; set; }
         public ICollection<DetalleVenta> DetallesVenta { get; set; }
 
         public Venta()

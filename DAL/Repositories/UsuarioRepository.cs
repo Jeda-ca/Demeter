@@ -18,43 +18,50 @@ namespace DAL.Repositories
         {
             Usuario usuario = null;
             string rolNombre = null;
+            bool esActivo = false; // Para almacenar el estado del usuario
 
             using (SqlConnection connection = ConnectionHelper.GetConnection())
             {
-                string queryUsuarioRol = "SELECT r.name FROM users u INNER JOIN roles r ON u.role_id = r.id_role WHERE u.id_user = @IdUser;";
-                using (SqlCommand cmdRol = new SqlCommand(queryUsuarioRol, connection))
+
+                string queryUsuarioInfo = @"
+                    SELECT r.name AS role_name, u.is_active 
+                    FROM users u 
+                    INNER JOIN roles r ON u.role_id = r.id_role 
+                    WHERE u.id_user = @IdUser;";
+
+                using (SqlCommand cmdInfo = new SqlCommand(queryUsuarioInfo, connection))
                 {
-                    cmdRol.Parameters.AddWithValue("@IdUser", idUsuario);
+                    cmdInfo.Parameters.AddWithValue("@IdUser", idUsuario);
                     connection.Open();
-                    var resultRol = cmdRol.ExecuteScalar();
-                    if (resultRol != null && resultRol != DBNull.Value)
+                    using (SqlDataReader readerInfo = cmdInfo.ExecuteReader())
                     {
-                        rolNombre = resultRol.ToString();
+                        if (readerInfo.Read())
+                        {
+                            rolNombre = readerInfo["role_name"].ToString();
+                            esActivo = Convert.ToBoolean(readerInfo["is_active"]);
+                        }
                     }
                 }
 
-                if (string.IsNullOrEmpty(rolNombre))
-                {
-                    if (connection.State == ConnectionState.Open) connection.Close(); // Asegurar cierre si no se encontró rol
-                    return null;
-                }
-
-                // Reutilizar la conexión si sigue abierta, o permitir que los repositorios la manejen
-                // Para este ejemplo, los repositorios de Admin/Vendedor abrirán su propia conexión.
-                // Esto es menos eficiente pero más simple si no se pasa la conexión/transacción.
                 if (connection.State == ConnectionState.Open) connection.Close();
 
+
+                if (string.IsNullOrEmpty(rolNombre))
+                {
+                    return null; 
+                }
 
                 if (rolNombre.ToUpper() == "ADMIN")
                 {
                     var adminRepo = new AdministradorRepository();
                     usuario = adminRepo.GetByUsuarioId(idUsuario);
                 }
-                else if (rolNombre.ToUpper() == "SELLER")
+                else if (rolNombre.ToUpper() == "VENDEDOR") 
                 {
                     var vendedorRepo = new VendedorRepository();
                     usuario = vendedorRepo.GetByUsuarioId(idUsuario);
                 }
+
             }
             return usuario;
         }
@@ -62,6 +69,7 @@ namespace DAL.Repositories
         public Usuario GetByNombreUsuario(string nombreUsuario)
         {
             int userId = 0;
+
             using (SqlConnection connection = ConnectionHelper.GetConnection())
             {
                 string queryId = "SELECT id_user FROM users WHERE username = @Username";
@@ -82,11 +90,13 @@ namespace DAL.Repositories
         public IEnumerable<Usuario> GetAllSystemUsers()
         {
             var usuarios = new List<Usuario>();
+
             var adminRepo = new AdministradorRepository();
             var vendedorRepo = new VendedorRepository();
 
             usuarios.AddRange(adminRepo.GetAll());
             usuarios.AddRange(vendedorRepo.GetAll());
+
 
             return usuarios.OrderBy(u => u.NombreUsuario).ToList();
         }
@@ -109,7 +119,7 @@ namespace DAL.Repositories
                     command.Parameters.AddWithValue("@PasswordHash", nuevoHashContrasena);
                 }
 
-                if (!setClauses.Any()) return false;
+                if (!setClauses.Any()) return false; 
 
                 command.CommandText = $"UPDATE users SET {string.Join(", ", setClauses)} WHERE id_user = @IdUser";
                 command.Parameters.AddWithValue("@IdUser", idUsuario);
@@ -118,6 +128,22 @@ namespace DAL.Repositories
                 connection.Open();
                 int rowsAffected = command.ExecuteNonQuery();
                 return rowsAffected > 0;
+            }
+        }
+
+        public bool UpdateUserStatus(int idUsuario, bool isActive)
+        {
+            using (SqlConnection connection = ConnectionHelper.GetConnection())
+            {
+                string query = "UPDATE users SET is_active = @IsActive WHERE id_user = @IdUser";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@IsActive", isActive);
+                    command.Parameters.AddWithValue("@IdUser", idUsuario);
+                    connection.Open();
+                    int rowsAffected = command.ExecuteNonQuery();
+                    return rowsAffected > 0;
+                }
             }
         }
     }
