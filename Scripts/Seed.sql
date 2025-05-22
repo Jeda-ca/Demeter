@@ -1,11 +1,14 @@
+-- Script para poblar la base de datos DEMETER_DB con datos de ejemplo
+-- AsegÃºrate de que las tablas estÃ©n vacÃ­as y las identidades reseteadas si es necesario antes de ejecutar.
+
 USE DEMETER_DB;
 GO
 
--- 1. Poblando Tablas de Catálogo
+-- 1. Poblando Tablas de CatÃ¡logo
 INSERT INTO document_types (name) VALUES
-(N'Cédula de Ciudadanía'),       -- ID: 1
+(N'CÃ©dula de CiudadanÃ­a'),       -- ID: 1
 (N'NIT'),                        -- ID: 2
-(N'Cédula de Extranjería'),      -- ID: 3
+(N'CÃ©dula de ExtranjerÃ­a'),      -- ID: 3
 (N'Pasaporte'),                  -- ID: 4
 (N'PEP');                        -- ID: 5
 PRINT 'Table document_types populated.';
@@ -28,11 +31,11 @@ PRINT 'Table measurement_units populated.';
 INSERT INTO product_categories (name) VALUES
 (N'FRUTAS'),                               -- ID: 1
 (N'VERDURAS Y HORTALIZAS'),                -- ID: 2
-(N'TUBÉRCULOS Y RAÍCES'),                  -- ID: 3
-(N'HIERBAS AROMÁTICAS Y CONDIMENTOS'),     -- ID: 4
+(N'TUBÃ‰RCULOS Y RAÃCES'),                  -- ID: 3
+(N'HIERBAS AROMÃTICAS Y CONDIMENTOS'),     -- ID: 4
 (N'GRANOS Y LEGUMBRES'),                   -- ID: 5
 (N'PROCESADOS ARTESANALES'),               -- ID: 6
-(N'HUEVOS Y LÁCTEOS');                     -- ID: 7
+(N'HUEVOS Y LÃCTEOS');                     -- ID: 7
 PRINT 'Table product_categories populated.';
 
 INSERT INTO sale_statuses (name) VALUES
@@ -58,28 +61,28 @@ INSERT INTO persons (first_name, last_name, document_type_id, document_number, p
 
 -- Personas para Vendedores (ID Persona: 2, 3, 4, 5)
 INSERT INTO persons (first_name, last_name, document_type_id, document_number, phone_number, registration_date) VALUES
-(N'Carlos', N'Vargas López', 1, '1001001001', '3101234501', DATEADD(MONTH, -6, GETDATE())),
-(N'Lucía', N'Fernández Díaz', 1, '1001001002', '3202345602', DATEADD(MONTH, -5, GETDATE())),
-(N'Miguel', N'Suárez Peña', 2, '900123456-1', '3113456703', DATEADD(MONTH, -4, GETDATE())),
+(N'Carlos', N'Vargas LÃ³pez', 1, '1001001001', '3101234501', DATEADD(MONTH, -6, GETDATE())),
+(N'LucÃ­a', N'FernÃ¡ndez DÃ­az', 1, '1001001002', '3202345602', DATEADD(MONTH, -5, GETDATE())),
+(N'Miguel', N'SuÃ¡rez PeÃ±a', 2, '900123456-1', '3113456703', DATEADD(MONTH, -4, GETDATE())),
 (N'Isabela', N'Mendoza Castro', 1, '1001001003', '3214567804', DATEADD(MONTH, -3, GETDATE()));
 
 -- Personas para Clientes (ID Persona: 6 a 15)
 INSERT INTO persons (first_name, last_name, document_type_id, document_number, phone_number, registration_date) VALUES
-(N'Ana', N'Gómez Pérez', 1, '2002002001', '3011122301', DATEADD(DAY, -60, GETDATE())),
-(N'Jorge', N'Martínez Silva', 1, '2002002002', '3152233402', DATEADD(DAY, -55, GETDATE())),
-(N'Sofía', N'Rojas Luna', 3, 'X000001Z', '3213344503', DATEADD(DAY, -50, GETDATE())),
-(N'Andrés', N'Parra Ortiz', 1, '2002002003', '3004455604', DATEADD(DAY, -45, GETDATE())),
-(N'Camila', N'Torres Niño', 1, '2002002004', '3105566705', DATEADD(DAY, -40, GETDATE())),
+(N'Ana', N'GÃ³mez PÃ©rez', 1, '2002002001', '3011122301', DATEADD(DAY, -60, GETDATE())),
+(N'Jorge', N'MartÃ­nez Silva', 1, '2002002002', '3152233402', DATEADD(DAY, -55, GETDATE())),
+(N'SofÃ­a', N'Rojas Luna', 3, 'X000001Z', '3213344503', DATEADD(DAY, -50, GETDATE())),
+(N'AndrÃ©s', N'Parra Ortiz', 1, '2002002003', '3004455604', DATEADD(DAY, -45, GETDATE())),
+(N'Camila', N'Torres NiÃ±o', 1, '2002002004', '3105566705', DATEADD(DAY, -40, GETDATE())),
 (N'Luis', N'Herrera Pinto', 1, '2002002005', '3206677806', DATEADD(DAY, -35, GETDATE())),
-(N'Valentina', N'Soto Ramírez', 1, '2002002006', '3017788907', DATEADD(DAY, -30, GETDATE())),
+(N'Valentina', N'Soto RamÃ­rez', 1, '2002002006', '3017788907', DATEADD(DAY, -30, GETDATE())),
 (N'Mateo', N'Chaparro Vega', 1, '2002002007', '3158899008', DATEADD(DAY, -25, GETDATE())),
-(N'Daniela', N'Moreno Ávila', 3, 'Y000002B', '3219900109', DATEADD(DAY, -20, GETDATE())),
-(N'Javier', N'Ríos Morales', 1, '2002002008', '3001010210', DATEADD(DAY, -15, GETDATE()));
+(N'Daniela', N'Moreno Ãvila', 3, 'Y000002B', '3219900109', DATEADD(DAY, -20, GETDATE())),
+(N'Javier', N'RÃ­os Morales', 1, '2002002008', '3001010210', DATEADD(DAY, -15, GETDATE()));
 PRINT 'Table persons populated.';
 
 -- Usuario Admin (Usa persona_id 1, rol_id 1) -> ID Usuario: 1
 INSERT INTO users (person_id, username, password_hash, role_id, is_active) VALUES
-(1, 'admin_demeter', 'admin123_hashed', 1, 1); -- Contraseña placeholder
+(1, 'admin_demeter', 'admin123_hashed', 1, 1); -- ContraseÃ±a placeholder
 
 -- Usuarios Vendedores (Usan person_id 2,3,4,5. rol_id 2) -> ID Usuario: 2, 3, 4, 5
 INSERT INTO users (person_id, username, password_hash, role_id, is_active) VALUES
@@ -94,11 +97,12 @@ INSERT INTO administrators (user_id) VALUES (1);
 PRINT 'Table administrators populated.';
 
 -- Vendedores (Usan user_id 2,3,4,5) -> ID Vendedor: 1, 2, 3, 4
+-- CÃ³digos actualizados al formato "V-00X"
 INSERT INTO sellers (user_id, seller_code) VALUES
-(2, 'VEND-CV-001'),
-(3, 'VEND-LF-002'),
-(4, 'VEND-MS-003'),
-(5, 'VEND-IM-004'); -- Vendedor Inactivo
+(2, 'V-001'), 
+(3, 'V-002'), 
+(4, 'V-003'), 
+(5, 'V-004'); -- Vendedor Inactivo, pero con cÃ³digo en formato
 PRINT 'Table sellers populated.';
 
 -- Clientes (Usan person_id 6 a 15) -> ID Cliente: 1 a 10
@@ -115,28 +119,28 @@ INSERT INTO clients (person_id, client_code, email, is_active, last_purchase_dat
 (15, 'CLI-JR-010', 'javier.rios@example.com', 1, DATEADD(DAY, -1, GETDATE()));
 PRINT 'Table clients populated.';
 
--- Productos Vendedor 1 (Carlos Vargas, ID Vendedor: 1) -> ID Producto: 1-5
+-- Productos Vendedor 1 (Carlos Vargas, ID Vendedor: 1, CÃ³digo: V-001) -> ID Producto: 1-5
 INSERT INTO products (name, description, price, measurement_unit_id, category_id, stock_quantity, seller_id, is_active) VALUES
 (N'Tomate Chonto Maduro', N'Tomate rojo maduro de alta calidad, ideal para ensaladas y guisos.', 2800, 1, 2, 50, 1, 1), 
 (N'Cilantro Fresco del Huerto', N'Atado grande de cilantro fresco, cultivado localmente.', 1800, 3, 4, 100, 1, 1), 
-(N'Papa Pastusa Seleccionada', N'Papa pastusa lavada, tamaño mediano.', 2000, 1, 3, 80, 1, 1), 
-(N'Aguacate Hass Cremoso', N'Aguacate Hass de la región, cremoso y listo para consumir.', 4500, 2, 1, 40, 1, 1), 
+(N'Papa Pastusa Seleccionada', N'Papa pastusa lavada, tamaÃ±o mediano.', 2000, 1, 3, 80, 1, 1), 
+(N'Aguacate Hass Cremoso', N'Aguacate Hass de la regiÃ³n, cremoso y listo para consumir.', 4500, 2, 1, 40, 1, 1), 
 (N'Huevos Criollos AA (Docena)', N'Docena de huevos criollos frescos, doble A.', 9000, 7, 7, 30, 1, 0); -- Producto Inactivo
 
--- Productos Vendedor 2 (Lucía Fernández, ID Vendedor: 2) -> ID Producto: 6-10
+-- Productos Vendedor 2 (LucÃ­a FernÃ¡ndez, ID Vendedor: 2, CÃ³digo: V-002) -> ID Producto: 6-10
 INSERT INTO products (name, description, price, measurement_unit_id, category_id, stock_quantity, seller_id, is_active) VALUES
 (N'Mango Tommy Dulce', N'Mango Tommy grande, dulce y jugoso, calidad extra.', 3200, 2, 1, 60, 2, 1), 
 (N'Frijol Cargamanto Rojo', N'Frijol cargamanto rojo seco, por libra.', 4800, 4, 5, 40, 2, 1), 
-(N'Queso Costeño Artesanal', N'Queso fresco artesanal, bloque de 500g aprox.', 8500, 2, 7, 25, 2, 1), 
-(N'Plátano Maduro Hartón', N'Plátano Hartón maduro, ideal para tajadas.', 1500, 2, 1, 70, 2, 1), 
-(N'Panela Pulverizada Orgánica', N'Panela de caña orgánica, por libra.', 6000, 4, 6, 35, 2, 1); 
+(N'Queso CosteÃ±o Artesanal', N'Queso fresco artesanal, bloque de 500g aprox.', 8500, 2, 7, 25, 2, 1), 
+(N'PlÃ¡tano Maduro HartÃ³n', N'PlÃ¡tano HartÃ³n maduro, ideal para tajadas.', 1500, 2, 1, 70, 2, 1), 
+(N'Panela Pulverizada OrgÃ¡nica', N'Panela de caÃ±a orgÃ¡nica, por libra.', 6000, 4, 6, 35, 2, 1); 
 
--- Productos Vendedor 3 (Miguel Suárez, ID Vendedor: 3) -> ID Producto: 11-15
+-- Productos Vendedor 3 (Miguel SuÃ¡rez, ID Vendedor: 3, CÃ³digo: V-003) -> ID Producto: 11-15
 INSERT INTO products (name, description, price, measurement_unit_id, category_id, stock_quantity, seller_id, is_active) VALUES
 (N'Yuca Amarilla Criolla', N'Yuca suave y sabrosa, por kilogramo.', 1200, 1, 3, 90, 3, 1), 
-(N'Limón Mandarino Jugoso', N'Limón mandarino grande y con mucho jugo, por kilogramo.', 2500, 1, 1, 55, 3, 1), 
-(N'Mazorca de Maíz Tierna', N'Mazorcas frescas y tiernas, por unidad.', 1000, 2, 2, 120, 3, 1), 
-(N'Café Molido de la Sierra', N'Café de origen de la Sierra Nevada, tostión media, libra.', 15000, 4, 6, 20, 3, 1), 
+(N'LimÃ³n Mandarino Jugoso', N'LimÃ³n mandarino grande y con mucho jugo, por kilogramo.', 2500, 1, 1, 55, 3, 1), 
+(N'Mazorca de MaÃ­z Tierna', N'Mazorcas frescas y tiernas, por unidad.', 1000, 2, 2, 120, 3, 1), 
+(N'CafÃ© Molido de la Sierra', N'CafÃ© de origen de la Sierra Nevada, tostiÃ³n media, libra.', 15000, 4, 6, 20, 3, 1), 
 (N'Ahuyama Mediana', N'Ahuyama o zapallo, ideal para cremas y sopas.', 3500, 2, 2, 30, 3, 1); 
 PRINT 'Table products populated.';
 
@@ -155,7 +159,7 @@ INSERT INTO sales (occurrence_date, subtotal, discount_amount, total_amount, sta
 (CONVERT(DATETIME2, '2025-05-13 14:00:00'), 7800.00, 0.00, 7800.00, 2, N'Productos para la semana.', 1, 2);
 -- Venta 5 (Cliente 4, Vendedor 1, Venta Cancelada)
 INSERT INTO sales (occurrence_date, subtotal, discount_amount, total_amount, status_id, observations, client_id, seller_id) VALUES
-(CONVERT(DATETIME2, '2025-05-09 16:30:00'), 6500.00, 0.00, 6500.00, 3, N'Cliente canceló el pedido.', 4, 1); -- CANCELADA
+(CONVERT(DATETIME2, '2025-05-09 16:30:00'), 6500.00, 0.00, 6500.00, 3, N'Cliente cancelÃ³ el pedido.', 4, 1); -- CANCELADA
 PRINT 'Table sales populated.';
 
 -- Detalles de Ventas
@@ -169,12 +173,12 @@ INSERT INTO sale_details (sale_id, product_id, quantity, unit_price, line_total)
 (2, 6, 1, 3200, 3200.00), 
 (2, 8, 1, 6300, 6300.00); 
 
--- Detalles Venta 3 (ID Venta: 3) -> Productos: Yuca (ID 11), Limón (ID 12)
+-- Detalles Venta 3 (ID Venta: 3) -> Productos: Yuca (ID 11), LimÃ³n (ID 12)
 INSERT INTO sale_details (sale_id, product_id, quantity, unit_price, line_total) VALUES 
 (3, 11, 2, 1200, 2400.00), 
 (3, 12, 1, 2300, 2300.00);
 
--- Detalles Venta 4 (ID Venta: 4) -> Productos: Plátano (ID 9), Panela (ID 10)
+-- Detalles Venta 4 (ID Venta: 4) -> Productos: PlÃ¡tano (ID 9), Panela (ID 10)
 INSERT INTO sale_details (sale_id, product_id, quantity, unit_price, line_total) VALUES 
 (4, 9, 2, 1500, 3000.00),
 (4, 10, 1, 4800, 4800.00); 
@@ -201,12 +205,3 @@ GO
 
 PRINT 'DEMETER_DB seeded successfully with sample data (INSERTs only).';
 GO
-
--- Consultas de verificación (opcional)
--- SELECT * FROM roles;
--- SELECT * FROM users;
--- SELECT * FROM v_seller_details;
--- SELECT * FROM v_product_details WHERE seller_user_is_active = 1 AND product_is_active_alias = 1;
--- SELECT * FROM v_sales_summary;
--- SELECT * FROM v_report_metadata_details;
--- GO

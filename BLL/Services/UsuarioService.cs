@@ -57,11 +57,10 @@ namespace BLL.Services
                 {
                     return usuario;
                 }
-                return null; 
+                return null;
             }
             catch (Exception ex)
             {
-
                 throw new ApplicationException("Error durante la autenticación.", ex);
             }
         }
@@ -74,7 +73,6 @@ namespace BLL.Services
             }
             catch (Exception ex)
             {
-
                 throw new ApplicationException("Error al obtener todos los usuarios del sistema.", ex);
             }
         }
@@ -127,29 +125,30 @@ namespace BLL.Services
             if (vendedor.TipoDocumentoId <= 0) return "El tipo de documento es requerido.";
             if (string.IsNullOrWhiteSpace(vendedor.NumeroDocumento)) return "El número de documento es requerido.";
             if (string.IsNullOrWhiteSpace(vendedor.NombreUsuario)) return "El nombre de usuario es requerido.";
-            if (string.IsNullOrWhiteSpace(vendedor.CodigoVendedor)) return "El código de vendedor es requerido.";
-
 
             try
             {
                 var rolVendedor = _rolRepository.GetByName("VENDEDOR");
                 if (rolVendedor == null) return "El rol 'VENDEDOR' no está configurado en el sistema.";
 
+
+                int nextSuffix = _vendedorRepository.GetMaxSellerNumericSuffix() + 1;
+                vendedor.CodigoVendedor = $"V-{nextSuffix:D3}"; // Formato V-001, V-002, etc.
+
                 vendedor.RolId = rolVendedor.IdRol;
-                vendedor.Rol = rolVendedor; 
+                vendedor.Rol = rolVendedor;
                 vendedor.HashContrasena = HashPassword(contrasena);
                 if (vendedor.FechaRegistro == DateTime.MinValue) vendedor.FechaRegistro = DateTime.Now;
-                vendedor.Activo = true; 
+                vendedor.Activo = true;
 
                 var vendedorAgregado = _vendedorRepository.Add(vendedor);
                 return vendedorAgregado != null && vendedorAgregado.IdVendedor > 0 ?
-                       $"Vendedor '{vendedor.Nombre} {vendedor.Apellido}' registrado exitosamente." :
-                       "Error al registrar el vendedor (verifique que el documento, username y código de vendedor no existan o sean únicos).";
+                       $"Vendedor '{vendedor.Nombre} {vendedor.Apellido}' (Código: {vendedor.CodigoVendedor}) registrado exitosamente." :
+                       "Error al registrar el vendedor (verifique que el documento y username no existan o sean únicos).";
             }
-            catch (InvalidOperationException ioex) { return ioex.Message; } 
+            catch (InvalidOperationException ioex) { return ioex.Message; }
             catch (Exception ex)
             {
-
                 return $"Error al registrar vendedor: {ex.Message}";
             }
         }
@@ -166,10 +165,10 @@ namespace BLL.Services
                 if (rolAdmin == null) return "El rol 'ADMIN' no está configurado en el sistema.";
 
                 admin.RolId = rolAdmin.IdRol;
-                admin.Rol = rolAdmin; 
+                admin.Rol = rolAdmin;
                 admin.HashContrasena = HashPassword(contrasena);
                 if (admin.FechaRegistro == DateTime.MinValue) admin.FechaRegistro = DateTime.Now;
-                admin.Activo = true; 
+                admin.Activo = true;
 
                 var adminAgregado = _administradorRepository.Add(admin);
                 return adminAgregado != null && adminAgregado.IdAdministrador > 0 ?
@@ -179,7 +178,6 @@ namespace BLL.Services
             catch (InvalidOperationException ioex) { return ioex.Message; }
             catch (Exception ex)
             {
-
                 return $"Error al registrar administrador: {ex.Message}";
             }
         }
@@ -212,7 +210,6 @@ namespace BLL.Services
                     hashParaActualizar = HashPassword(nuevaContrasena);
                 }
 
-
                 bool actualizado = _usuarioRepository.UpdateUsuarioBasico(idUsuario, nuevoNombreUsuario, hashParaActualizar);
 
                 return actualizado ?
@@ -221,7 +218,6 @@ namespace BLL.Services
             }
             catch (Exception ex)
             {
-
                 return $"Error al modificar datos básicos del usuario: {ex.Message}";
             }
         }

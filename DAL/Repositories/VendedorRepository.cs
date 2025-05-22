@@ -7,6 +7,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DAL.Repositories
@@ -22,6 +23,41 @@ namespace DAL.Repositories
             _usuarioRepositoryInternal = new UsuarioRepository();
         }
 
+        public int GetMaxSellerNumericSuffix()
+        {
+            int maxSuffix = 0;
+            using (SqlConnection connection = ConnectionHelper.GetConnection())
+            {
+                // Query para obtener todos los códigos de vendedor.
+                // Asumimos un formato como "V-001", "V-123".
+                string query = "SELECT seller_code FROM sellers;";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string code = reader["seller_code"].ToString();
+                            // Intentar extraer la parte numérica después del prefijo "V-"
+                            Match match = Regex.Match(code, @"^V-(\d+)$");
+                            if (match.Success)
+                            {
+                                if (int.TryParse(match.Groups[1].Value, out int currentSuffix))
+                                {
+                                    if (currentSuffix > maxSuffix)
+                                    {
+                                        maxSuffix = currentSuffix;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return maxSuffix;
+        }
+
         public Vendedor Add(Vendedor entity)
         {
             if (entity == null || string.IsNullOrWhiteSpace(entity.Nombre)
@@ -30,7 +66,7 @@ namespace DAL.Repositories
                 || string.IsNullOrWhiteSpace(entity.NombreUsuario) || string.IsNullOrWhiteSpace(entity.HashContrasena)
                 || entity.RolId == 0 || string.IsNullOrWhiteSpace(entity.CodigoVendedor))
             {
-                throw new ArgumentException("Datos incompletos para crear un vendedor.");
+                throw new ArgumentException("Datos incompletos para crear un vendedor. El código de vendedor es generado pero debe estar presente.");
             }
 
             if (_usuarioRepositoryInternal.GetByNombreUsuario(entity.NombreUsuario) != null)
@@ -42,16 +78,16 @@ namespace DAL.Repositories
                 throw new InvalidOperationException($"Una persona con el documento tipo '{entity.TipoDocumentoId}' y número '{entity.NumeroDocumento}' ya existe.");
             }
 
-            using (SqlConnection conn = ConnectionHelper.GetConnection())
+            using (SqlConnection connCheck = ConnectionHelper.GetConnection())
             {
-                conn.Open();
+                connCheck.Open();
                 string checkCodeQuery = "SELECT COUNT(1) FROM sellers WHERE seller_code = @SellerCode";
-                using (SqlCommand cmd = new SqlCommand(checkCodeQuery, conn))
+                using (SqlCommand cmdCheck = new SqlCommand(checkCodeQuery, connCheck))
                 {
-                    cmd.Parameters.AddWithValue("@SellerCode", entity.CodigoVendedor);
-                    if ((int)cmd.ExecuteScalar() > 0)
+                    cmdCheck.Parameters.AddWithValue("@SellerCode", entity.CodigoVendedor);
+                    if ((int)cmdCheck.ExecuteScalar() > 0)
                     {
-                        throw new InvalidOperationException($"El código de vendedor '{entity.CodigoVendedor}' ya está en uso.");
+                        throw new InvalidOperationException($"El código de vendedor '{entity.CodigoVendedor}' generado ya está en uso. Reintente la operación.");
                     }
                 }
             }
@@ -88,6 +124,7 @@ namespace DAL.Repositories
                                 else { transaction.Rollback(); throw new DataException("Error al insertar en persons para Vendedor."); }
                             }
                         }
+
                         string usuarioQuery = @"
                             INSERT INTO users (person_id, username, password_hash, role_id)
                             OUTPUT INSERTED.id_user, INSERTED.is_active
@@ -181,17 +218,6 @@ namespace DAL.Repositories
                             usuarioCommand.ExecuteNonQuery();
                         }
 
-                        string sellerQuery = @"
-                            UPDATE sellers SET seller_code = @SellerCode
-                            WHERE id_seller = @IdSeller AND user_id = @IdUser;";
-                        using (SqlCommand sellerCommand = new SqlCommand(sellerQuery, connection, transaction))
-                        {
-                            sellerCommand.Parameters.AddWithValue("@SellerCode", entity.CodigoVendedor);
-                            sellerCommand.Parameters.AddWithValue("@IdSeller", entity.IdVendedor);
-                            sellerCommand.Parameters.AddWithValue("@IdUser", entity.IdUsuario);
-                            sellerCommand.ExecuteNonQuery();
-                        }
-
                         transaction.Commit();
                         return true;
                     }
@@ -213,7 +239,6 @@ namespace DAL.Repositories
                     try
                     {
                         int userIdToInactivate = 0;
-
                         string getUserIdQuery = "SELECT user_id FROM sellers WHERE id_seller = @IdSeller;";
                         using (SqlCommand cmdGetUserId = new SqlCommand(getUserIdQuery, connection, transaction))
                         {
@@ -225,7 +250,7 @@ namespace DAL.Repositories
                             }
                             else
                             {
-                                transaction.Rollback(); // Vendedor no encontrado
+                                transaction.Rollback();
                                 return false;
                             }
                         }
@@ -294,7 +319,6 @@ namespace DAL.Repositories
             using (SqlConnection connection = ConnectionHelper.GetConnection())
             {
                 string query = "SELECT * FROM v_seller_details ORDER BY person_last_name, person_first_name;";
-                // Si se quiere buscar solo activos: WHERE user_is_active = 1
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     connection.Open();
@@ -357,7 +381,6 @@ namespace DAL.Repositories
             using (SqlConnection connection = ConnectionHelper.GetConnection())
             {
                 string query = "SELECT * FROM v_seller_details WHERE (person_first_name LIKE @SearchTerm OR person_last_name LIKE @SearchTerm) ORDER BY person_last_name, person_first_name;";
-                // Si se quiere buscar solo activos: AND user_is_active = 1
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@SearchTerm", "%" + searchTerm + "%");
@@ -422,7 +445,7 @@ namespace DAL.Repositories
                     IdRol = Convert.ToInt32(reader["role_id"]),
                     Nombre = reader["role_name"].ToString()
                 },
-                Activo = Convert.ToBoolean(reader["user_is_active"]), // Mapear el estado activo
+                Activo = Convert.ToBoolean(reader["user_is_active"]),
 
                 IdVendedor = Convert.ToInt32(reader["id_seller"]),
                 CodigoVendedor = reader["seller_code"].ToString()

@@ -13,5 +13,6 @@ namespace DAL.Interfaces
         Vendedor GetByCodigoVendedor(string codigo);
         IEnumerable<Vendedor> SearchByNombreOApellido(string searchTerm);
         Vendedor GetByNumeroDocumento(int tipoDocumentoId, string numeroDocumento);
+        int GetMaxSellerNumericSuffix();
     }
 }
