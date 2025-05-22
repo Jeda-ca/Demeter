@@ -13,7 +13,7 @@ namespace ENTITY
         public string Descripcion { get; set; } // Nullable
         public decimal Precio { get; set; }
         public int UnidadMedidaId { get; set; }
-        public int CategoriaId { get; set; }
+        public int CategoriaId { get; set; } // FK a la categoria del producto
         public int Stock { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaActualizacionStock { get; set; }

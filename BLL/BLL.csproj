@@ -41,7 +41,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Interfaces\IClienteService.cs" />
+    <Compile Include="Interfaces\IProductoService.cs" />
+    <Compile Include="Interfaces\IUsuarioService.cs" />
+    <Compile Include="Interfaces\IVendedorService.cs" />
+    <Compile Include="Interfaces\IVentaService.cs" />
+    <Compile Include="Services\ClienteService.cs" />
+    <Compile Include="Services\ReporteService.cs" />
+    <Compile Include="Services\UsuarioService.cs" />
+    <Compile Include="Services\VentaService.cs" />
+    <Compile Include="Services\ProductoService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -54,5 +63,6 @@
       <Name>ENTITY</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
