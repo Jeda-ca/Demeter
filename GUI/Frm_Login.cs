@@ -22,7 +22,7 @@ namespace GUI
         // EVENTOS
         private void cbx_showPassword_CheckedChanged(object sender, EventArgs e) // Evento para mostrar/ocultar la contraseña
         {
-            txtBx_Password.PasswordChar = cbx_showPassword.Checked ? '\0' : '●'; // Cambia el carácter de la contraseña según el estado del checkbox (\0 es el carácter nulo, que muestra el texto sin ocultarlo)
+            tbx_Password.PasswordChar = cbx_showPassword.Checked ? '\0' : '●'; // Cambia el carácter de la contraseña según el estado del checkbox (\0 es el carácter nulo, que muestra el texto sin ocultarlo)
         }
         private void btn_Ingresar_Click(object sender, EventArgs e) // Evento para iniciar sesión con valores de prueba
         {
@@ -40,19 +40,19 @@ namespace GUI
         //MÉTODOS PRIVADOS
         private void IniciarSesion()
         {
-            if (string.IsNullOrWhiteSpace(txtBx_Username.Text) || string.IsNullOrWhiteSpace(txtBx_Password.Text)) // Se valida que no haya campos vacíos
+            if (string.IsNullOrWhiteSpace(tbx_Username.Text) || string.IsNullOrWhiteSpace(tbx_Password.Text)) // Se valida que no haya campos vacíos
             {
                 MessageBox.Show("No pueden quedar campos vacíos", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-            if (txtBx_Username.Text == "admin" && txtBx_Password.Text == "12345") // Valores de prueba para el usuario admin
+            if (tbx_Username.Text == "admin" && tbx_Password.Text == "12345") // Valores de prueba para el usuario admin
             {
                 UserRole = "Admin";
                 this.DialogResult = DialogResult.OK;
                 this.Close();
                 return;
             }
-            else if (txtBx_Username.Text == "vendedor" && txtBx_Password.Text == "54321") // Valores de prueba para el usuario vendedor
+            else if (tbx_Username.Text == "vendedor" && tbx_Password.Text == "54321") // Valores de prueba para el usuario vendedor
             {
                 UserRole = "Vendedor";
                 this.DialogResult = DialogResult.OK;

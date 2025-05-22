@@ -41,22 +41,22 @@
             // 
             // panelTitleBar
             // 
-            this.panelTitleBar.Size = new System.Drawing.Size(1616, 41);
+            this.panelTitleBar.Size = new System.Drawing.Size(1326, 33);
             // 
             // btn_Minimized
             // 
             this.btn_Minimized.FlatAppearance.BorderSize = 0;
-            this.btn_Minimized.Location = new System.Drawing.Point(1481, 0);
+            this.btn_Minimized.Location = new System.Drawing.Point(1218, 0);
             // 
             // btn_Maximized
             // 
             this.btn_Maximized.FlatAppearance.BorderSize = 0;
-            this.btn_Maximized.Location = new System.Drawing.Point(1526, 0);
+            this.btn_Maximized.Location = new System.Drawing.Point(1254, 0);
             // 
             // btn_Exit
             // 
             this.btn_Exit.FlatAppearance.BorderSize = 0;
-            this.btn_Exit.Location = new System.Drawing.Point(1571, 0);
+            this.btn_Exit.Location = new System.Drawing.Point(1290, 0);
             // 
             // panelMenu
             // 
@@ -65,7 +65,7 @@
             this.panelMenu.Controls.Add(this.ibtn_Ventas);
             this.panelMenu.Controls.Add(this.ibtn_Clientes);
             this.panelMenu.Controls.Add(this.ibtn_Signout);
-            this.panelMenu.Size = new System.Drawing.Size(350, 1004);
+            this.panelMenu.Size = new System.Drawing.Size(280, 849);
             this.panelMenu.Controls.SetChildIndex(this.ibtn_Signout, 0);
             this.panelMenu.Controls.SetChildIndex(this.ibtn_Clientes, 0);
             this.panelMenu.Controls.SetChildIndex(this.ibtn_Ventas, 0);
@@ -80,7 +80,7 @@
             // 
             // panelContent
             // 
-            this.panelContent.Size = new System.Drawing.Size(1266, 1004);
+            this.panelContent.Size = new System.Drawing.Size(1046, 849);
             this.panelContent.TabIndex = 4;
             // 
             // ibtn_Signout
@@ -99,9 +99,10 @@
             this.ibtn_Signout.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.ibtn_Signout.IconSize = 38;
             this.ibtn_Signout.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ibtn_Signout.Location = new System.Drawing.Point(0, 924);
+            this.ibtn_Signout.Location = new System.Drawing.Point(0, 785);
+            this.ibtn_Signout.Margin = new System.Windows.Forms.Padding(2);
             this.ibtn_Signout.Name = "ibtn_Signout";
-            this.ibtn_Signout.Size = new System.Drawing.Size(350, 80);
+            this.ibtn_Signout.Size = new System.Drawing.Size(280, 64);
             this.ibtn_Signout.TabIndex = 20;
             this.ibtn_Signout.Tag = "CERRAR SESIÓN";
             this.ibtn_Signout.Text = "CERRAR SESIÓN";
@@ -124,9 +125,10 @@
             this.ibtn_Clientes.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.ibtn_Clientes.IconSize = 38;
             this.ibtn_Clientes.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ibtn_Clientes.Location = new System.Drawing.Point(0, 549);
+            this.ibtn_Clientes.Location = new System.Drawing.Point(0, 439);
+            this.ibtn_Clientes.Margin = new System.Windows.Forms.Padding(2);
             this.ibtn_Clientes.Name = "ibtn_Clientes";
-            this.ibtn_Clientes.Size = new System.Drawing.Size(350, 80);
+            this.ibtn_Clientes.Size = new System.Drawing.Size(280, 64);
             this.ibtn_Clientes.TabIndex = 17;
             this.ibtn_Clientes.Tag = "GESTOR DE CLIENTES";
             this.ibtn_Clientes.Text = "GESTOR DE CLIENTES";
@@ -148,9 +150,10 @@
             this.ibtn_Ventas.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.ibtn_Ventas.IconSize = 38;
             this.ibtn_Ventas.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ibtn_Ventas.Location = new System.Drawing.Point(0, 469);
+            this.ibtn_Ventas.Location = new System.Drawing.Point(0, 375);
+            this.ibtn_Ventas.Margin = new System.Windows.Forms.Padding(2);
             this.ibtn_Ventas.Name = "ibtn_Ventas";
-            this.ibtn_Ventas.Size = new System.Drawing.Size(350, 80);
+            this.ibtn_Ventas.Size = new System.Drawing.Size(280, 64);
             this.ibtn_Ventas.TabIndex = 16;
             this.ibtn_Ventas.Tag = "GESTOR DE VENTAS";
             this.ibtn_Ventas.Text = "GESTOR DE VENTAS";
@@ -172,9 +175,10 @@
             this.ibtn_Productos.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.ibtn_Productos.IconSize = 38;
             this.ibtn_Productos.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ibtn_Productos.Location = new System.Drawing.Point(0, 389);
+            this.ibtn_Productos.Location = new System.Drawing.Point(0, 311);
+            this.ibtn_Productos.Margin = new System.Windows.Forms.Padding(2);
             this.ibtn_Productos.Name = "ibtn_Productos";
-            this.ibtn_Productos.Size = new System.Drawing.Size(350, 80);
+            this.ibtn_Productos.Size = new System.Drawing.Size(280, 64);
             this.ibtn_Productos.TabIndex = 15;
             this.ibtn_Productos.Tag = "GESTOR DE PRODUCTOS";
             this.ibtn_Productos.Text = "GESTOR DE PRODUCTOS";
@@ -196,9 +200,10 @@
             this.ibtn_Dashboard.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.ibtn_Dashboard.IconSize = 38;
             this.ibtn_Dashboard.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ibtn_Dashboard.Location = new System.Drawing.Point(0, 309);
+            this.ibtn_Dashboard.Location = new System.Drawing.Point(0, 247);
+            this.ibtn_Dashboard.Margin = new System.Windows.Forms.Padding(2);
             this.ibtn_Dashboard.Name = "ibtn_Dashboard";
-            this.ibtn_Dashboard.Size = new System.Drawing.Size(350, 80);
+            this.ibtn_Dashboard.Size = new System.Drawing.Size(280, 64);
             this.ibtn_Dashboard.TabIndex = 14;
             this.ibtn_Dashboard.Tag = "DASHBOARD";
             this.ibtn_Dashboard.Text = "DASHBOARD";
@@ -207,10 +212,10 @@
             // 
             // Frm_MainVendor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
-            this.ClientSize = new System.Drawing.Size(1618, 1047);
+            this.ClientSize = new System.Drawing.Size(1328, 884);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Location = new System.Drawing.Point(0, 0);
             this.Name = "Frm_MainVendor";

@@ -77,7 +77,7 @@ namespace GUI
         {
             btnMenu.Enabled = false; // Deshabilita el botón de menú durante la animación.
             int targetWidth = menuIsCollapsed ? PANEL_COLLAPSED_WIDTH : PANEL_EXPANDED_WIDTH;
-            int step = 15; // Velocidad de la animación (ajustable).
+            int step = 90; // Velocidad de la animación (ajustable).
 
             if (panelMenu.Width < targetWidth) // Si el menú se está expandiendo
             {
