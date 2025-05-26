@@ -134,6 +134,8 @@ namespace GUI
             SendMessage(this.Handle, 0x112, 0xf012, 0);
         }
 
+        
+
         // --- MÉTODOS PROTECTED VIRTUALES (para ser sobrescritos por las clases derivadas) ---
 
         // Método virtual para lógica adicional en el evento Load de los formularios derivados.

@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Frm_MainBase));
             this.panelTitleBar = new System.Windows.Forms.Panel();
             this.btn_Minimized = new FontAwesome.Sharp.IconButton();
             this.btn_Maximized = new FontAwesome.Sharp.IconButton();
@@ -39,7 +38,7 @@
             this.btnMenu = new FontAwesome.Sharp.IconButton();
             this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
             this.tim_PanelMenu = new System.Windows.Forms.Timer(this.components);
-            this.panelContent = new System.Windows.Forms.Panel(); // Panel para el contenido específico de cada formulario hijo
+            this.panelContent = new System.Windows.Forms.Panel();
             this.panelTitleBar.SuspendLayout();
             this.panelMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
@@ -120,7 +119,7 @@
             this.label1.Padding = new System.Windows.Forms.Padding(0, 6, 0, 0);
             this.label1.Size = new System.Drawing.Size(347, 41);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Demeter - Sesión Base"; // Texto por defecto, será sobrescrito.
+            this.label1.Text = "Demeter - Sesión Base";
             // 
             // panelMenu
             // 
@@ -130,7 +129,7 @@
             this.panelMenu.Dock = System.Windows.Forms.DockStyle.Left;
             this.panelMenu.Location = new System.Drawing.Point(0, 41);
             this.panelMenu.Name = "panelMenu";
-            this.panelMenu.Size = new System.Drawing.Size(350, 959); // Altura inicial
+            this.panelMenu.Size = new System.Drawing.Size(350, 959);
             this.panelMenu.TabIndex = 1;
             // 
             // btnMenu
@@ -152,7 +151,7 @@
             // 
             // pictureBoxLogo
             // 
-            this.pictureBoxLogo.Image = global::GUI.Properties.Resources.LogoDemeter_removebg_preview; // Asumiendo que esta imagen está en Resources
+            this.pictureBoxLogo.Image = global::GUI.Properties.Resources.LogoDemeter_removebg_preview;
             this.pictureBoxLogo.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxLogo.Name = "pictureBoxLogo";
             this.pictureBoxLogo.Size = new System.Drawing.Size(350, 300);
@@ -168,9 +167,9 @@
             // panelContent
             // 
             this.panelContent.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelContent.Location = new System.Drawing.Point(350, 41); // Posición inicial, se ajustará con el Dock
+            this.panelContent.Location = new System.Drawing.Point(350, 41);
             this.panelContent.Name = "panelContent";
-            this.panelContent.Size = new System.Drawing.Size(1250, 959); // Tamaño inicial
+            this.panelContent.Size = new System.Drawing.Size(1250, 959);
             this.panelContent.TabIndex = 2;
             // 
             // Frm_MainBase
@@ -179,13 +178,12 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
             this.ClientSize = new System.Drawing.Size(1600, 1000);
-            this.Controls.Add(this.panelContent); // Añadir el panel de contenido
+            this.Controls.Add(this.panelContent);
             this.Controls.Add(this.panelMenu);
             this.Controls.Add(this.panelTitleBar);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Frm_MainBase";
             this.Text = "Demeter - Base";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized; // Inicia maximizado por defecto
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.panelTitleBar.ResumeLayout(false);
             this.panelMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).EndInit();

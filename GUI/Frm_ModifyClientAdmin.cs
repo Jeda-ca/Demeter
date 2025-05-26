@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace GUI
 {
-    public partial class Frm_ModifyC : Form
+    public partial class Frm_ModifyClient : Form
     {
-        public Frm_ModifyC()
+        public Frm_ModifyClient()
         {
             InitializeComponent();
             // Asignar eventos a los botones
@@ -82,84 +82,3 @@ namespace GUI
         }
     }
 }
-
-
-//using System;
-//using System.Collections.Generic;
-//using System.ComponentModel;
-//using System.Data;
-//using System.Drawing;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
-//using System.Windows.Forms;
-
-//namespace GUI
-//{
-//    public partial class Frm_ModifyC : Form
-//    {
-//        public Frm_ModifyC()
-//        {
-//            InitializeComponent();
-//            // Asignar eventos a los botones
-//            ibtn_Clear.Click += ibtn_Clear_Click;
-//            ibtn_Modify.Click += ibtn_Modify_Click;
-//            ibtn_Cancel.Click += ibtn_Cancel_Click;
-//        }
-
-//        // Método para limpiar todos los TextBox y ComboBox del formulario
-//        private void ClearFormFields()
-//        {
-//            tbx_Name.Clear();
-//            tbx_LastName.Clear();
-//            cbx_TypeDoc.SelectedIndex = -1; // Deseleccionar cualquier elemento
-//            tbx_NumDoc.Clear();
-//            tbx_Cellphone.Clear();
-//            tbx_Email.Clear(); // Campo específico de cliente
-//            // Puedes añadir más campos si los tienes en este formulario
-//        }
-
-//        // Evento Click del botón "Limpiar"
-//        private void ibtn_Clear_Click(object sender, EventArgs e)
-//        {
-//            ClearFormFields();
-//        }
-
-//        // Evento Click del botón "Modificar" (placeholder para la lógica de modificar cliente)
-//        private void ibtn_Modify_Click(object sender, EventArgs e)
-//        {
-//            // Lógica placeholder para modificar un cliente existente
-//            MessageBox.Show("Lógica para modificar la información del cliente aquí.", "Modificar Cliente", MessageBoxButtons.OK, MessageBoxIcon.Information);
-//            // Después de modificar, podrías cerrar el formulario:
-//            // this.Close();
-//        }
-
-//        // Evento Click del botón "Cancelar"
-//        private void ibtn_Cancel_Click(object sender, EventArgs e)
-//        {
-//            this.Close(); // Cierra el formulario sin realizar ninguna acción de guardado
-//        }
-//    }
-//}
-
-
-////using System;
-////using System.Collections.Generic;
-////using System.ComponentModel;
-////using System.Data;
-////using System.Drawing;
-////using System.Linq;
-////using System.Text;
-////using System.Threading.Tasks;
-////using System.Windows.Forms;
-
-////namespace GUI
-////{
-////    public partial class Frm_ModifyC : Form
-////    {
-////        public Frm_ModifyC()
-////        {
-////            InitializeComponent();
-////        }
-////    }
-////}

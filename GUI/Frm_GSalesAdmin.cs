@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GUI
@@ -15,23 +9,21 @@ namespace GUI
         public Frm_GSalesAdmin()
         {
             InitializeComponent();
-            // Configuración esencial para que este formulario pueda ser incrustado como un control.
+
+            // Configuración esencial para que este formulario pueda ser incrustado como un control:
             this.TopLevel = false; // Indica que no es una ventana de nivel superior independiente.
             this.FormBorderStyle = FormBorderStyle.None; // Elimina el borde y la barra de título.
             this.Dock = DockStyle.Fill; // Hace que el formulario llene el control contenedor.
         }
-
-        // Evento Load del formulario.
-        // Se ha corregido el nombre del método para que coincida con el nombre del formulario (Frm_GSalesAdmin).
-        private void Frm_GSalesAdmin_Load(object sender, EventArgs e)
+        private void Frm_GSalesAdmin_Load(object sender, EventArgs e) // Evento Load del formulario.
         {
             // Inicializar cbx_TipoReport con tipos de reporte de ventas.
-            cbx_TipoV.Items.Add("-- Seleccione un tipo de reporte --"); // Índice 0
-            cbx_TipoV.Items.Add("VENTAS GENERALES"); // Índice 1
-            cbx_TipoV.Items.Add("VENTAS POR VENDEDOR"); // Índice 2
-            cbx_TipoV.Items.Add("VENTAS POR CLIENTE"); // Índice 3
+            //cbx_TipoV.Items.Add("-- Seleccione un tipo de reporte --"); // Índice 0
+            //cbx_TipoV.Items.Add("VENTAS GENERALES"); // Índice 1
+            //cbx_TipoV.Items.Add("VENTAS POR VENDEDOR"); // Índice 2
+            //cbx_TipoV.Items.Add("VENTAS POR CLIENTE"); // Índice 3
             // Puedes añadir más tipos de reporte aquí si es necesario.
-            cbx_TipoV.SelectedIndex = 0; // Seleccionar la opción por defecto al inicio
+            // cbx_TipoV.SelectedIndex = 0; // Seleccionar la opción por defecto al inicio
 
             // Asegurar que los paneles y DateTimePickers estén ocultos al inicio.
             panelFiltro.Visible = false;
@@ -39,8 +31,26 @@ namespace GUI
             dtp_FFin.Visible = false;
         }
 
-        // Método para actualizar la visibilidad del panelFiltro y las opciones de cbx_FiltroReport.
-        private void UpdateFilterPanelVisibility()
+        //EVENTOS
+        private void cbx_TipoReport_SelectedIndexChanged(object sender, EventArgs e) // Evento SelectedIndexChanged del ComboBox cbx_TipoReport.
+        {
+            UpdateFilterPanelVisibility();
+        }
+        private void cbx_FiltroReport_SelectedIndexChanged(object sender, EventArgs e) // Evento SelectedIndexChanged del ComboBox cbx_FiltroReport.
+        {
+            UpdateDateTimePickerVisibility();
+        }
+        private void ibtn_StatusVenta_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void ibtn_CancelVenta_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // MÉTODOS PRIVADOS
+        private void UpdateFilterPanelVisibility() // Método para actualizar la visibilidad del panelFiltro y las opciones de cbx_FiltroReport.
         {
             // Limpiar opciones de filtro previas.
             cbx_FiltroV.Items.Clear();
@@ -67,9 +77,7 @@ namespace GUI
                 panelFiltro.Visible = false;
             }
         }
-
-        // Método para actualizar la visibilidad de los DateTimePicker.
-        private void UpdateDateTimePickerVisibility()
+        private void UpdateDateTimePickerVisibility() // Método para actualizar la visibilidad de los DateTimePicker.
         {
             string selectedFilter = cbx_FiltroV.SelectedItem?.ToString();
 
@@ -88,21 +96,7 @@ namespace GUI
             }
             // Para otros filtros, ambos DateTimePicker permanecerán ocultos.
         }
-
-        // Evento SelectedIndexChanged del ComboBox cbx_TipoReport.
-        private void cbx_TipoReport_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            UpdateFilterPanelVisibility();
-        }
-
-        // Evento SelectedIndexChanged del ComboBox cbx_FiltroReport.
-        private void cbx_FiltroReport_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            UpdateDateTimePickerVisibility();
-        }
-
-        // Método placeholder para el botón de búsqueda.
-        private void ibtn_Buscar_Click(object sender, EventArgs e)
+        private void ibtn_Buscar_Click(object sender, EventArgs e) // Método placeholder para el botón de búsqueda.
         {
             // --- Lógica de búsqueda de ventas basada en el tipo de reporte, filtro y fechas/texto. ---
             string tipoReporte = cbx_TipoV.SelectedItem?.ToString();
@@ -123,9 +117,7 @@ namespace GUI
             // Aquí llamarías a la capa BLL para obtener los datos de ventas y llenar el dgv_Reportes.
             LoadSalesData(); // Por ahora, solo recarga los datos placeholder
         }
-
-        // Método placeholder para cargar/recargar datos de ventas.
-        private void LoadSalesData()
+        private void LoadSalesData() // Método placeholder para cargar/recargar datos de ventas.
         {
             // --- Lógica para cargar datos de ventas desde la capa BLL y llenar el dgv_Reportes. ---
             // Por ahora, el DataGridView estará vacío o con columnas definidas.

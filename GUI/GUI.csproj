@@ -55,6 +55,9 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="RJCodeAdvance.RJControls, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RJCodeAdvance.RJControls.1.0.0\lib\net45\RJCodeAdvance.RJControls.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.6.1\lib\net462\System.Buffers.dll</HintPath>
@@ -98,11 +101,71 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppContext.cs" />
-    <Compile Include="Frm_Add.cs">
+    <Compile Include="Frm_AddClientVendor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Frm_Add.Designer.cs">
-      <DependentUpon>Frm_Add.cs</DependentUpon>
+    <Compile Include="Frm_AddClientVendor.Designer.cs">
+      <DependentUpon>Frm_AddClientVendor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_AddCategoryAdmin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_AddCategoryAdmin.Designer.cs">
+      <DependentUpon>Frm_AddCategoryAdmin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_AddProductVendor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_AddProductVendor.Designer.cs">
+      <DependentUpon>Frm_AddProductVendor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_AddSaleVendor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_AddSaleVendor.Designer.cs">
+      <DependentUpon>Frm_AddSaleVendor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_AddVendorAdmin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_AddVendorAdmin.Designer.cs">
+      <DependentUpon>Frm_AddVendorAdmin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_BusqClient.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_BusqClient.Designer.cs">
+      <DependentUpon>Frm_BusqClient.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_BusqProduct.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_BusqProduct.Designer.cs">
+      <DependentUpon>Frm_BusqProduct.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_ClientsReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_ClientsReport.Designer.cs">
+      <DependentUpon>Frm_ClientsReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_DashboardVendor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_DashboardVendor.Designer.cs">
+      <DependentUpon>Frm_DashboardVendor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_GClientsVendor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_GClientsVendor.Designer.cs">
+      <DependentUpon>Frm_GClientsVendor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_GProductsAdmin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_GProductsAdmin.Designer.cs">
+      <DependentUpon>Frm_GProductsAdmin.cs</DependentUpon>
     </Compile>
     <Compile Include="Frm_DashboardAdmin.cs">
       <SubType>Form</SubType>
@@ -115,6 +178,18 @@
     </Compile>
     <Compile Include="Frm_GClientsAdmin.Designer.cs">
       <DependentUpon>Frm_GClientsAdmin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_GProductsVendor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_GProductsVendor.Designer.cs">
+      <DependentUpon>Frm_GProductsVendor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_GSalesVendor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_GSalesVendor.Designer.cs">
+      <DependentUpon>Frm_GSalesVendor.cs</DependentUpon>
     </Compile>
     <Compile Include="Frm_GUsersAdmin.cs">
       <SubType>Form</SubType>
@@ -158,34 +233,124 @@
     <Compile Include="Frm_MainVendor.Designer.cs">
       <DependentUpon>Frm_MainVendor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Frm_ModifyV.cs">
+    <Compile Include="Frm_ModifyCategoryAdmin.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Frm_ModifyV.Designer.cs">
-      <DependentUpon>Frm_ModifyV.cs</DependentUpon>
+    <Compile Include="Frm_ModifyCategoryAdmin.Designer.cs">
+      <DependentUpon>Frm_ModifyCategoryAdmin.cs</DependentUpon>
     </Compile>
-    <Compile Include="Frm_ModifyC.cs">
+    <Compile Include="Frm_ModifyProductAdmin_Vendor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Frm_ModifyC.Designer.cs">
-      <DependentUpon>Frm_ModifyC.cs</DependentUpon>
+    <Compile Include="Frm_ModifyProductAdmin_Vendor.Designer.cs">
+      <DependentUpon>Frm_ModifyProductAdmin_Vendor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Frm_ReportsAdmin.cs">
+    <Compile Include="Frm_ModifyVendorAdmin.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Frm_ReportsAdmin.Designer.cs">
-      <DependentUpon>Frm_ReportsAdmin.cs</DependentUpon>
+    <Compile Include="Frm_ModifyVendorAdmin.Designer.cs">
+      <DependentUpon>Frm_ModifyVendorAdmin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_ModifyClientAdmin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_ModifyClientAdmin.Designer.cs">
+      <DependentUpon>Frm_ModifyClientAdmin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_GCategoriesAdmin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_GCategoriesAdmin.Designer.cs">
+      <DependentUpon>Frm_GCategoriesAdmin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_GeneralInventoryReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_GeneralInventoryReport.Designer.cs">
+      <DependentUpon>Frm_GeneralInventoryReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_GeneralSalesReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_GeneralSalesReport.Designer.cs">
+      <DependentUpon>Frm_GeneralSalesReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_InventoryByVendorReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_InventoryByVendorReport.Designer.cs">
+      <DependentUpon>Frm_InventoryByVendorReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_ModifyVentState.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_ModifyVentState.Designer.cs">
+      <DependentUpon>Frm_ModifyVentState.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_RegisterAdmin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_RegisterAdmin.Designer.cs">
+      <DependentUpon>Frm_RegisterAdmin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_VendorsReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_VendorsReport.Designer.cs">
+      <DependentUpon>Frm_VendorsReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_SalesByVendorReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_SalesByVendorReport.Designer.cs">
+      <DependentUpon>Frm_SalesByVendorReport.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Frm_Add.resx">
-      <DependentUpon>Frm_Add.cs</DependentUpon>
+    <EmbeddedResource Include="Frm_AddClientVendor.resx">
+      <DependentUpon>Frm_AddClientVendor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_AddCategoryAdmin.resx">
+      <DependentUpon>Frm_AddCategoryAdmin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_AddProductVendor.resx">
+      <DependentUpon>Frm_AddProductVendor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_AddSaleVendor.resx">
+      <DependentUpon>Frm_AddSaleVendor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_AddVendorAdmin.resx">
+      <DependentUpon>Frm_AddVendorAdmin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_BusqClient.resx">
+      <DependentUpon>Frm_BusqClient.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_BusqProduct.resx">
+      <DependentUpon>Frm_BusqProduct.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_ClientsReport.resx">
+      <DependentUpon>Frm_ClientsReport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_DashboardVendor.resx">
+      <DependentUpon>Frm_DashboardVendor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_GClientsVendor.resx">
+      <DependentUpon>Frm_GClientsVendor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_GProductsAdmin.resx">
+      <DependentUpon>Frm_GProductsAdmin.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Frm_DashboardAdmin.resx">
       <DependentUpon>Frm_DashboardAdmin.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Frm_GClientsAdmin.resx">
       <DependentUpon>Frm_GClientsAdmin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_GProductsVendor.resx">
+      <DependentUpon>Frm_GProductsVendor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_GSalesVendor.resx">
+      <DependentUpon>Frm_GSalesVendor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Frm_GUsersAdmin.resx">
       <DependentUpon>Frm_GUsersAdmin.cs</DependentUpon>
@@ -210,14 +375,41 @@
     <EmbeddedResource Include="Frm_MainVendor.resx">
       <DependentUpon>Frm_MainVendor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Frm_ModifyV.resx">
-      <DependentUpon>Frm_ModifyV.cs</DependentUpon>
+    <EmbeddedResource Include="Frm_ModifyCategoryAdmin.resx">
+      <DependentUpon>Frm_ModifyCategoryAdmin.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Frm_ModifyC.resx">
-      <DependentUpon>Frm_ModifyC.cs</DependentUpon>
+    <EmbeddedResource Include="Frm_ModifyProductAdmin_Vendor.resx">
+      <DependentUpon>Frm_ModifyProductAdmin_Vendor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Frm_ReportsAdmin.resx">
-      <DependentUpon>Frm_ReportsAdmin.cs</DependentUpon>
+    <EmbeddedResource Include="Frm_ModifyVendorAdmin.resx">
+      <DependentUpon>Frm_ModifyVendorAdmin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_ModifyClientAdmin.resx">
+      <DependentUpon>Frm_ModifyClientAdmin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_GCategoriesAdmin.resx">
+      <DependentUpon>Frm_GCategoriesAdmin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_GeneralInventoryReport.resx">
+      <DependentUpon>Frm_GeneralInventoryReport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_GeneralSalesReport.resx">
+      <DependentUpon>Frm_GeneralSalesReport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_InventoryByVendorReport.resx">
+      <DependentUpon>Frm_InventoryByVendorReport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_ModifyVentState.resx">
+      <DependentUpon>Frm_ModifyVentState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_RegisterAdmin.resx">
+      <DependentUpon>Frm_RegisterAdmin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_VendorsReport.resx">
+      <DependentUpon>Frm_VendorsReport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_SalesByVendorReport.resx">
+      <DependentUpon>Frm_SalesByVendorReport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

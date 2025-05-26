@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace GUI
 {
-    public partial class Frm_ModifyV : Form
+    public partial class Frm_ModifyVendorAdmin : Form
     {
-        public Frm_ModifyV()
+        public Frm_ModifyVendorAdmin()
         {
             InitializeComponent();
             // Asignar eventos a los botones

@@ -1,33 +1,87 @@
-﻿using FontAwesome.Sharp;
+﻿using RJCodeAdvance.RJControls;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GUI
 {
     public partial class Frm_MainAdmin : Frm_MainBase
     {
-        // Variable para mantener una referencia al formulario hijo actualmente activo.
-        private Form currentChildForm;
-
+        private Form currentChildForm; // Variable para mantener una referencia al formulario hijo actualmente activo.
         public Frm_MainAdmin()
         {
             InitializeComponent();
             label1.Text = "Demeter - Sesión de Administrador";
-            // No es necesario ajustar ICONBTN_HEIGHT aquí si ya es 65 por defecto en la base.
         }
 
-        // --- MÉTODOS PRIVADOS/PROTECTED ESPECÍFICOS DE Frm_MainAdmin ---
+        // EVENTOS
+        private void ibtn_Dashboard_Click(object sender, EventArgs e)
+        {
+            OpenChildForm(new Frm_DashboardAdmin()); // Abre el formulario del Dashboard.
+        }
+        private void ibtn_Clientes_Click(object sender, EventArgs e)
+        {
+            OpenChildForm(new Frm_GClientsAdmin()); // Abre el formulario del Gestor de clientes.
+        }
+        private void ibtn_Vendedores_Click(object sender, EventArgs e)
+        {
+            OpenChildForm(new Frm_GVendorsAdmin()); // Abre el formulario del Gestor de vendedores.
+        }
+        private void ibtn_Ventas_Click(object sender, EventArgs e)
+        {
+            OpenChildForm(new Frm_GSalesAdmin()); // Abre el formulario del Gestor de ventas.
+        }
+        private void ibtn_Manten_Click(object sender, EventArgs e)
+        {
+            Open_DropdownMenu(ddm_Mantenimiento, sender); // Abre el menu del botón Mantenimiento.
+        }
+        private void categoria_Click(object sender, EventArgs e)
+        {
+            OpenChildForm(new Frm_GCategoriesAdmin()); // Abre el formulario del Gestor de productos.
+        }
+        private void producto_Click(object sender, EventArgs e)
+        {
+            OpenChildForm(new Frm_GProductsAdmin()); // Abre el formulario del Gestor de categorías.
+        }
+        private void ibtn_Usuarios_Click(object sender, EventArgs e)
+        {
+            OpenChildForm(new Frm_GUsersAdmin()); // Abre el formulario del Gestor de usuarios.
+        }
+        private void ibtn_Reportes_Click(object sender, EventArgs e)
+        {
+            Open_DropdownMenu(ddm_Reportes, sender); // Abre el menu del botón Reportes.
+        }
+        private void Ventas_general_Click(object sender, EventArgs e)
+        {
+            OpenChildForm(new Frm_GeneralSalesReport()); // Abre el formulario del reporte de ventas general.
+        }
+        private void Ventas_porVendedor_Click(object sender, EventArgs e)
+        {
+            OpenChildForm(new Frm_SalesByVendorReport()); // Abre el formulario del reporte de ventas por vendedor.
+        }
+        private void Inventario_general_Click(object sender, EventArgs e)
+        {
+            OpenChildForm(new Frm_GeneralInventoryReport()); // Abre el formulario del reporte de inventario general.
+        }
+        private void Inventario_porVendedor_Click(object sender, EventArgs e)
+        {
+            OpenChildForm(new Frm_InventoryByVendorReport()); // Abre el formulario del reporte de inventario por vendedor.
+        }
+        private void vendedores_Click(object sender, EventArgs e)
+        {
+            OpenChildForm(new Frm_VendorsReport()); // Abre el formulario del Gestor de vendedores desde el menú desplegable de Reportes.
+        }
+        private void clientes_Click(object sender, EventArgs e)
+        {
+            OpenChildForm(new Frm_ClientsReport()); // Abre el formulario del Gestor de clientes desde el menú desplegable de Reportes.
+        }
+        private void ibtn_CerrarSesion_Click(object sender, EventArgs e) // Evento Click para el botón de Cerrar Sesión.
+        {
+            CerrarSesion(); // Llama al método CerrarSesion de la clase base.
+        }
 
-        // Método para abrir un formulario hijo dentro del panel de contenido (panelContent).
-        private void OpenChildForm(Form childForm)
+        // MÉTODOS PRIVADOS
+        private void OpenChildForm(Form childForm) // Método para abrir un formulario hijo dentro del panel de contenido (panelContent).
         {
             // Si ya hay un formulario hijo abierto, ciérralo para evitar superposiciones.
             if (currentChildForm != null)
@@ -47,54 +101,38 @@ namespace GUI
             childForm.BringToFront(); // Asegura que el formulario hijo esté al frente.
             childForm.Show(); // Muestra el formulario hijo.
         }
+        private void Open_DropdownMenu(RJDropdownMenu dropdownMenu, object sender)
+        {
+            Control control = (Control)sender;
+            dropdownMenu.VisibleChanged += new EventHandler((sender2, ev) => DropdownMenu_VisibleChanged(sender2, ev, control));
+            dropdownMenu.Show(control, control.Width, 0);
+        }
+        private void DropdownMenu_VisibleChanged(object sender, EventArgs e, Control ctrl)
+        {
+            RJDropdownMenu dropdownMenu = (RJDropdownMenu)sender;
+            if (!DesignMode)
+            {
+                if (dropdownMenu.Visible)
+                {
+                    ctrl.BackColor = Color.FromArgb(117, 82, 72);
+                }
+                else
+                {
+                    ctrl.BackColor = Color.FromArgb(117, 82, 72);
+                }
+            }
+        }
 
-        // --- EVENTOS ESPECÍFICOS DE Frm_MainAdmin ---
-
-        // Sobrescribe el método OnFormLoad de la clase base para añadir lógica específica.
-        protected override void OnFormLoad(object sender, EventArgs e)
+        // MÉTODOS SOBREESCRITOS DE LA CLASE BASE / PROTECTED
+        protected override void OnFormLoad(object sender, EventArgs e) // Sobrescribe el método OnFormLoad de la clase base para añadir lógica específica.
         {
             // Abre el Dashboard por defecto al cargar el formulario del administrador.
             OpenChildForm(new Frm_DashboardAdmin());
         }
-
-        // Sobrescribe el método OnFormResize de la clase base para añadir lógica específica.
-        protected override void OnFormResize(object sender, EventArgs e)
+        protected override void OnFormResize(object sender, EventArgs e) // Sobrescribe el método OnFormResize de la clase base para añadir lógica específica.
         {
             // Lógica específica del administrador al redimensionar el formulario, si la hay.
             // El formulario hijo ya se adaptará debido a DockStyle.Fill.
-        }
-
-        // Evento Click para el botón de Cerrar Sesión.
-        private void ibtn_CerrarSesion_Click(object sender, EventArgs e)
-        {
-            CerrarSesion(); // Llama al método CerrarSesion de la clase base.
-        }
-
-        // Evento Click para el botón de Dashboard.
-        private void ibtn_Dashboard_Click_1(object sender, EventArgs e)
-        {
-            OpenChildForm(new Frm_DashboardAdmin()); // Abre el formulario del Dashboard.
-        }
-        private void ibtn_Clientes_Click(object sender, EventArgs e)
-        {
-            OpenChildForm(new Frm_GClientsAdmin()); // Abre el formulario del Gestor de clientes.
-        }
-        private void ibtn_Vendedores_Click(object sender, EventArgs e)
-        {
-            OpenChildForm(new Frm_GVendorsAdmin()); // Abre el formulario del Gestor de vendedores.
-        }
-        private void ibtn_Ventas_Click(object sender, EventArgs e)
-        {
-            OpenChildForm(new Frm_GSalesAdmin()); // Abre el formulario del Gestor de ventas.
-        }
-        private void ibtn_Usuarios_Click(object sender, EventArgs e)
-        {
-            OpenChildForm(new Frm_GUsersAdmin()); // Abre el formulario del Gestor de usuarios.
-        }
-
-        private void ibtn_Reportes_Click(object sender, EventArgs e)
-        {
-            OpenChildForm(new Frm_ReportsAdmin()); // Abre el formulario de Reportes.
         }
 
         // Los demás eventos (minimizar, maximizar, salir, menú hamburguesa, etc.)
