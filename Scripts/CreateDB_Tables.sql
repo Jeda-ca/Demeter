@@ -261,3 +261,7 @@ CREATE INDEX ix_reports_report_type_id ON reports(report_type_id);
 CREATE INDEX ix_reports_filter_seller_id ON reports(filter_seller_id);
 CREATE INDEX ix_reports_filter_client_id ON reports(filter_client_id);
 CREATE INDEX ix_reports_generation_date ON reports(generation_date);
+
+USE DEMETER_DB;
+GO
+Select * from users;
