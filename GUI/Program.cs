@@ -5,7 +5,6 @@ namespace GUI
 {
     internal static class Program
     {
-        
         static void Main()
         {
             Application.EnableVisualStyles();

@@ -96,6 +96,7 @@
             this.ibtn_Cancel.TabIndex = 7;
             this.ibtn_Cancel.Text = "Cancelar";
             this.ibtn_Cancel.UseVisualStyleBackColor = false;
+            this.ibtn_Cancel.Click += new System.EventHandler(this.ibtn_Cancel_Click);
             // 
             // ibtn_Clear
             // 
@@ -114,6 +115,7 @@
             this.ibtn_Clear.TabIndex = 6;
             this.ibtn_Clear.Text = "Limpiar";
             this.ibtn_Clear.UseVisualStyleBackColor = false;
+            this.ibtn_Clear.Click += new System.EventHandler(this.ibtn_Clear_Click);
             // 
             // ibtn_Add
             // 
@@ -132,6 +134,7 @@
             this.ibtn_Add.TabIndex = 5;
             this.ibtn_Add.Text = "Agregar";
             this.ibtn_Add.UseVisualStyleBackColor = false;
+            this.ibtn_Add.Click += new System.EventHandler(this.ibtn_Add_Click);
             // 
             // groupBox1
             // 
@@ -180,10 +183,6 @@
             this.cbx_UnMedida.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbx_UnMedida.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbx_UnMedida.FormattingEnabled = true;
-            this.cbx_UnMedida.Items.AddRange(new object[] {
-            "--Seleccione una opción--",
-            "C.C",
-            "C.E"});
             this.cbx_UnMedida.Location = new System.Drawing.Point(642, 65);
             this.cbx_UnMedida.Margin = new System.Windows.Forms.Padding(4);
             this.cbx_UnMedida.Name = "cbx_UnMedida";
@@ -223,10 +222,6 @@
             this.cbx_Category.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbx_Category.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbx_Category.FormattingEnabled = true;
-            this.cbx_Category.Items.AddRange(new object[] {
-            "--Seleccione una opción--",
-            "C.C",
-            "C.E"});
             this.cbx_Category.Location = new System.Drawing.Point(338, 65);
             this.cbx_Category.Margin = new System.Windows.Forms.Padding(4);
             this.cbx_Category.Name = "cbx_Category";

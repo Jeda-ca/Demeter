@@ -218,6 +218,7 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.label1);
             this.Name = "Frm_GeneralInventoryReport";
+            this.Load += new System.EventHandler(this.Frm_GeneralInventoryReport_Load);
             this.panel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgv_ReportesVentxVend)).EndInit();

@@ -30,6 +30,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Frm_Login));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lbl_RegisterAdmin = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -39,23 +41,21 @@
             this.cbx_showPassword = new System.Windows.Forms.CheckBox();
             this.btn_Ingresar = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.iconPictureBox2 = new FontAwesome.Sharp.IconPictureBox();
-            this.iconPictureBox1 = new FontAwesome.Sharp.IconPictureBox();
             this.ibtn_Minimized_LogIn = new FontAwesome.Sharp.IconButton();
             this.ibtn_Exit_LogIn = new FontAwesome.Sharp.IconButton();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.iconPictureBox2 = new FontAwesome.Sharp.IconPictureBox();
+            this.iconPictureBox1 = new FontAwesome.Sharp.IconPictureBox();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.lbl_RegisterAdmin);
             this.panel1.Controls.Add(this.pictureBox1);
             this.panel1.Controls.Add(this.label5);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
@@ -64,6 +64,30 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(262, 500);
             this.panel1.TabIndex = 0;
+            // 
+            // lbl_RegisterAdmin
+            // 
+            this.lbl_RegisterAdmin.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lbl_RegisterAdmin.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_RegisterAdmin.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(66)))), ((int)(((byte)(98)))));
+            this.lbl_RegisterAdmin.Location = new System.Drawing.Point(18, 459);
+            this.lbl_RegisterAdmin.Name = "lbl_RegisterAdmin";
+            this.lbl_RegisterAdmin.Size = new System.Drawing.Size(230, 26);
+            this.lbl_RegisterAdmin.TabIndex = 6;
+            this.lbl_RegisterAdmin.Text = "Registrarse como Administrador";
+            this.lbl_RegisterAdmin.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbl_RegisterAdmin.Click += new System.EventHandler(this.lbl_RegisterAdmin_Click);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::GUI.Properties.Resources.LogoDemeter;
+            this.pictureBox1.Location = new System.Drawing.Point(31, 94);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(200, 200);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox1.TabIndex = 5;
+            this.pictureBox1.TabStop = false;
             // 
             // label5
             // 
@@ -171,36 +195,7 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(413, 40);
             this.panel2.TabIndex = 11;
-            // 
-            // iconPictureBox2
-            // 
-            this.iconPictureBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(248)))), ((int)(((byte)(233)))));
-            this.iconPictureBox2.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.iconPictureBox2.IconChar = FontAwesome.Sharp.IconChar.Key;
-            this.iconPictureBox2.IconColor = System.Drawing.SystemColors.ControlText;
-            this.iconPictureBox2.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            this.iconPictureBox2.IconSize = 35;
-            this.iconPictureBox2.Location = new System.Drawing.Point(300, 278);
-            this.iconPictureBox2.Margin = new System.Windows.Forms.Padding(4);
-            this.iconPictureBox2.Name = "iconPictureBox2";
-            this.iconPictureBox2.Size = new System.Drawing.Size(35, 35);
-            this.iconPictureBox2.TabIndex = 13;
-            this.iconPictureBox2.TabStop = false;
-            // 
-            // iconPictureBox1
-            // 
-            this.iconPictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(248)))), ((int)(((byte)(233)))));
-            this.iconPictureBox1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.iconPictureBox1.IconChar = FontAwesome.Sharp.IconChar.UserCircle;
-            this.iconPictureBox1.IconColor = System.Drawing.SystemColors.ControlText;
-            this.iconPictureBox1.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            this.iconPictureBox1.IconSize = 35;
-            this.iconPictureBox1.Location = new System.Drawing.Point(300, 191);
-            this.iconPictureBox1.Margin = new System.Windows.Forms.Padding(4);
-            this.iconPictureBox1.Name = "iconPictureBox1";
-            this.iconPictureBox1.Size = new System.Drawing.Size(35, 35);
-            this.iconPictureBox1.TabIndex = 12;
-            this.iconPictureBox1.TabStop = false;
+            this.panel2.Click += new System.EventHandler(this.lbl_RegisterAdmin_Click);
             // 
             // ibtn_Minimized_LogIn
             // 
@@ -236,27 +231,35 @@
             this.ibtn_Exit_LogIn.UseVisualStyleBackColor = true;
             this.ibtn_Exit_LogIn.Click += new System.EventHandler(this.ibtn_Exit_LogIn_Click);
             // 
-            // pictureBox1
+            // iconPictureBox2
             // 
-            this.pictureBox1.Image = global::GUI.Properties.Resources.LogoDemeter;
-            this.pictureBox1.Location = new System.Drawing.Point(31, 94);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(200, 200);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox1.TabIndex = 5;
-            this.pictureBox1.TabStop = false;
+            this.iconPictureBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(248)))), ((int)(((byte)(233)))));
+            this.iconPictureBox2.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.iconPictureBox2.IconChar = FontAwesome.Sharp.IconChar.Key;
+            this.iconPictureBox2.IconColor = System.Drawing.SystemColors.ControlText;
+            this.iconPictureBox2.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            this.iconPictureBox2.IconSize = 35;
+            this.iconPictureBox2.Location = new System.Drawing.Point(300, 278);
+            this.iconPictureBox2.Margin = new System.Windows.Forms.Padding(4);
+            this.iconPictureBox2.Name = "iconPictureBox2";
+            this.iconPictureBox2.Size = new System.Drawing.Size(35, 35);
+            this.iconPictureBox2.TabIndex = 13;
+            this.iconPictureBox2.TabStop = false;
             // 
-            // label1
+            // iconPictureBox1
             // 
-            this.label1.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(66)))), ((int)(((byte)(98)))));
-            this.label1.Location = new System.Drawing.Point(18, 459);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(230, 26);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Registrarse como Administrador";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.iconPictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(248)))), ((int)(((byte)(233)))));
+            this.iconPictureBox1.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.iconPictureBox1.IconChar = FontAwesome.Sharp.IconChar.UserCircle;
+            this.iconPictureBox1.IconColor = System.Drawing.SystemColors.ControlText;
+            this.iconPictureBox1.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            this.iconPictureBox1.IconSize = 35;
+            this.iconPictureBox1.Location = new System.Drawing.Point(300, 191);
+            this.iconPictureBox1.Margin = new System.Windows.Forms.Padding(4);
+            this.iconPictureBox1.Name = "iconPictureBox1";
+            this.iconPictureBox1.Size = new System.Drawing.Size(35, 35);
+            this.iconPictureBox1.TabIndex = 12;
+            this.iconPictureBox1.TabStop = false;
             // 
             // Frm_Login
             // 
@@ -283,10 +286,10 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
             this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -309,7 +312,7 @@
         private FontAwesome.Sharp.IconButton ibtn_Minimized_LogIn;
         private FontAwesome.Sharp.IconPictureBox iconPictureBox1;
         private FontAwesome.Sharp.IconPictureBox iconPictureBox2;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lbl_RegisterAdmin;
     }
 }
 

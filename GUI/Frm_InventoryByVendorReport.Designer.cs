@@ -304,6 +304,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label1);
             this.Name = "Frm_InventoryByVendorReport";
+            this.Load += new System.EventHandler(this.Frm_InventoryByVendorReport_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_ReportesVentxVend)).EndInit();

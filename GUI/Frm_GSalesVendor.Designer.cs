@@ -34,6 +34,8 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.ibtn_Clear = new FontAwesome.Sharp.IconButton();
+            this.ibtn_Buscar = new FontAwesome.Sharp.IconButton();
             this.tbx_Busqueda = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.panelFiltro = new System.Windows.Forms.Panel();
@@ -46,10 +48,8 @@
             this.dgv_ListaVentas = new System.Windows.Forms.DataGridView();
             this.cbx_TipoV = new System.Windows.Forms.ComboBox();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.label4 = new System.Windows.Forms.Label();
             this.ibtn_Add = new FontAwesome.Sharp.IconButton();
-            this.ibtn_Clear = new FontAwesome.Sharp.IconButton();
-            this.ibtn_Buscar = new FontAwesome.Sharp.IconButton();
+            this.label4 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panelFiltro.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_ListaVentas)).BeginInit();
@@ -88,6 +88,51 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1064, 338);
             this.panel1.TabIndex = 15;
+            // 
+            // ibtn_Clear
+            // 
+            this.ibtn_Clear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ibtn_Clear.BackColor = System.Drawing.Color.Salmon;
+            this.ibtn_Clear.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ibtn_Clear.FlatAppearance.BorderSize = 0;
+            this.ibtn_Clear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ibtn_Clear.Font = new System.Drawing.Font("Tahoma", 10.2F, System.Drawing.FontStyle.Bold);
+            this.ibtn_Clear.ForeColor = System.Drawing.Color.White;
+            this.ibtn_Clear.IconChar = FontAwesome.Sharp.IconChar.Broom;
+            this.ibtn_Clear.IconColor = System.Drawing.Color.White;
+            this.ibtn_Clear.IconFont = FontAwesome.Sharp.IconFont.Solid;
+            this.ibtn_Clear.IconSize = 30;
+            this.ibtn_Clear.Location = new System.Drawing.Point(1004, 128);
+            this.ibtn_Clear.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.ibtn_Clear.Name = "ibtn_Clear";
+            this.ibtn_Clear.Size = new System.Drawing.Size(39, 32);
+            this.ibtn_Clear.TabIndex = 15;
+            this.ibtn_Clear.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.ibtn_Clear.UseVisualStyleBackColor = false;
+            this.ibtn_Clear.Click += new System.EventHandler(this.ibtn_Clear_Click);
+            // 
+            // ibtn_Buscar
+            // 
+            this.ibtn_Buscar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ibtn_Buscar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(66)))), ((int)(((byte)(98)))));
+            this.ibtn_Buscar.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ibtn_Buscar.FlatAppearance.BorderSize = 0;
+            this.ibtn_Buscar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ibtn_Buscar.Font = new System.Drawing.Font("Tahoma", 10.2F, System.Drawing.FontStyle.Bold);
+            this.ibtn_Buscar.ForeColor = System.Drawing.Color.White;
+            this.ibtn_Buscar.IconChar = FontAwesome.Sharp.IconChar.MagnifyingGlass;
+            this.ibtn_Buscar.IconColor = System.Drawing.Color.White;
+            this.ibtn_Buscar.IconFont = FontAwesome.Sharp.IconFont.Solid;
+            this.ibtn_Buscar.IconSize = 23;
+            this.ibtn_Buscar.Location = new System.Drawing.Point(862, 128);
+            this.ibtn_Buscar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.ibtn_Buscar.Name = "ibtn_Buscar";
+            this.ibtn_Buscar.Size = new System.Drawing.Size(133, 33);
+            this.ibtn_Buscar.TabIndex = 14;
+            this.ibtn_Buscar.Text = "Buscar";
+            this.ibtn_Buscar.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.ibtn_Buscar.UseVisualStyleBackColor = false;
+            this.ibtn_Buscar.Click += new System.EventHandler(this.ibtn_Buscar_Click);
             // 
             // tbx_Busqueda
             // 
@@ -167,6 +212,7 @@
             this.cbx_FiltroV.Name = "cbx_FiltroV";
             this.cbx_FiltroV.Size = new System.Drawing.Size(263, 30);
             this.cbx_FiltroV.TabIndex = 1;
+            this.cbx_FiltroV.SelectedIndexChanged += new System.EventHandler(this.cbx_FiltroV_SelectedIndexChanged);
             // 
             // label2
             // 
@@ -254,6 +300,7 @@
             this.cbx_TipoV.Name = "cbx_TipoV";
             this.cbx_TipoV.Size = new System.Drawing.Size(320, 30);
             this.cbx_TipoV.TabIndex = 0;
+            this.cbx_TipoV.SelectedIndexChanged += new System.EventHandler(this.cbx_TipoV_SelectedIndexChanged);
             // 
             // panel2
             // 
@@ -267,17 +314,6 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1064, 202);
             this.panel2.TabIndex = 16;
-            // 
-            // label4
-            // 
-            this.label4.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label4.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
-            this.label4.Location = new System.Drawing.Point(0, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(1064, 37);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "Controles de gestión";
             // 
             // ibtn_Add
             // 
@@ -303,48 +339,16 @@
             this.ibtn_Add.UseVisualStyleBackColor = false;
             this.ibtn_Add.Click += new System.EventHandler(this.ibtn_Add_Click);
             // 
-            // ibtn_Clear
+            // label4
             // 
-            this.ibtn_Clear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ibtn_Clear.BackColor = System.Drawing.Color.Salmon;
-            this.ibtn_Clear.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.ibtn_Clear.FlatAppearance.BorderSize = 0;
-            this.ibtn_Clear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ibtn_Clear.Font = new System.Drawing.Font("Tahoma", 10.2F, System.Drawing.FontStyle.Bold);
-            this.ibtn_Clear.ForeColor = System.Drawing.Color.White;
-            this.ibtn_Clear.IconChar = FontAwesome.Sharp.IconChar.Broom;
-            this.ibtn_Clear.IconColor = System.Drawing.Color.White;
-            this.ibtn_Clear.IconFont = FontAwesome.Sharp.IconFont.Solid;
-            this.ibtn_Clear.IconSize = 30;
-            this.ibtn_Clear.Location = new System.Drawing.Point(1004, 128);
-            this.ibtn_Clear.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.ibtn_Clear.Name = "ibtn_Clear";
-            this.ibtn_Clear.Size = new System.Drawing.Size(39, 32);
-            this.ibtn_Clear.TabIndex = 15;
-            this.ibtn_Clear.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-            this.ibtn_Clear.UseVisualStyleBackColor = false;
-            // 
-            // ibtn_Buscar
-            // 
-            this.ibtn_Buscar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ibtn_Buscar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(66)))), ((int)(((byte)(98)))));
-            this.ibtn_Buscar.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.ibtn_Buscar.FlatAppearance.BorderSize = 0;
-            this.ibtn_Buscar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ibtn_Buscar.Font = new System.Drawing.Font("Tahoma", 10.2F, System.Drawing.FontStyle.Bold);
-            this.ibtn_Buscar.ForeColor = System.Drawing.Color.White;
-            this.ibtn_Buscar.IconChar = FontAwesome.Sharp.IconChar.MagnifyingGlass;
-            this.ibtn_Buscar.IconColor = System.Drawing.Color.White;
-            this.ibtn_Buscar.IconFont = FontAwesome.Sharp.IconFont.Solid;
-            this.ibtn_Buscar.IconSize = 23;
-            this.ibtn_Buscar.Location = new System.Drawing.Point(862, 128);
-            this.ibtn_Buscar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.ibtn_Buscar.Name = "ibtn_Buscar";
-            this.ibtn_Buscar.Size = new System.Drawing.Size(133, 33);
-            this.ibtn_Buscar.TabIndex = 14;
-            this.ibtn_Buscar.Text = "Buscar";
-            this.ibtn_Buscar.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-            this.ibtn_Buscar.UseVisualStyleBackColor = false;
+            this.label4.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label4.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
+            this.label4.Location = new System.Drawing.Point(0, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(1064, 37);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "Controles de gestión";
             // 
             // Frm_GSalesVendor
             // 
@@ -357,6 +361,7 @@
             this.Controls.Add(this.label1);
             this.Name = "Frm_GSalesVendor";
             this.Text = "Frm_GSalesVendor";
+            this.Load += new System.EventHandler(this.Frm_GSalesVendor_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panelFiltro.ResumeLayout(false);

@@ -24,12 +24,12 @@ namespace GUI
             this.Dock = DockStyle.Fill; // Hace que el formulario llene el control contenedor.
 
             // Inicializar ComboBox de búsqueda (placeholder)
-            //cbx_Buscar.Items.Add("-- Seleccione --");
-            //cbx_Buscar.Items.Add("Nombre");
-            //cbx_Buscar.Items.Add("Apellido");
-            //cbx_Buscar.Items.Add("Número de Documento");
-            //cbx_Buscar.Items.Add("Email");
-            //cbx_Buscar.SelectedIndex = 0;
+            cbx_Buscar.Items.Add("-- Seleccione --");
+            cbx_Buscar.Items.Add("Nombre");
+            cbx_Buscar.Items.Add("Apellido");
+            cbx_Buscar.Items.Add("Número de Documento");
+            cbx_Buscar.Items.Add("Email");
+            cbx_Buscar.SelectedIndex = 0;
         }
         private void Frm_GClientsAdmin_Load(object sender, EventArgs e) // Evento Load del formulario.
         {
@@ -67,21 +67,21 @@ namespace GUI
         // MÉTODOS PRIVADOS
         private void LoadClientsData() // Método placeholder para cargar/recargar datos de clientes.
         {
-            // --- Lógica para cargar datos de clientes desde la capa BLL y llenar el DataGridView. ---
-            // Por ahora, el DataGridView estará vacío o con columnas definidas.
-            //DataTable dt = new DataTable();
-            //dt.Columns.Add("ID", typeof(int));
-            //dt.Columns.Add("Nombre", typeof(string));
-            //dt.Columns.Add("Apellido", typeof(string));
-            //dt.Columns.Add("Documento", typeof(string));
-            //dt.Columns.Add("Teléfono", typeof(string));
-            //dt.Columns.Add("Email", typeof(string));
+            //---Lógica para cargar datos de clientes desde la capa BLL y llenar el DataGridView. -- -
+            //Por ahora, el DataGridView estará vacío o con columnas definidas.
+            DataTable dt = new DataTable();
+            dt.Columns.Add("ID", typeof(int));
+            dt.Columns.Add("Nombre", typeof(string));
+            dt.Columns.Add("Apellido", typeof(string));
+            dt.Columns.Add("Documento", typeof(string));
+            dt.Columns.Add("Teléfono", typeof(string));
+            dt.Columns.Add("Email", typeof(string));
             // No se añaden filas de datos de prueba.
             // Para probar:
             // dt.Rows.Add(1, "Ana", "López", "1001001", "3011112233", "ana.lopez@example.com"); // DATOS DE PRUEBA
             // dt.Rows.Add(2, "Carlos", "Ramírez", "1001002", "3024445566", "carlos.ramirez@example.com"); // DATOS DE PRUEBA
 
-            // dgv_ListaClientes.DataSource = dt; // Asignar el DataTable al DataGridView
+            dgv_ListaClientes.DataSource = dt; // Asignar el DataTable al DataGridView
         }
         private void ModifyClientInfo()
         {

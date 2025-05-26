@@ -28,18 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Title title2 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title3 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title4 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.iconPictureBox4 = new FontAwesome.Sharp.IconPictureBox();
             this.ibtn_OKCustomDate = new FontAwesome.Sharp.IconButton();
             this.ibtn_CustomDate = new FontAwesome.Sharp.IconButton();
@@ -115,6 +115,7 @@
             this.ibtn_OKCustomDate.Size = new System.Drawing.Size(48, 60);
             this.ibtn_OKCustomDate.TabIndex = 24;
             this.ibtn_OKCustomDate.UseVisualStyleBackColor = false;
+            this.ibtn_OKCustomDate.Click += new System.EventHandler(this.ibtn_OKCustomDate_Click);
             // 
             // ibtn_CustomDate
             // 
@@ -135,6 +136,7 @@
             this.ibtn_CustomDate.TabIndex = 23;
             this.ibtn_CustomDate.Text = "Fecha personalizada";
             this.ibtn_CustomDate.UseVisualStyleBackColor = false;
+            this.ibtn_CustomDate.Click += new System.EventHandler(this.ibtn_CustomDate_Click);
             // 
             // ibtn_Today
             // 
@@ -155,6 +157,7 @@
             this.ibtn_Today.TabIndex = 22;
             this.ibtn_Today.Text = "Hoy";
             this.ibtn_Today.UseVisualStyleBackColor = false;
+            this.ibtn_Today.Click += new System.EventHandler(this.ibtn_Today_Click);
             // 
             // ibtn_7Days
             // 
@@ -175,6 +178,7 @@
             this.ibtn_7Days.TabIndex = 21;
             this.ibtn_7Days.Text = "Últ. 7 días";
             this.ibtn_7Days.UseVisualStyleBackColor = false;
+            this.ibtn_7Days.Click += new System.EventHandler(this.ibtn_7Days_Click);
             // 
             // ibtn_30Days
             // 
@@ -195,6 +199,7 @@
             this.ibtn_30Days.TabIndex = 20;
             this.ibtn_30Days.Text = "Últ. 30 días";
             this.ibtn_30Days.UseVisualStyleBackColor = false;
+            this.ibtn_30Days.Click += new System.EventHandler(this.ibtn_30Days_Click);
             // 
             // ibtn_ThisMonth
             // 
@@ -215,6 +220,7 @@
             this.ibtn_ThisMonth.TabIndex = 19;
             this.ibtn_ThisMonth.Text = "Este mes";
             this.ibtn_ThisMonth.UseVisualStyleBackColor = false;
+            this.ibtn_ThisMonth.Click += new System.EventHandler(this.ibtn_ThisMonth_Click);
             // 
             // label4
             // 
@@ -231,31 +237,31 @@
             // 
             this.dgv_PBajoStock.AllowUserToAddRows = false;
             this.dgv_PBajoStock.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Tahoma", 10F);
-            this.dgv_PBajoStock.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.dgv_PBajoStock.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle5;
             this.dgv_PBajoStock.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgv_PBajoStock.BackgroundColor = System.Drawing.Color.CadetBlue;
             this.dgv_PBajoStock.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dgv_PBajoStock.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
             this.dgv_PBajoStock.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Tahoma", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgv_PBajoStock.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Tahoma", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv_PBajoStock.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.dgv_PBajoStock.ColumnHeadersHeight = 30;
             this.dgv_PBajoStock.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(248)))), ((int)(((byte)(233)))));
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(203)))), ((int)(((byte)(91)))));
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgv_PBajoStock.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(248)))), ((int)(((byte)(233)))));
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(203)))), ((int)(((byte)(91)))));
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgv_PBajoStock.DefaultCellStyle = dataGridViewCellStyle7;
             this.dgv_PBajoStock.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgv_PBajoStock.EnableHeadersVisualStyles = false;
             this.dgv_PBajoStock.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
@@ -265,11 +271,11 @@
             this.dgv_PBajoStock.ReadOnly = true;
             this.dgv_PBajoStock.RowHeadersVisible = false;
             this.dgv_PBajoStock.RowHeadersWidth = 51;
-            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(203)))), ((int)(((byte)(91)))));
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
-            this.dgv_PBajoStock.RowsDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(203)))), ((int)(((byte)(91)))));
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
+            this.dgv_PBajoStock.RowsDefaultCellStyle = dataGridViewCellStyle8;
             this.dgv_PBajoStock.RowTemplate.Height = 24;
             this.dgv_PBajoStock.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgv_PBajoStock.Size = new System.Drawing.Size(579, 169);
@@ -318,30 +324,30 @@
             this.chart_Top10Products.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
             this.chart_Top10Products.BorderlineColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(66)))), ((int)(((byte)(98)))));
             this.chart_Top10Products.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea1.Name = "ChartArea1";
-            this.chart_Top10Products.ChartAreas.Add(chartArea1);
-            legend1.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
-            legend1.Name = "Legend1";
-            this.chart_Top10Products.Legends.Add(legend1);
+            chartArea3.Name = "ChartArea1";
+            this.chart_Top10Products.ChartAreas.Add(chartArea3);
+            legend3.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+            legend3.Name = "Legend1";
+            this.chart_Top10Products.Legends.Add(legend3);
             this.chart_Top10Products.Location = new System.Drawing.Point(597, 172);
             this.chart_Top10Products.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.chart_Top10Products.Name = "chart_Top10Products";
             this.chart_Top10Products.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.EarthTones;
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Doughnut;
-            series1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            series1.IsValueShownAsLabel = true;
-            series1.LabelForeColor = System.Drawing.Color.White;
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.chart_Top10Products.Series.Add(series1);
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Doughnut;
+            series3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            series3.IsValueShownAsLabel = true;
+            series3.LabelForeColor = System.Drawing.Color.White;
+            series3.Legend = "Legend1";
+            series3.Name = "Series1";
+            this.chart_Top10Products.Series.Add(series3);
             this.chart_Top10Products.Size = new System.Drawing.Size(571, 596);
             this.chart_Top10Products.TabIndex = 31;
             this.chart_Top10Products.Text = "chart2";
-            title1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            title1.Name = "Title1";
-            title1.Text = "Top 10 productos más vendidos";
-            this.chart_Top10Products.Titles.Add(title1);
+            title3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            title3.Name = "Title1";
+            title3.Text = "Top 10 productos más vendidos";
+            this.chart_Top10Products.Titles.Add(title3);
             // 
             // label1
             // 
@@ -431,27 +437,27 @@
             this.chart_IngresoPorFecha.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
             this.chart_IngresoPorFecha.BorderlineColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(66)))), ((int)(((byte)(98)))));
             this.chart_IngresoPorFecha.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea2.Name = "ChartArea1";
-            this.chart_IngresoPorFecha.ChartAreas.Add(chartArea2);
-            legend2.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Top;
-            legend2.Name = "Legend1";
-            this.chart_IngresoPorFecha.Legends.Add(legend2);
+            chartArea4.Name = "ChartArea1";
+            this.chart_IngresoPorFecha.ChartAreas.Add(chartArea4);
+            legend4.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Top;
+            legend4.Name = "Legend1";
+            this.chart_IngresoPorFecha.Legends.Add(legend4);
             this.chart_IngresoPorFecha.Location = new System.Drawing.Point(12, 172);
             this.chart_IngresoPorFecha.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.chart_IngresoPorFecha.Name = "chart_IngresoPorFecha";
             this.chart_IngresoPorFecha.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.SemiTransparent;
-            series2.ChartArea = "ChartArea1";
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            this.chart_IngresoPorFecha.Series.Add(series2);
+            series4.ChartArea = "ChartArea1";
+            series4.Legend = "Legend1";
+            series4.Name = "Series1";
+            this.chart_IngresoPorFecha.Series.Add(series4);
             this.chart_IngresoPorFecha.Size = new System.Drawing.Size(579, 376);
             this.chart_IngresoPorFecha.TabIndex = 30;
             this.chart_IngresoPorFecha.Text = "chart1";
-            title2.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            title2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            title2.Name = "Title1";
-            title2.Text = "Ingreso bruto x Fecha";
-            this.chart_IngresoPorFecha.Titles.Add(title2);
+            title4.Alignment = System.Drawing.ContentAlignment.TopLeft;
+            title4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            title4.Name = "Title1";
+            title4.Text = "Ingreso bruto x Fecha";
+            this.chart_IngresoPorFecha.Titles.Add(title4);
             // 
             // panel3
             // 
@@ -577,6 +583,7 @@
             this.Controls.Add(this.chart_IngresoPorFecha);
             this.Name = "Frm_DashboardVendor";
             this.Text = "Frm_DashboardVendor";
+            this.Load += new System.EventHandler(this.Frm_DashboardVendor_Load);
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_PBajoStock)).EndInit();
             this.panel5.ResumeLayout(false);

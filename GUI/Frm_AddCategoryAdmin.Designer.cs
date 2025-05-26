@@ -83,6 +83,7 @@
             this.ibtn_Add.TabIndex = 42;
             this.ibtn_Add.Text = "Agregar";
             this.ibtn_Add.UseVisualStyleBackColor = false;
+            this.ibtn_Add.Click += new System.EventHandler(this.ibtn_Add_Click);
             // 
             // ibtn_Clear
             // 
@@ -101,6 +102,7 @@
             this.ibtn_Clear.TabIndex = 43;
             this.ibtn_Clear.Text = "Limpiar";
             this.ibtn_Clear.UseVisualStyleBackColor = false;
+            this.ibtn_Clear.Click += new System.EventHandler(this.ibtn_Clear_Click);
             // 
             // ibtn_Cancel
             // 
@@ -119,6 +121,7 @@
             this.ibtn_Cancel.TabIndex = 44;
             this.ibtn_Cancel.Text = "Cancelar";
             this.ibtn_Cancel.UseVisualStyleBackColor = false;
+            this.ibtn_Cancel.Click += new System.EventHandler(this.ibtn_Cancel_Click);
             // 
             // groupBox1
             // 

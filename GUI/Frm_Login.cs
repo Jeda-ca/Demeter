@@ -37,6 +37,17 @@ namespace GUI
             Application.Exit();
         }
 
+        // Nuevo evento para abrir el formulario de registro de administrador
+        private void lbl_RegisterAdmin_Click(object sender, EventArgs e)
+        {
+            Frm_RegisterAdmin frmRegisterAdmin = new Frm_RegisterAdmin();
+            this.Hide(); // Oculta el formulario de Login
+            frmRegisterAdmin.ShowDialog(); // Muestra el formulario de registro como un diálogo modal
+            this.Show(); // Vuelve a mostrar el formulario de Login cuando el de registro se cierra
+            // Si el registro fue exitoso, podrías querer hacer algo aquí,
+            // por ejemplo, limpiar los campos del login o mostrar un mensaje.
+        }
+
         //MÉTODOS PRIVADOS
         private void IniciarSesion()
         {
@@ -45,6 +56,9 @@ namespace GUI
                 MessageBox.Show("No pueden quedar campos vacíos", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
+            // --- Valores de prueba para el usuario admin y vendedor (PLACEHOLDER) ---
+            // En un escenario real, aquí se llamaría a la capa BLL para validar las credenciales
+            // y obtener el rol del usuario desde la base de datos.
             if (tbx_Username.Text == "admin" && tbx_Password.Text == "12345") // Valores de prueba para el usuario admin
             {
                 UserRole = "Admin";
@@ -61,7 +75,7 @@ namespace GUI
             }
             else
             {
-                MessageBox.Show( "Usuario o contraseña incorrectos", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error ); // Mensaje de error si las credenciales no son correctas
+                MessageBox.Show("Usuario o contraseña incorrectos", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); // Mensaje de error si las credenciales no son correctas
                 return;
             }
         }

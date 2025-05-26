@@ -115,6 +115,7 @@
             this.iconButton1.TabIndex = 9;
             this.iconButton1.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
             this.iconButton1.UseVisualStyleBackColor = false;
+            this.iconButton1.Click += new System.EventHandler(this.ibtn_Clear_Click);
             // 
             // ibtn_Buscar
             // 
@@ -137,6 +138,7 @@
             this.ibtn_Buscar.Text = "Buscar";
             this.ibtn_Buscar.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
             this.ibtn_Buscar.UseVisualStyleBackColor = false;
+            this.ibtn_Buscar.Click += new System.EventHandler(this.ibtn_Buscar_Click);
             // 
             // label2
             // 
@@ -273,6 +275,7 @@
             this.ibtn_Add.Text = "Agregar";
             this.ibtn_Add.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.ibtn_Add.UseVisualStyleBackColor = false;
+            this.ibtn_Add.Click += new System.EventHandler(this.ibtn_Add_Click);
             // 
             // ibtn_Delete
             // 
@@ -296,6 +299,7 @@
             this.ibtn_Delete.Text = "Eliminar";
             this.ibtn_Delete.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.ibtn_Delete.UseVisualStyleBackColor = false;
+            this.ibtn_Delete.Click += new System.EventHandler(this.ibtn_Delete_Click);
             // 
             // ibtn_ModifyInfo
             // 
@@ -319,6 +323,7 @@
             this.ibtn_ModifyInfo.Text = "Modificar información";
             this.ibtn_ModifyInfo.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.ibtn_ModifyInfo.UseVisualStyleBackColor = false;
+            this.ibtn_ModifyInfo.Click += new System.EventHandler(this.ibtn_ModifyInfo_Click);
             // 
             // label3
             // 
@@ -341,6 +346,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label1);
             this.Name = "Frm_GCategoriesAdmin";
+            this.Load += new System.EventHandler(this.Frm_GCategoriesAdmin_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_ListaProductos)).EndInit();

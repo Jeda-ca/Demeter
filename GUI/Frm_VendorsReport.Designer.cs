@@ -218,6 +218,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label1);
             this.Name = "Frm_VendorsReport";
+            this.Load += new System.EventHandler(this.Frm_VendorsReport_Load);
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgv_ReportesVentxVend)).EndInit();
             this.panel2.ResumeLayout(false);

@@ -31,7 +31,12 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Frm_AddClientVendor));
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.ibtn_Cancel = new FontAwesome.Sharp.IconButton();
+            this.ibtn_Clear = new FontAwesome.Sharp.IconButton();
+            this.ibtn_Add = new FontAwesome.Sharp.IconButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.tbx_Cellphone = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -42,11 +47,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.tbx_Name = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.ibtn_Cancel = new FontAwesome.Sharp.IconButton();
-            this.ibtn_Clear = new FontAwesome.Sharp.IconButton();
-            this.ibtn_Add = new FontAwesome.Sharp.IconButton();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -77,6 +77,64 @@
             this.groupBox3.TabIndex = 27;
             this.groupBox3.TabStop = false;
             // 
+            // ibtn_Cancel
+            // 
+            this.ibtn_Cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ibtn_Cancel.BackColor = System.Drawing.Color.Teal;
+            this.ibtn_Cancel.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.ibtn_Cancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ibtn_Cancel.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.ibtn_Cancel.ForeColor = System.Drawing.SystemColors.Control;
+            this.ibtn_Cancel.IconChar = FontAwesome.Sharp.IconChar.None;
+            this.ibtn_Cancel.IconColor = System.Drawing.Color.Black;
+            this.ibtn_Cancel.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            this.ibtn_Cancel.Location = new System.Drawing.Point(761, 16);
+            this.ibtn_Cancel.Margin = new System.Windows.Forms.Padding(4);
+            this.ibtn_Cancel.Name = "ibtn_Cancel";
+            this.ibtn_Cancel.Size = new System.Drawing.Size(155, 73);
+            this.ibtn_Cancel.TabIndex = 7;
+            this.ibtn_Cancel.Text = "Cancelar";
+            this.ibtn_Cancel.UseVisualStyleBackColor = false;
+            this.ibtn_Cancel.Click += new System.EventHandler(this.ibtn_Cancel_Click);
+            // 
+            // ibtn_Clear
+            // 
+            this.ibtn_Clear.BackColor = System.Drawing.Color.Teal;
+            this.ibtn_Clear.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.ibtn_Clear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ibtn_Clear.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.ibtn_Clear.ForeColor = System.Drawing.SystemColors.Control;
+            this.ibtn_Clear.IconChar = FontAwesome.Sharp.IconChar.None;
+            this.ibtn_Clear.IconColor = System.Drawing.Color.Black;
+            this.ibtn_Clear.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            this.ibtn_Clear.Location = new System.Drawing.Point(263, 16);
+            this.ibtn_Clear.Margin = new System.Windows.Forms.Padding(4);
+            this.ibtn_Clear.Name = "ibtn_Clear";
+            this.ibtn_Clear.Size = new System.Drawing.Size(155, 73);
+            this.ibtn_Clear.TabIndex = 6;
+            this.ibtn_Clear.Text = "Limpiar";
+            this.ibtn_Clear.UseVisualStyleBackColor = false;
+            this.ibtn_Clear.Click += new System.EventHandler(this.ibtn_Clear_Click);
+            // 
+            // ibtn_Add
+            // 
+            this.ibtn_Add.BackColor = System.Drawing.Color.Teal;
+            this.ibtn_Add.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.ibtn_Add.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ibtn_Add.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.ibtn_Add.ForeColor = System.Drawing.SystemColors.Control;
+            this.ibtn_Add.IconChar = FontAwesome.Sharp.IconChar.None;
+            this.ibtn_Add.IconColor = System.Drawing.Color.Black;
+            this.ibtn_Add.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            this.ibtn_Add.Location = new System.Drawing.Point(33, 16);
+            this.ibtn_Add.Margin = new System.Windows.Forms.Padding(4);
+            this.ibtn_Add.Name = "ibtn_Add";
+            this.ibtn_Add.Size = new System.Drawing.Size(155, 73);
+            this.ibtn_Add.TabIndex = 5;
+            this.ibtn_Add.Text = "Agregar";
+            this.ibtn_Add.UseVisualStyleBackColor = false;
+            this.ibtn_Add.Click += new System.EventHandler(this.ibtn_Add_Click);
+            // 
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
@@ -100,6 +158,25 @@
             this.groupBox1.TabIndex = 26;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Información personal";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox1.Location = new System.Drawing.Point(34, 237);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(4);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(582, 30);
+            this.textBox1.TabIndex = 24;
+            // 
+            // label6
+            // 
+            this.label6.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(30, 205);
+            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(588, 28);
+            this.label6.TabIndex = 25;
+            this.label6.Text = "E-mail";
             // 
             // label7
             // 
@@ -202,81 +279,7 @@
             this.label2.TabIndex = 17;
             this.label2.Text = "Nombre";
             // 
-            // ibtn_Cancel
-            // 
-            this.ibtn_Cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ibtn_Cancel.BackColor = System.Drawing.Color.Teal;
-            this.ibtn_Cancel.FlatAppearance.BorderColor = System.Drawing.Color.White;
-            this.ibtn_Cancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ibtn_Cancel.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
-            this.ibtn_Cancel.ForeColor = System.Drawing.SystemColors.Control;
-            this.ibtn_Cancel.IconChar = FontAwesome.Sharp.IconChar.None;
-            this.ibtn_Cancel.IconColor = System.Drawing.Color.Black;
-            this.ibtn_Cancel.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            this.ibtn_Cancel.Location = new System.Drawing.Point(761, 16);
-            this.ibtn_Cancel.Margin = new System.Windows.Forms.Padding(4);
-            this.ibtn_Cancel.Name = "ibtn_Cancel";
-            this.ibtn_Cancel.Size = new System.Drawing.Size(155, 73);
-            this.ibtn_Cancel.TabIndex = 7;
-            this.ibtn_Cancel.Text = "Cancelar";
-            this.ibtn_Cancel.UseVisualStyleBackColor = false;
-            // 
-            // ibtn_Clear
-            // 
-            this.ibtn_Clear.BackColor = System.Drawing.Color.Teal;
-            this.ibtn_Clear.FlatAppearance.BorderColor = System.Drawing.Color.White;
-            this.ibtn_Clear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ibtn_Clear.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
-            this.ibtn_Clear.ForeColor = System.Drawing.SystemColors.Control;
-            this.ibtn_Clear.IconChar = FontAwesome.Sharp.IconChar.None;
-            this.ibtn_Clear.IconColor = System.Drawing.Color.Black;
-            this.ibtn_Clear.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            this.ibtn_Clear.Location = new System.Drawing.Point(263, 16);
-            this.ibtn_Clear.Margin = new System.Windows.Forms.Padding(4);
-            this.ibtn_Clear.Name = "ibtn_Clear";
-            this.ibtn_Clear.Size = new System.Drawing.Size(155, 73);
-            this.ibtn_Clear.TabIndex = 6;
-            this.ibtn_Clear.Text = "Limpiar";
-            this.ibtn_Clear.UseVisualStyleBackColor = false;
-            // 
-            // ibtn_Add
-            // 
-            this.ibtn_Add.BackColor = System.Drawing.Color.Teal;
-            this.ibtn_Add.FlatAppearance.BorderColor = System.Drawing.Color.White;
-            this.ibtn_Add.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ibtn_Add.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
-            this.ibtn_Add.ForeColor = System.Drawing.SystemColors.Control;
-            this.ibtn_Add.IconChar = FontAwesome.Sharp.IconChar.None;
-            this.ibtn_Add.IconColor = System.Drawing.Color.Black;
-            this.ibtn_Add.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            this.ibtn_Add.Location = new System.Drawing.Point(33, 16);
-            this.ibtn_Add.Margin = new System.Windows.Forms.Padding(4);
-            this.ibtn_Add.Name = "ibtn_Add";
-            this.ibtn_Add.Size = new System.Drawing.Size(155, 73);
-            this.ibtn_Add.TabIndex = 5;
-            this.ibtn_Add.Text = "Agregar";
-            this.ibtn_Add.UseVisualStyleBackColor = false;
-            // 
-            // textBox1
-            // 
-            this.textBox1.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(34, 237);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(4);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(582, 30);
-            this.textBox1.TabIndex = 24;
-            // 
-            // label6
-            // 
-            this.label6.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(30, 205);
-            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(588, 28);
-            this.label6.TabIndex = 25;
-            this.label6.Text = "E-mail";
-            // 
-            // Frm__AddClientVendor
+            // Frm_AddClientVendor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -286,7 +289,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "Frm__AddClientVendor";
+            this.Name = "Frm_AddClientVendor";
             this.Text = "Demeter";
             this.groupBox3.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);

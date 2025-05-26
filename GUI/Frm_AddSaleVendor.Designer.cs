@@ -59,11 +59,11 @@
             this.label13 = new System.Windows.Forms.Label();
             this.ibtn_AddDV = new FontAwesome.Sharp.IconButton();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.cbx_State = new System.Windows.Forms.ComboBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.tbx_Total = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.cbx_State = new System.Windows.Forms.ComboBox();
+            this.dgv_SaleDetail = new System.Windows.Forms.DataGridView();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.tbx_Observaciones = new System.Windows.Forms.TextBox();
             this.groupBox3.SuspendLayout();
@@ -72,7 +72,7 @@
             this.groupBox1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgv_SaleDetail)).BeginInit();
             this.groupBox6.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -120,6 +120,7 @@
             this.ibtn_Cancel.TabIndex = 7;
             this.ibtn_Cancel.Text = "Cancelar";
             this.ibtn_Cancel.UseVisualStyleBackColor = false;
+            this.ibtn_Cancel.Click += new System.EventHandler(this.ibtn_Cancel_Click);
             // 
             // ibtn_Clear
             // 
@@ -138,6 +139,7 @@
             this.ibtn_Clear.TabIndex = 6;
             this.ibtn_Clear.Text = "Limpiar";
             this.ibtn_Clear.UseVisualStyleBackColor = false;
+            this.ibtn_Clear.Click += new System.EventHandler(this.ibtn_Clear_Click);
             // 
             // ibtn_Register
             // 
@@ -156,6 +158,7 @@
             this.ibtn_Register.TabIndex = 5;
             this.ibtn_Register.Text = "Registrar";
             this.ibtn_Register.UseVisualStyleBackColor = false;
+            this.ibtn_Register.Click += new System.EventHandler(this.ibtn_Register_Click);
             // 
             // groupBox2
             // 
@@ -198,6 +201,7 @@
             this.ibtn_NomProduct.Size = new System.Drawing.Size(45, 42);
             this.ibtn_NomProduct.TabIndex = 24;
             this.ibtn_NomProduct.UseVisualStyleBackColor = false;
+            this.ibtn_NomProduct.Click += new System.EventHandler(this.ibtn_NomProduct_Click);
             // 
             // tbx_Product
             // 
@@ -321,6 +325,7 @@
             this.ibtn_DocClient.Size = new System.Drawing.Size(45, 42);
             this.ibtn_DocClient.TabIndex = 22;
             this.ibtn_DocClient.UseVisualStyleBackColor = false;
+            this.ibtn_DocClient.Click += new System.EventHandler(this.ibtn_DocClient_Click);
             // 
             // tbx_NomClient
             // 
@@ -424,6 +429,7 @@
             this.ibtn_AddDV.Size = new System.Drawing.Size(74, 43);
             this.ibtn_AddDV.TabIndex = 36;
             this.ibtn_AddDV.UseVisualStyleBackColor = false;
+            this.ibtn_AddDV.Click += new System.EventHandler(this.ibtn_AddDV_Click);
             // 
             // groupBox5
             // 
@@ -434,7 +440,7 @@
             this.groupBox5.Controls.Add(this.tbx_Total);
             this.groupBox5.Controls.Add(this.ibtn_AddDV);
             this.groupBox5.Controls.Add(this.tbx_SubTVent);
-            this.groupBox5.Controls.Add(this.dataGridView1);
+            this.groupBox5.Controls.Add(this.dgv_SaleDetail);
             this.groupBox5.Controls.Add(this.label5);
             this.groupBox5.Controls.Add(this.nud_Cantidad);
             this.groupBox5.Controls.Add(this.label15);
@@ -451,15 +457,24 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Detalle de venta";
             // 
-            // dataGridView1
+            // cbx_State
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(34, 117);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowHeadersWidth = 51;
-            this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(507, 218);
-            this.dataGridView1.TabIndex = 0;
+            this.cbx_State.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbx_State.FormattingEnabled = true;
+            this.cbx_State.Location = new System.Drawing.Point(588, 305);
+            this.cbx_State.Name = "cbx_State";
+            this.cbx_State.Size = new System.Drawing.Size(175, 32);
+            this.cbx_State.TabIndex = 47;
+            // 
+            // label9
+            // 
+            this.label9.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Location = new System.Drawing.Point(584, 273);
+            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(179, 28);
+            this.label9.TabIndex = 46;
+            this.label9.Text = "Estado de venta";
             // 
             // label7
             // 
@@ -481,24 +496,15 @@
             this.tbx_Total.Size = new System.Drawing.Size(175, 30);
             this.tbx_Total.TabIndex = 43;
             // 
-            // label9
+            // dgv_SaleDetail
             // 
-            this.label9.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(584, 273);
-            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(179, 28);
-            this.label9.TabIndex = 46;
-            this.label9.Text = "Estado de venta";
-            // 
-            // cbx_State
-            // 
-            this.cbx_State.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbx_State.FormattingEnabled = true;
-            this.cbx_State.Location = new System.Drawing.Point(588, 305);
-            this.cbx_State.Name = "cbx_State";
-            this.cbx_State.Size = new System.Drawing.Size(175, 32);
-            this.cbx_State.TabIndex = 47;
+            this.dgv_SaleDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgv_SaleDetail.Location = new System.Drawing.Point(34, 117);
+            this.dgv_SaleDetail.Name = "dgv_SaleDetail";
+            this.dgv_SaleDetail.RowHeadersWidth = 51;
+            this.dgv_SaleDetail.RowTemplate.Height = 24;
+            this.dgv_SaleDetail.Size = new System.Drawing.Size(507, 218);
+            this.dgv_SaleDetail.TabIndex = 0;
             // 
             // groupBox6
             // 
@@ -525,8 +531,8 @@
             // 
             // Frm_AddSaleVendor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(248)))), ((int)(((byte)(233)))));
             this.ClientSize = new System.Drawing.Size(1376, 549);
             this.Controls.Add(this.groupBox6);
@@ -549,7 +555,7 @@
             this.groupBox4.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgv_SaleDetail)).EndInit();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             this.ResumeLayout(false);
@@ -588,7 +594,7 @@
         private System.Windows.Forms.Label label6;
         private FontAwesome.Sharp.IconButton ibtn_AddDV;
         private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView dgv_SaleDetail;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox tbx_Total;

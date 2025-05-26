@@ -35,7 +35,11 @@
             this.ibtn_Clear = new FontAwesome.Sharp.IconButton();
             this.ibtn_Modify = new FontAwesome.Sharp.IconButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.nud_Stock = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
+            this.cbx_UdMedida = new System.Windows.Forms.ComboBox();
             this.nud_Price = new System.Windows.Forms.NumericUpDown();
+            this.label7 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.cbx_Category = new System.Windows.Forms.ComboBox();
             this.tbx_NumDoc = new System.Windows.Forms.TextBox();
@@ -43,14 +47,10 @@
             this.label3 = new System.Windows.Forms.Label();
             this.tbx_Name = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.cbx_UdMedida = new System.Windows.Forms.ComboBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.nud_Stock = new System.Windows.Forms.NumericUpDown();
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nud_Price)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_Stock)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nud_Price)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -96,6 +96,7 @@
             this.ibtn_Cancel.TabIndex = 7;
             this.ibtn_Cancel.Text = "Cancelar";
             this.ibtn_Cancel.UseVisualStyleBackColor = false;
+            this.ibtn_Cancel.Click += new System.EventHandler(this.ibtn_Cancel_Click);
             // 
             // ibtn_Clear
             // 
@@ -114,6 +115,7 @@
             this.ibtn_Clear.TabIndex = 6;
             this.ibtn_Clear.Text = "Limpiar";
             this.ibtn_Clear.UseVisualStyleBackColor = false;
+            this.ibtn_Clear.Click += new System.EventHandler(this.ibtn_Clear_Click);
             // 
             // ibtn_Modify
             // 
@@ -132,6 +134,7 @@
             this.ibtn_Modify.TabIndex = 5;
             this.ibtn_Modify.Text = "Guardar cambios";
             this.ibtn_Modify.UseVisualStyleBackColor = false;
+            this.ibtn_Modify.Click += new System.EventHandler(this.ibtn_Modify_Click);
             // 
             // groupBox1
             // 
@@ -157,6 +160,39 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Información";
             // 
+            // nud_Stock
+            // 
+            this.nud_Stock.Font = new System.Drawing.Font("Tahoma", 11.25F);
+            this.nud_Stock.Location = new System.Drawing.Point(642, 150);
+            this.nud_Stock.Name = "nud_Stock";
+            this.nud_Stock.Size = new System.Drawing.Size(279, 30);
+            this.nud_Stock.TabIndex = 27;
+            // 
+            // label6
+            // 
+            this.label6.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(638, 33);
+            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(279, 28);
+            this.label6.TabIndex = 26;
+            this.label6.Text = "Unidad de medida";
+            // 
+            // cbx_UdMedida
+            // 
+            this.cbx_UdMedida.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbx_UdMedida.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbx_UdMedida.FormattingEnabled = true;
+            this.cbx_UdMedida.Items.AddRange(new object[] {
+            "--Seleccione una opción--",
+            "C.C",
+            "C.E"});
+            this.cbx_UdMedida.Location = new System.Drawing.Point(642, 65);
+            this.cbx_UdMedida.Margin = new System.Windows.Forms.Padding(4);
+            this.cbx_UdMedida.Name = "cbx_UdMedida";
+            this.cbx_UdMedida.Size = new System.Drawing.Size(277, 31);
+            this.cbx_UdMedida.TabIndex = 25;
+            // 
             // nud_Price
             // 
             this.nud_Price.Font = new System.Drawing.Font("Tahoma", 11.25F);
@@ -164,6 +200,16 @@
             this.nud_Price.Name = "nud_Price";
             this.nud_Price.Size = new System.Drawing.Size(279, 30);
             this.nud_Price.TabIndex = 24;
+            // 
+            // label7
+            // 
+            this.label7.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(642, 118);
+            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(277, 28);
+            this.label7.TabIndex = 23;
+            this.label7.Text = "Stock";
             // 
             // label5
             // 
@@ -239,50 +285,7 @@
             this.label2.TabIndex = 17;
             this.label2.Text = "Nombre";
             // 
-            // cbx_UdMedida
-            // 
-            this.cbx_UdMedida.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbx_UdMedida.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbx_UdMedida.FormattingEnabled = true;
-            this.cbx_UdMedida.Items.AddRange(new object[] {
-            "--Seleccione una opción--",
-            "C.C",
-            "C.E"});
-            this.cbx_UdMedida.Location = new System.Drawing.Point(642, 65);
-            this.cbx_UdMedida.Margin = new System.Windows.Forms.Padding(4);
-            this.cbx_UdMedida.Name = "cbx_UdMedida";
-            this.cbx_UdMedida.Size = new System.Drawing.Size(277, 31);
-            this.cbx_UdMedida.TabIndex = 25;
-            // 
-            // label6
-            // 
-            this.label6.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(638, 33);
-            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(279, 28);
-            this.label6.TabIndex = 26;
-            this.label6.Text = "Unidad de medida";
-            // 
-            // label7
-            // 
-            this.label7.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(642, 118);
-            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(277, 28);
-            this.label7.TabIndex = 23;
-            this.label7.Text = "Stock";
-            // 
-            // nud_Stock
-            // 
-            this.nud_Stock.Font = new System.Drawing.Font("Tahoma", 11.25F);
-            this.nud_Stock.Location = new System.Drawing.Point(642, 150);
-            this.nud_Stock.Name = "nud_Stock";
-            this.nud_Stock.Size = new System.Drawing.Size(279, 30);
-            this.nud_Stock.TabIndex = 27;
-            // 
-            // Frm_ModifyProductAdmin
+            // Frm_ModifyProductAdmin_Vendor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -293,13 +296,13 @@
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "Frm_ModifyProductAdmin";
+            this.Name = "Frm_ModifyProductAdmin_Vendor";
             this.Text = "Demeter";
             this.groupBox3.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nud_Price)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_Stock)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nud_Price)).EndInit();
             this.ResumeLayout(false);
 
         }

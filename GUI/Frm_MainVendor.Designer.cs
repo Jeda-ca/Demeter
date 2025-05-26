@@ -42,24 +42,24 @@
             // panelTitleBar
             // 
             this.panelTitleBar.Margin = new System.Windows.Forms.Padding(4);
-            this.panelTitleBar.Size = new System.Drawing.Size(1910, 41);
+            this.panelTitleBar.Size = new System.Drawing.Size(1940, 41);
             // 
             // btn_Minimized
             // 
             this.btn_Minimized.FlatAppearance.BorderSize = 0;
-            this.btn_Minimized.Location = new System.Drawing.Point(1775, 0);
+            this.btn_Minimized.Location = new System.Drawing.Point(1805, 0);
             this.btn_Minimized.Margin = new System.Windows.Forms.Padding(4);
             // 
             // btn_Maximized
             // 
             this.btn_Maximized.FlatAppearance.BorderSize = 0;
-            this.btn_Maximized.Location = new System.Drawing.Point(1820, 0);
+            this.btn_Maximized.Location = new System.Drawing.Point(1850, 0);
             this.btn_Maximized.Margin = new System.Windows.Forms.Padding(4);
             // 
             // btn_Exit
             // 
             this.btn_Exit.FlatAppearance.BorderSize = 0;
-            this.btn_Exit.Location = new System.Drawing.Point(1865, 0);
+            this.btn_Exit.Location = new System.Drawing.Point(1895, 0);
             this.btn_Exit.Margin = new System.Windows.Forms.Padding(4);
             // 
             // panelMenu
@@ -86,7 +86,7 @@
             // panelContent
             // 
             this.panelContent.Margin = new System.Windows.Forms.Padding(4);
-            this.panelContent.Size = new System.Drawing.Size(1560, 1059);
+            this.panelContent.Size = new System.Drawing.Size(1590, 1059);
             this.panelContent.TabIndex = 4;
             // 
             // ibtn_Signout
@@ -225,7 +225,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
-            this.ClientSize = new System.Drawing.Size(1912, 1102);
+            this.ClientSize = new System.Drawing.Size(1942, 1102);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Location = new System.Drawing.Point(0, 0);
             this.Margin = new System.Windows.Forms.Padding(4);

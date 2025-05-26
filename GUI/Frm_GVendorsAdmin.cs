@@ -70,18 +70,17 @@ namespace GUI
         {
             // --- Lógica para cargar datos de vendedores desde la capa BLL y llenar el DataGridView. ---
             // Por ahora, el DataGridView estará vacío o con columnas definidas.
-            //DataTable dt = new DataTable();
-            //dt.Columns.Add("ID", typeof(int));
-            //dt.Columns.Add("Nombre", typeof(string));
-            //dt.Columns.Add("Apellido", typeof(string));
-            //dt.Columns.Add("Documento", typeof(string));
-            //dt.Columns.Add("Teléfono", typeof(string));
+            DataTable dt = new DataTable();
+            dt.Columns.Add("ID", typeof(int));
+            dt.Columns.Add("Nombre completo", typeof(string));
+            dt.Columns.Add("Documento", typeof(string));
+            dt.Columns.Add("Teléfono", typeof(string));
             // No se añaden filas de datos de prueba, solo las columnas.
             // Para probar:
-            // dt.Rows.Add(1, "Juan", "Pérez", "123456789", "3001112233"); // [cite: 18, 19]
-            // dt.Rows.Add(2, "María", "Gómez", "987654321", "3104445566"); // [cite: 18, 19]
+            // dt.Rows.Add(1, "Juan Pérez", "123456789", "3001112233"); // [cite: 18, 19]
+            // dt.Rows.Add(2, "María Gómez", "987654321", "3104445566"); // [cite: 18, 19]
 
-            // dgv_ListaVendedores.DataSource = dt; // Asignar el DataTable al DataGridView
+            dgv_ListaVendedores.DataSource = dt; // Asignar el DataTable al DataGridView
         }
         private void AddNewVendor()
         {

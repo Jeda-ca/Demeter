@@ -19,92 +19,103 @@ namespace GUI
             this.TopLevel = false; // Indica que no es una ventana de nivel superior independiente.
             this.FormBorderStyle = FormBorderStyle.None; // Elimina el borde y la barra de título.
             this.Dock = DockStyle.Fill; // Hace que el formulario llene el control contenedor.
+            
+            ibtn_Buscar.Click += ibtn_Buscar_Click;
+            cbx_FiltroV.SelectedIndexChanged += cbx_FiltroV_SelectedIndexChanged;
+
+
+            // Inicializar el ComboBox de filtro (placeholder)
+            cbx_FiltroV.Items.Add("-- Seleccione un filtro --"); // Índice 0
+            cbx_FiltroV.Items.Add("Fecha"); // Índice 1
+            cbx_FiltroV.Items.Add("Rango de fecha"); // Índice 2
+            cbx_FiltroV.SelectedIndex = 0; // Seleccionar la opción por defecto al inicio
+
+            // Asegurar que los DateTimePickers estén ocultos al inicio.
+            // Asumiendo que dtp_FInicio y dtp_FFin existen en el Designer.cs
+            // Si no existen, estas líneas causarán un error.
+            // dtp_FInicio.Visible = false;
+            // dtp_FFin.Visible = false;
         }
 
         // Evento Load del formulario.
-        private void Frm_Reports_Load(object sender, EventArgs e) // <-- Nombre del método corregido (si no lo estaba ya)
+        // Nombre del método corregido para coincidir con el nombre del formulario.
+        private void Frm_SalesByVendorReport_Load(object sender, EventArgs e)
         {
-            // Inicializar el ComboBox con tipos de reporte.
-            //cbx_TipoReport.Items.Add("-- Seleccione un tipo de reporte --"); // Opción por defecto (Índice 0)
-            //cbx_TipoReport.Items.Add("VENTAS GENERALES"); // Índice 1
-            //cbx_TipoReport.Items.Add("VENTAS POR VENDEDOR"); // Índice 2
-            //cbx_TipoReport.Items.Add("INVENTARIO GENERAL"); // Índice 3
-            //cbx_TipoReport.Items.Add("INVENTARIO POR VENDEDOR"); // Índice 4
-            //cbx_TipoReport.Items.Add("LISTA DE CLIENTES"); // Índice 5
-            //cbx_TipoReport.SelectedIndex = 0; // Seleccionar la opción por defecto al inicio
-
-            // Asegurar que el panel de filtro esté oculto al inicio.
-            //panelFiltro.Visible = false;
+            LoadReportData(); // Carga los datos iniciales al cargar el formulario.
         }
 
-        // Evento SelectedIndexChanged del ComboBox cbx_TipoReport.
-        private void cbx_TipoReport_SelectedIndexChanged(object sender, EventArgs e)
+        // Método para actualizar la visibilidad de los DateTimePicker.
+        private void UpdateDateTimePickerVisibility()
         {
-            // El panelFiltro se hará visible solo si se selecciona una opción diferente a la por defecto
-            // y a "VENTAS GENERALES".
-            //if (cbx_TipoReport.SelectedIndex > 1) // Es decir, a partir de "VENTAS POR VENDEDOR" (Índice 2)
-            //{
-            //    panelFiltro.Visible = true;
-            //    // --- Lógica placeholder para cargar opciones específicas en cbx_FiltroReport ---
-            //    cbx_FiltroReport.Items.Clear();
-            //    cbx_FiltroReport.Items.Add("-- Seleccione un filtro --");
-            //    string selectedType = cbx_TipoReport.SelectedItem.ToString();
+            string selectedFilter = cbx_FiltroV.SelectedItem?.ToString();
 
-            //    if (selectedType == "VENTAS POR VENDEDOR" || selectedType == "INVENTARIO POR VENDEDOR")
-            //    {
-            //        cbx_FiltroReport.Items.Add("Vendedor Específico");
-            //        cbx_FiltroReport.Items.Add("Fecha");
-            //        cbx_FiltroReport.Items.Add("Rango de fecha");
-            //    }
-            //    else if (selectedType == "LISTA DE CLIENTES")
-            //    {
-            //        cbx_FiltroReport.Items.Add("Cliente Específico");
-            //    }
-            //    // Si añades otros tipos de reporte que necesiten filtro, añádelos aquí.
+            // Asumiendo que dtp_FInicio y dtp_FFin existen en el Designer.cs
+            // Si no existen, estas líneas causarán un error.
+            // dtp_FInicio.Visible = false;
+            // dtp_FFin.Visible = false;
 
-            //    cbx_FiltroReport.SelectedIndex = 0;
-            //}
-            //else
-            //{
-            //    panelFiltro.Visible = false;
-            //    cbx_FiltroReport.Items.Clear(); // Limpiar el filtro secundario si el panel se oculta.
-            //}
-            // También deberías llamar a una lógica para cargar el DataGridView aquí con los datos adecuados.
-            // LoadReportData(); // Método placeholder para cargar datos del reporte.
+            if (selectedFilter == "Fecha")
+            {
+                // dtp_FInicio.Visible = true;
+                // dtp_FFin.Visible = false; // Asegurarse de que el segundo esté oculto
+            }
+            else if (selectedFilter == "Rango de fecha")
+            {
+                // dtp_FInicio.Visible = true;
+                // dtp_FFin.Visible = true;
+            }
+            // Para otros filtros, ambos DateTimePicker permanecerán ocultos.
+        }
+
+        // Evento SelectedIndexChanged del ComboBox cbx_FiltroV.
+        // Nombre del método corregido para coincidir con el nombre del control en Designer.cs.
+        private void cbx_FiltroV_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateDateTimePickerVisibility();
         }
 
         // Método placeholder para el botón de búsqueda.
         private void ibtn_Buscar_Click(object sender, EventArgs e)
         {
             // --- Lógica de búsqueda de reporte basada en el tipo, filtro y texto. ---
-            //string tipoReporte = cbx_TipoReport.SelectedItem?.ToString();
-            //string filtroSeleccionado = cbx_FiltroReport.SelectedItem?.ToString(); // Puede ser null
-            //string textoBusqueda = tbx_BusqReport.Text;
+            string filtroSeleccionado = cbx_FiltroV.SelectedItem?.ToString(); // Puede ser null
+            // string textoBusqueda = tbx_BusqReport.Text; // Asumiendo tbx_BusqReport existe
+            // DateTime? fechaInicio = dtp_FInicio.Visible ? dtp_FInicio.Value : (DateTime?)null;
+            // DateTime? fechaFin = dtp_FFin.Visible ? dtp_FFin.Value : (DateTime?)null;
 
             // Validaciones básicas
-            //if (cbx_TipoReport.SelectedIndex == 0)
-            //{
-            //    MessageBox.Show("Por favor, seleccione un tipo de reporte.", "Búsqueda incompleta", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            //    return;
-            //}
+            if (cbx_FiltroV.SelectedIndex == 0)
+            {
+                MessageBox.Show("Por favor, seleccione un tipo de filtro.", "Búsqueda incompleta", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-            //MessageBox.Show($"Generando Reporte:\nTipo: {tipoReporte}\nFiltro: {filtroSeleccionado ?? "Ninguno"}\nTexto de Búsqueda: {textoBusqueda}", "Generar Reporte (Placeholder)", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show($"Generando Reporte:\nFiltro: {filtroSeleccionado ?? "Ninguno"}", "Generar Reporte (Placeholder)", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            // Aquí se llamaría a la capa BLL para obtener los datos del reporte y llenar dgv_Reportes.
+            // Aquí se llamaría a la capa BLL para obtener los datos del reporte y llenar dgv_ReportesVentxVend.
             LoadReportData(); // Recarga los datos placeholder.
         }
 
-        // Método placeholder para cargar/recargar datos del DataGridView de reportes.
+        // Método placeholder para cargar/recargar datos del DataGridView de reportes de ventas por vendedor.
         private void LoadReportData()
         {
-            // --- Lógica para cargar datos del reporte en dgv_Reportes. ---
-            // Por ahora, el DataGridView estará vacío o con columnas definidas.
+            // --- Lógica para cargar datos del reporte en dgv_ReportesVentxVend. ---
+            // Por ahora, el DataGridView tendrá columnas definidas y datos de ejemplo.
             DataTable dt = new DataTable();
-            dt.Columns.Add("Columna A", typeof(string));
-            dt.Columns.Add("Columna B", typeof(string));
-            dt.Columns.Add("Columna C", typeof(string));
-            // No se añaden filas de datos de prueba.
-            dgv_ReportesVentxVend.DataSource = dt;
+            dt.Columns.Add("ID Venta", typeof(int));
+            dt.Columns.Add("Fecha Ocurrencia", typeof(DateTime));
+            dt.Columns.Add("Total Venta", typeof(decimal));
+            dt.Columns.Add("Cliente", typeof(string));
+            dt.Columns.Add("Estado", typeof(string));
+
+            // Datos de ejemplo para las columnas (simulando ventas de un vendedor específico)
+            //dt.Rows.Add(1, DateTime.Now.AddDays(-10), 15000.00m, "Ana Gómez", "COMPLETADA");
+            //dt.Rows.Add(5, DateTime.Now.AddDays(-3), 11800.00m, "Camila Torres", "COMPLETADA");
+            //dt.Rows.Add(9, DateTime.Now.AddDays(-1), 7000.00m, "Daniela Moreno", "PENDIENTE");
+
+            // Asumiendo que el DataGridView se llama dgv_ReportesVentxVend en tu Designer.cs
+            // Si el nombre es diferente, por favor, ajusta esta línea.
+            dgv_ReportesVentxVend.DataSource = dt; // Ajusta el nombre de tu DataGridView
         }
     }
 }

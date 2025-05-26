@@ -32,12 +32,12 @@
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.dgv_Client = new System.Windows.Forms.DataGridView();
+            this.ibtn_Clear = new FontAwesome.Sharp.IconButton();
             this.cbx_Busq = new System.Windows.Forms.ComboBox();
+            this.ibtn_Buscar = new FontAwesome.Sharp.IconButton();
             this.label3 = new System.Windows.Forms.Label();
             this.tbx_Busq = new System.Windows.Forms.TextBox();
             this.ibtn_OK = new FontAwesome.Sharp.IconButton();
-            this.ibtn_Clear = new FontAwesome.Sharp.IconButton();
-            this.ibtn_Buscar = new FontAwesome.Sharp.IconButton();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_Client)).BeginInit();
             this.SuspendLayout();
@@ -83,6 +83,28 @@
             this.dgv_Client.Size = new System.Drawing.Size(665, 211);
             this.dgv_Client.TabIndex = 55;
             // 
+            // ibtn_Clear
+            // 
+            this.ibtn_Clear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ibtn_Clear.BackColor = System.Drawing.Color.Salmon;
+            this.ibtn_Clear.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ibtn_Clear.FlatAppearance.BorderSize = 0;
+            this.ibtn_Clear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ibtn_Clear.Font = new System.Drawing.Font("Tahoma", 10.2F, System.Drawing.FontStyle.Bold);
+            this.ibtn_Clear.ForeColor = System.Drawing.Color.White;
+            this.ibtn_Clear.IconChar = FontAwesome.Sharp.IconChar.Broom;
+            this.ibtn_Clear.IconColor = System.Drawing.Color.White;
+            this.ibtn_Clear.IconFont = FontAwesome.Sharp.IconFont.Solid;
+            this.ibtn_Clear.IconSize = 30;
+            this.ibtn_Clear.Location = new System.Drawing.Point(638, 65);
+            this.ibtn_Clear.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.ibtn_Clear.Name = "ibtn_Clear";
+            this.ibtn_Clear.Size = new System.Drawing.Size(39, 32);
+            this.ibtn_Clear.TabIndex = 54;
+            this.ibtn_Clear.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.ibtn_Clear.UseVisualStyleBackColor = false;
+            this.ibtn_Clear.Click += new System.EventHandler(this.ibtn_Clear_Click);
+            // 
             // cbx_Busq
             // 
             this.cbx_Busq.FormattingEnabled = true;
@@ -90,6 +112,29 @@
             this.cbx_Busq.Name = "cbx_Busq";
             this.cbx_Busq.Size = new System.Drawing.Size(221, 32);
             this.cbx_Busq.TabIndex = 19;
+            // 
+            // ibtn_Buscar
+            // 
+            this.ibtn_Buscar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ibtn_Buscar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(66)))), ((int)(((byte)(98)))));
+            this.ibtn_Buscar.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ibtn_Buscar.FlatAppearance.BorderSize = 0;
+            this.ibtn_Buscar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ibtn_Buscar.Font = new System.Drawing.Font("Tahoma", 10.2F, System.Drawing.FontStyle.Bold);
+            this.ibtn_Buscar.ForeColor = System.Drawing.Color.White;
+            this.ibtn_Buscar.IconChar = FontAwesome.Sharp.IconChar.MagnifyingGlass;
+            this.ibtn_Buscar.IconColor = System.Drawing.Color.White;
+            this.ibtn_Buscar.IconFont = FontAwesome.Sharp.IconFont.Solid;
+            this.ibtn_Buscar.IconSize = 23;
+            this.ibtn_Buscar.Location = new System.Drawing.Point(496, 65);
+            this.ibtn_Buscar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.ibtn_Buscar.Name = "ibtn_Buscar";
+            this.ibtn_Buscar.Size = new System.Drawing.Size(133, 33);
+            this.ibtn_Buscar.TabIndex = 53;
+            this.ibtn_Buscar.Text = "Buscar";
+            this.ibtn_Buscar.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.ibtn_Buscar.UseVisualStyleBackColor = false;
+            this.ibtn_Buscar.Click += new System.EventHandler(this.ibtn_Buscar_Click);
             // 
             // label3
             // 
@@ -130,49 +175,7 @@
             this.ibtn_OK.TabIndex = 56;
             this.ibtn_OK.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
             this.ibtn_OK.UseVisualStyleBackColor = false;
-            // 
-            // ibtn_Clear
-            // 
-            this.ibtn_Clear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ibtn_Clear.BackColor = System.Drawing.Color.Salmon;
-            this.ibtn_Clear.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.ibtn_Clear.FlatAppearance.BorderSize = 0;
-            this.ibtn_Clear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ibtn_Clear.Font = new System.Drawing.Font("Tahoma", 10.2F, System.Drawing.FontStyle.Bold);
-            this.ibtn_Clear.ForeColor = System.Drawing.Color.White;
-            this.ibtn_Clear.IconChar = FontAwesome.Sharp.IconChar.Broom;
-            this.ibtn_Clear.IconColor = System.Drawing.Color.White;
-            this.ibtn_Clear.IconFont = FontAwesome.Sharp.IconFont.Solid;
-            this.ibtn_Clear.IconSize = 30;
-            this.ibtn_Clear.Location = new System.Drawing.Point(638, 65);
-            this.ibtn_Clear.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.ibtn_Clear.Name = "ibtn_Clear";
-            this.ibtn_Clear.Size = new System.Drawing.Size(39, 32);
-            this.ibtn_Clear.TabIndex = 54;
-            this.ibtn_Clear.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-            this.ibtn_Clear.UseVisualStyleBackColor = false;
-            // 
-            // ibtn_Buscar
-            // 
-            this.ibtn_Buscar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ibtn_Buscar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(66)))), ((int)(((byte)(98)))));
-            this.ibtn_Buscar.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.ibtn_Buscar.FlatAppearance.BorderSize = 0;
-            this.ibtn_Buscar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ibtn_Buscar.Font = new System.Drawing.Font("Tahoma", 10.2F, System.Drawing.FontStyle.Bold);
-            this.ibtn_Buscar.ForeColor = System.Drawing.Color.White;
-            this.ibtn_Buscar.IconChar = FontAwesome.Sharp.IconChar.MagnifyingGlass;
-            this.ibtn_Buscar.IconColor = System.Drawing.Color.White;
-            this.ibtn_Buscar.IconFont = FontAwesome.Sharp.IconFont.Solid;
-            this.ibtn_Buscar.IconSize = 23;
-            this.ibtn_Buscar.Location = new System.Drawing.Point(496, 65);
-            this.ibtn_Buscar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.ibtn_Buscar.Name = "ibtn_Buscar";
-            this.ibtn_Buscar.Size = new System.Drawing.Size(133, 33);
-            this.ibtn_Buscar.TabIndex = 53;
-            this.ibtn_Buscar.Text = "Buscar";
-            this.ibtn_Buscar.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-            this.ibtn_Buscar.UseVisualStyleBackColor = false;
+            this.ibtn_OK.Click += new System.EventHandler(this.ibtn_OK_Click);
             // 
             // Frm_BusqClient
             // 
