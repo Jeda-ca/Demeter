@@ -436,7 +436,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
     <ProjectReference Include="..\BLL\BLL.csproj">
       <Project>{d2b526da-5ca9-4f28-82ff-8e17868413d7}</Project>
       <Name>BLL</Name>
@@ -445,7 +444,6 @@
       <Project>{ce5c6e22-0d54-42d3-ab02-df46c8d8e18e}</Project>
       <Name>ENTITY</Name>
     </ProjectReference>
-=======
     <Content Include="image\LogoDemeter-removebg-preview.png" />
     <Content Include="image\LogoDemeter.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -462,7 +460,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
->>>>>>> gui
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets" Condition="Exists('..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets')" />
