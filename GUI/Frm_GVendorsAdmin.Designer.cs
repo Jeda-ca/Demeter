@@ -297,6 +297,7 @@
             this.ibtn_Clear.TabIndex = 12;
             this.ibtn_Clear.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
             this.ibtn_Clear.UseVisualStyleBackColor = false;
+            this.ibtn_Clear.Click += new System.EventHandler(this.ibtn_Clear_Click);
             // 
             // ibtn_Buscar
             // 
@@ -319,6 +320,7 @@
             this.ibtn_Buscar.Text = "Buscar";
             this.ibtn_Buscar.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
             this.ibtn_Buscar.UseVisualStyleBackColor = false;
+            this.ibtn_Buscar.Click += new System.EventHandler(this.ibtn_Buscar_Click);
             // 
             // tbx_Busqueda
             // 
@@ -366,7 +368,7 @@
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Frm_GVendorsAdmin";
             this.Text = "Frm_GVendorsAdmin";
-            this.Load += new System.EventHandler(this.Frm_GVendedoresAdmin_Load);
+            this.Load += new System.EventHandler(this.Frm_GVendorsAdmin_Load);
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).EndInit();
             this.panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgv_ListaVendedores)).EndInit();

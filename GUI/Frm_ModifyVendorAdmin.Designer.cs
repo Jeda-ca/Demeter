@@ -66,6 +66,7 @@
             this.ibtn_Cancel.TabIndex = 30;
             this.ibtn_Cancel.Text = "Cancelar";
             this.ibtn_Cancel.UseVisualStyleBackColor = false;
+            this.ibtn_Cancel.Click += new System.EventHandler(this.ibtn_Cancel_Click);
             // 
             // ibtn_Clear
             // 
@@ -84,6 +85,7 @@
             this.ibtn_Clear.TabIndex = 29;
             this.ibtn_Clear.Text = "Limpiar";
             this.ibtn_Clear.UseVisualStyleBackColor = false;
+            this.ibtn_Clear.Click += new System.EventHandler(this.ibtn_Clear_Click);
             // 
             // ibtn_Modify
             // 
@@ -102,6 +104,7 @@
             this.ibtn_Modify.TabIndex = 28;
             this.ibtn_Modify.Text = "Guardar cambios";
             this.ibtn_Modify.UseVisualStyleBackColor = false;
+            this.ibtn_Modify.Click += new System.EventHandler(this.ibtn_Modify_Click);
             // 
             // label1
             // 

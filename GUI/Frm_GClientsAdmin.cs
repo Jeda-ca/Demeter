@@ -1,4 +1,7 @@
-﻿using GUI;
+﻿using BLL.Interfaces;
+using BLL.Services;
+using ENTITY;
+using GUI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,122 +17,308 @@ namespace GUI
 {
     public partial class Frm_GClientsAdmin : Form
     {
-        public Frm_GClientsAdmin()
+        private readonly IClienteService _clienteService;
+        private readonly ITipoDocumentoService _tipoDocumentoService; // Para mostrar nombre de tipo doc
+        private readonly int _idAdminLogueado;
+
+        public Frm_GClientsAdmin(int idAdminLogueado)
         {
             InitializeComponent();
+            this.TopLevel = false;
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.Dock = DockStyle.Fill;
 
-            // Configuración esencial para que este formulario pueda ser incrustado como un control:
-            this.TopLevel = false; // Indica que no es una ventana de nivel superior independiente.
-            this.FormBorderStyle = FormBorderStyle.None; // Elimina el borde y la barra de título.
-            this.Dock = DockStyle.Fill; // Hace que el formulario llene el control contenedor.
+            _idAdminLogueado = idAdminLogueado;
 
-            // Inicializar ComboBox de búsqueda (placeholder)
-            cbx_Buscar.Items.Add("-- Seleccione --");
-            cbx_Buscar.Items.Add("Nombre");
-            cbx_Buscar.Items.Add("Apellido");
-            cbx_Buscar.Items.Add("Número de Documento");
-            cbx_Buscar.Items.Add("Email");
-            cbx_Buscar.SelectedIndex = 0;
-        }
-        private void Frm_GClientsAdmin_Load(object sender, EventArgs e) // Evento Load del formulario.
-        {
-            LoadClientsData(); // Lógica para cargar datos de clientes en el DataGridView.
-        }
-
-        //EVENTOS
-        private void ibtn_ModifyInfo_Click(object sender, EventArgs e) // Evento Click del botón "Modificar Información" para abrir Frm_ModifyC
-        {
-            if (dgv_ListaClientes.SelectedRows.Count > 0) // Lógica para verificar si hay un cliente seleccionado en el DataGridView
+            if (_idAdminLogueado <= 0)
             {
-                ModifyClientInfo(); // Llama al método para abrir el formulario de modificar cliente.
-            }
-            else
-            {
-                MessageBox.Show("Por favor, seleccione un cliente para modificar.", "Modificar Cliente", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-        private void ibtn_Delete_Click(object sender, EventArgs e) // Evento Click del botón "Eliminar" (placeholder para la lógica de eliminar cliente)
-        {
-            if (dgv_ListaClientes.SelectedRows.Count > 0)
-            {
-                DeleteClient(); // Llama al método para eliminar el cliente seleccionado.
-            }
-            else
-            {
-                MessageBox.Show("Por favor, seleccione un cliente para eliminar.", "Eliminar Cliente", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-        private void ibtn_Buscar_Click(object sender, EventArgs e) // Evento Click del botón "Buscar" (placeholder para la lógica de búsqueda)
-        {
-            BuscarClient(); // Llama al método para buscar clientes.
-        }
-
-        // MÉTODOS PRIVADOS
-        private void LoadClientsData() // Método placeholder para cargar/recargar datos de clientes.
-        {
-            //---Lógica para cargar datos de clientes desde la capa BLL y llenar el DataGridView. -- -
-            //Por ahora, el DataGridView estará vacío o con columnas definidas.
-            DataTable dt = new DataTable();
-            dt.Columns.Add("ID", typeof(int));
-            dt.Columns.Add("Nombre", typeof(string));
-            dt.Columns.Add("Apellido", typeof(string));
-            dt.Columns.Add("Documento", typeof(string));
-            dt.Columns.Add("Teléfono", typeof(string));
-            dt.Columns.Add("Email", typeof(string));
-            // No se añaden filas de datos de prueba.
-            // Para probar:
-            // dt.Rows.Add(1, "Ana", "López", "1001001", "3011112233", "ana.lopez@example.com"); // DATOS DE PRUEBA
-            // dt.Rows.Add(2, "Carlos", "Ramírez", "1001002", "3024445566", "carlos.ramirez@example.com"); // DATOS DE PRUEBA
-
-            dgv_ListaClientes.DataSource = dt; // Asignar el DataTable al DataGridView
-        }
-        private void ModifyClientInfo()
-        {
-            // --- Lógica para pasar la información del cliente seleccionado a Frm_ModifyC ---
-            // Ejemplo:
-            // int clienteId = (int)dgv_ListaClientes.SelectedRows[0].Cells["ID"].Value;
-            // string nombre = dgv_ListaClientes.SelectedRows[0].Cells["Nombre"].Value.ToString();
-            // ... y pasar todos los datos necesarios al constructor de Frm_ModifyC
-
-            Frm_ModifyClient frmModifyC = new Frm_ModifyClient(); // Si necesitas pasar datos, modifica el constructor de Frm_ModifyC
-            DialogResult result = frmModifyC.ShowDialog(); // Abre el formulario Frm_ModifyC como un diálogo modal
-
-            // Si el formulario Frm_ModifyC se cerró con DialogResult.OK
-            // if (result == DialogResult.OK)
-            // {
-            //     LoadClientsData(); // Recargar la lista de clientes si es necesario.
-            // }
-        }
-        private void DeleteClient()
-        {
-            DialogResult result = MessageBox.Show("¿Está seguro que desea eliminar el cliente seleccionado?", "Confirmar Eliminación", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            if (result == DialogResult.Yes)
-            {
-                // --- Lógica placeholder para eliminar el cliente seleccionado ---
-                // Ejemplo: int clienteId = (int)dgv_ListaClientes.SelectedRows[0].Cells["ID"].Value;
-                // BLL.ClienteManager.DeleteCliente(clienteId); // Llamada a la capa BLL
-
-                MessageBox.Show("Cliente eliminado con éxito (Placeholder).", "Eliminar Cliente", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                // Después de eliminar, podrías recargar la lista de clientes:
-                // LoadClientsData();
-            }
-        }
-        private void BuscarClient()
-        {
-            // --- Lógica para buscar clientes basada en el texto y el criterio de búsqueda. ---
-            string searchText = tbx_Busqueda.Text;
-            string searchCriteria = cbx_Buscar.SelectedItem?.ToString(); // Asumiendo que cbx_Buscar existe y tiene opciones
-
-            if (cbx_Buscar.SelectedIndex == 0 || string.IsNullOrWhiteSpace(searchText))
-            {
-                MessageBox.Show("Por favor, seleccione un criterio de búsqueda y/o ingrese un texto.", "Búsqueda incompleta", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                LoadClientsData(); // Recargar todos los clientes si la búsqueda es inválida o vacía.
+                MessageBox.Show("Error: ID de administrador no válido. No se pueden realizar operaciones.", "Error de Sesión", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.BeginInvoke(new MethodInvoker(this.Close)); // Cerrar de forma segura
                 return;
             }
 
-            MessageBox.Show($"Lógica de búsqueda para '{searchText}' por '{searchCriteria}'.", "Buscar Cliente (Placeholder)", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            // Aquí llamarías a la capa BLL para filtrar los datos y actualizar el DataGridView.
-            // Ejemplo: dgv_ListaClientes.DataSource = BLL.ClienteManager.SearchClients(searchText, searchCriteria);
+            try
+            {
+                _clienteService = new ClienteService();
+                _tipoDocumentoService = new TipoDocumentoService(); // Para obtener nombres de TipoDocumento
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error crítico al inicializar servicios: {ex.Message}", "Error de Inicialización", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Deshabilitar controles si la inicialización falla
+                if (ibtn_ModifyInfo != null) ibtn_ModifyInfo.Enabled = false;
+                if (ibtn_Delete != null) ibtn_Delete.Enabled = false;
+                if (ibtn_Buscar != null) ibtn_Buscar.Enabled = false;
+            }
         }
+
+        private void Frm_GClientsAdmin_Load(object sender, EventArgs e)
+        {
+            if (_idAdminLogueado > 0 && _clienteService != null)
+            {
+                CargarFiltrosComboBox();
+                LoadClientsData(true); // Cargar solo activos por defecto
+            }
+        }
+
+        private void CargarFiltrosComboBox()
+        {
+            if (cbx_Buscar == null) return;
+            cbx_Buscar.Items.Clear();
+            cbx_Buscar.Items.Add("-- Seleccione Criterio --");
+            cbx_Buscar.Items.Add("Nombre o Apellido");
+            cbx_Buscar.Items.Add("Número de Documento");
+            cbx_Buscar.Items.Add("Email");
+            cbx_Buscar.Items.Add("Estado (Activo/Inactivo)");
+            cbx_Buscar.SelectedIndex = 0;
+        }
+
+        private void LoadClientsData(bool soloActivos = false)
+        {
+            try
+            {
+                if (_clienteService == null)
+                {
+                    MessageBox.Show("Servicio de clientes no inicializado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                IEnumerable<Cliente> clientes;
+                if (soloActivos)
+                {
+                    clientes = _clienteService.ObtenerTodosLosClientes().Where(c => c.Activo).ToList();
+                }
+                else
+                {
+                    clientes = _clienteService.ObtenerTodosLosClientes().ToList();
+                }
+
+                DataTable dt = new DataTable();
+                dt.Columns.Add("IdCliente", typeof(int));
+                dt.Columns.Add("NombreCompleto", typeof(string));
+                dt.Columns.Add("TipoDocumento", typeof(string));
+                dt.Columns.Add("NumeroDocumento", typeof(string));
+                dt.Columns.Add("Telefono", typeof(string));
+                dt.Columns.Add("Email", typeof(string));
+                dt.Columns.Add("Estado", typeof(string));
+
+                foreach (var cliente in clientes)
+                {
+                    // Para obtener el nombre del TipoDocumento, necesitamos la entidad TipoDocumento poblada.
+                    // Si _clienteService.ObtenerTodosLosClientes() ya incluye esto (por eager loading en DAL), está bien.
+                    // Si no, necesitaríamos llamar a _tipoDocumentoService.ObtenerPorId(cliente.TipoDocumentoId).Nombre
+                    string nombreTipoDoc = cliente.TipoDocumento?.Nombre ?? _tipoDocumentoService?.ObtenerPorId(cliente.TipoDocumentoId)?.Nombre ?? cliente.TipoDocumentoId.ToString();
+
+                    dt.Rows.Add(
+                        cliente.IdCliente,
+                        $"{cliente.Nombre} {cliente.Apellido}",
+                        nombreTipoDoc,
+                        cliente.NumeroDocumento,
+                        cliente.Telefono,
+                        cliente.Correo,
+                        cliente.Activo ? "Activo" : "Inactivo"
+                    );
+                }
+
+                if (dgv_ListaClientes != null)
+                {
+                    dgv_ListaClientes.DataSource = dt;
+
+                    if (dgv_ListaClientes.Columns["IdCliente"] != null)
+                        dgv_ListaClientes.Columns["IdCliente"].Visible = false;
+
+                    bool mostrarColumnaEstadoActual = (cbx_Buscar.SelectedItem?.ToString() == "Estado (Activo/Inactivo)");
+                    if (dgv_ListaClientes.Columns["Estado"] != null)
+                        dgv_ListaClientes.Columns["Estado"].Visible = !soloActivos || mostrarColumnaEstadoActual;
+                }
+            }
+            catch (ApplicationException appEx)
+            {
+                MessageBox.Show(appEx.Message, "Error de Aplicación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar datos de clientes: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ibtn_ModifyInfo_Click(object sender, EventArgs e)
+        {
+            if (dgv_ListaClientes.SelectedRows.Count > 0)
+            {
+                try
+                {
+                    int idClienteSeleccionado = Convert.ToInt32(dgv_ListaClientes.SelectedRows[0].Cells["IdCliente"].Value);
+                    if (_clienteService == null) { MessageBox.Show("Servicio de clientes no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                    Cliente clienteAModificar = _clienteService.ObtenerClientePorId(idClienteSeleccionado);
+
+                    if (clienteAModificar != null)
+                    {
+                        // Usar el nombre de tu formulario de modificación: Frm_ModifyClient o Frm_ModifyClientAdmin
+                        using (Frm_ModifyClientAdmin frmModify = new Frm_ModifyClientAdmin(clienteAModificar, _idAdminLogueado))
+                        {
+                            if (frmModify.ShowDialog() == DialogResult.OK)
+                            {
+                                LoadClientsData(true);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo encontrar el cliente seleccionado para modificar.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al preparar modificación del cliente: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Por favor, seleccione un cliente de la lista para modificar.", "Selección Requerida", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void ibtn_Delete_Click(object sender, EventArgs e) // Cambia estado Activo/Inactivo
+        {
+            if (dgv_ListaClientes.SelectedRows.Count > 0)
+            {
+                try
+                {
+                    int idCliente = Convert.ToInt32(dgv_ListaClientes.SelectedRows[0].Cells["IdCliente"].Value);
+                    string nombreCliente = dgv_ListaClientes.SelectedRows[0].Cells["NombreCompleto"].Value.ToString();
+                    string estadoActualStr = dgv_ListaClientes.SelectedRows[0].Cells["Estado"].Value.ToString();
+                    bool estaActivo = estadoActualStr.Equals("Activo", StringComparison.OrdinalIgnoreCase);
+
+                    string accion = estaActivo ? "inactivar" : "reactivar";
+                    DialogResult confirmacion = MessageBox.Show($"¿Está seguro que desea {accion} al cliente '{nombreCliente}'?", $"Confirmar {accion}", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                    if (confirmacion == DialogResult.Yes)
+                    {
+                        if (_clienteService == null) { MessageBox.Show("Servicio de clientes no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                        bool resultadoOp = _clienteService.CambiarEstadoActividadCliente(idCliente, !estaActivo);
+
+                        string mensajeResultado = resultadoOp ?
+                            $"Estado del cliente '{nombreCliente}' cambiado exitosamente a {(!estaActivo ? "Activo" : "Inactivo")}." :
+                            $"No se pudo cambiar el estado del cliente '{nombreCliente}'.";
+
+                        MessageBox.Show(mensajeResultado, "Cambio de Estado", MessageBoxButtons.OK,
+                                        resultadoOp ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+                        LoadClientsData(true);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al cambiar estado del cliente: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Por favor, seleccione un cliente de la lista.", "Selección Requerida", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void ibtn_Buscar_Click(object sender, EventArgs e)
+        {
+            string criterio = cbx_Buscar.SelectedItem?.ToString();
+            string textoBusqueda = tbx_Busqueda.Text.Trim();
+            IEnumerable<Cliente> clientesFiltrados = new List<Cliente>();
+            bool mostrarColumnaEstadoAlBuscar = false;
+
+            if (string.IsNullOrEmpty(criterio) || criterio == "-- Seleccione Criterio --")
+            {
+                LoadClientsData(true);
+                return;
+            }
+            if (_clienteService == null) { MessageBox.Show("Servicio de clientes no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+            try
+            {
+                var todosLosClientes = _clienteService.ObtenerTodosLosClientes();
+
+                switch (criterio)
+                {
+                    case "Nombre o Apellido":
+                        if (!string.IsNullOrWhiteSpace(textoBusqueda))
+                            clientesFiltrados = todosLosClientes.Where(c =>
+                                (c.Nombre.IndexOf(textoBusqueda, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                                 c.Apellido.IndexOf(textoBusqueda, StringComparison.OrdinalIgnoreCase) >= 0) && c.Activo
+                            ).ToList();
+                        else { LoadClientsData(true); return; }
+                        break;
+                    case "Número de Documento":
+                        if (!string.IsNullOrWhiteSpace(textoBusqueda))
+                            clientesFiltrados = todosLosClientes.Where(c => c.NumeroDocumento.Contains(textoBusqueda) && c.Activo).ToList();
+                        else { LoadClientsData(true); return; }
+                        break;
+                    case "Email":
+                        if (!string.IsNullOrWhiteSpace(textoBusqueda))
+                            clientesFiltrados = todosLosClientes.Where(c => c.Correo != null && c.Correo.IndexOf(textoBusqueda, StringComparison.OrdinalIgnoreCase) >= 0 && c.Activo).ToList();
+                        else { LoadClientsData(true); return; }
+                        break;
+                    case "Estado (Activo/Inactivo)":
+                        mostrarColumnaEstadoAlBuscar = true;
+                        if (textoBusqueda.Equals("Activo", StringComparison.OrdinalIgnoreCase))
+                            clientesFiltrados = todosLosClientes.Where(c => c.Activo).ToList();
+                        else if (textoBusqueda.Equals("Inactivo", StringComparison.OrdinalIgnoreCase))
+                            clientesFiltrados = todosLosClientes.Where(c => !c.Activo).ToList();
+                        else if (string.IsNullOrWhiteSpace(textoBusqueda))
+                            clientesFiltrados = todosLosClientes.ToList();
+                        else
+                        {
+                            MessageBox.Show("Para filtrar por estado, ingrese 'Activo', 'Inactivo' o deje el campo vacío para ver todos.", "Entrada Inválida", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            LoadClientsData(true); return;
+                        }
+                        break;
+                    default:
+                        clientesFiltrados = todosLosClientes.Where(c => c.Activo).ToList();
+                        break;
+                }
+
+                DataTable dt = new DataTable();
+                dt.Columns.Add("IdCliente", typeof(int));
+                dt.Columns.Add("NombreCompleto", typeof(string));
+                dt.Columns.Add("TipoDocumento", typeof(string));
+                dt.Columns.Add("NumeroDocumento", typeof(string));
+                dt.Columns.Add("Telefono", typeof(string));
+                dt.Columns.Add("Email", typeof(string));
+                dt.Columns.Add("Estado", typeof(string));
+
+                foreach (var cliente in clientesFiltrados)
+                {
+                    string nombreTipoDoc = cliente.TipoDocumento?.Nombre ?? _tipoDocumentoService?.ObtenerPorId(cliente.TipoDocumentoId)?.Nombre ?? cliente.TipoDocumentoId.ToString();
+                    dt.Rows.Add(
+                        cliente.IdCliente,
+                        $"{cliente.Nombre} {cliente.Apellido}",
+                        nombreTipoDoc,
+                        cliente.NumeroDocumento,
+                        cliente.Telefono,
+                        cliente.Correo,
+                        cliente.Activo ? "Activo" : "Inactivo"
+                    );
+                }
+                dgv_ListaClientes.DataSource = dt;
+
+                if (dgv_ListaClientes.Columns["IdCliente"] != null)
+                    dgv_ListaClientes.Columns["IdCliente"].Visible = false;
+                if (dgv_ListaClientes.Columns["Estado"] != null)
+                    dgv_ListaClientes.Columns["Estado"].Visible = mostrarColumnaEstadoAlBuscar;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al buscar clientes: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Asegúrate de que el botón Limpiar(ibtn_Clear) esté conectado a este evento en el Designer.cs
+        private void ibtn_Clear_Click(object sender, EventArgs e)
+        {
+            if (tbx_Busqueda != null) tbx_Busqueda.Clear();
+            if (cbx_Buscar != null && cbx_Buscar.Items.Count > 0) cbx_Buscar.SelectedIndex = 0;
+            LoadClientsData(true); // Recargar solo activos
+        }
+
     }
 }

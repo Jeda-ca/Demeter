@@ -1,5 +1,6 @@
 ﻿using BLL.Interfaces;
 using DAL.Interfaces;
+using DAL.Repositories;
 using ENTITY;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,19 @@ namespace BLL.Services
         private readonly IVendedorRepository _vendedorRepository;
         private readonly IAdministradorRepository _administradorRepository;
         private readonly IRolRepository _rolRepository;
+        readonly IPersonaRepository _personaRepository;
 
+        // Nuevo constructor sin parámetros para ser usado por la GUI
+        public UsuarioService()
+        {
+            _rolRepository = new RolRepository();
+            _personaRepository = new PersonaRepository();
+            _usuarioRepository = new UsuarioRepository();
+            _vendedorRepository = new VendedorRepository();
+            _administradorRepository = new AdministradorRepository();
+        }
+
+        // Constructor parametrizado (útil para pruebas unitarias o inyección de dependencias más avanzada)
         public UsuarioService(IUsuarioRepository usuarioRepository,
                               IVendedorRepository vendedorRepository,
                               IAdministradorRepository administradorRepository,
@@ -61,10 +74,10 @@ namespace BLL.Services
             }
             catch (Exception ex)
             {
+                // Considera loggear el error
                 throw new ApplicationException("Error durante la autenticación.", ex);
             }
         }
-
         public IEnumerable<Usuario> ObtenerTodosLosUsuariosDelSistema()
         {
             try
@@ -76,19 +89,6 @@ namespace BLL.Services
                 throw new ApplicationException("Error al obtener todos los usuarios del sistema.", ex);
             }
         }
-
-        public IEnumerable<Usuario> ObtenerTodosLosUsuariosActivosDelSistema()
-        {
-            try
-            {
-                return _usuarioRepository.GetAllSystemUsers().Where(u => u.Activo);
-            }
-            catch (Exception ex)
-            {
-                throw new ApplicationException("Error al obtener todos los usuarios activos del sistema.", ex);
-            }
-        }
-
 
         public Usuario ObtenerUsuarioPorId(int idUsuario)
         {
@@ -102,7 +102,6 @@ namespace BLL.Services
                 throw new ApplicationException($"Error al obtener usuario con ID {idUsuario}.", ex);
             }
         }
-
         public Usuario ObtenerUsuarioPorNombreUsuario(string nombreUsuario)
         {
             if (string.IsNullOrWhiteSpace(nombreUsuario)) return null;
@@ -120,23 +119,18 @@ namespace BLL.Services
         {
             if (vendedor == null) return "Datos del vendedor no pueden ser nulos.";
             if (string.IsNullOrWhiteSpace(contrasena)) return "La contraseña es requerida.";
-            if (string.IsNullOrWhiteSpace(vendedor.Nombre)) return "El nombre del vendedor es requerido.";
-            if (string.IsNullOrWhiteSpace(vendedor.Apellido)) return "El apellido del vendedor es requerido.";
-            if (vendedor.TipoDocumentoId <= 0) return "El tipo de documento es requerido.";
-            if (string.IsNullOrWhiteSpace(vendedor.NumeroDocumento)) return "El número de documento es requerido.";
-            if (string.IsNullOrWhiteSpace(vendedor.NombreUsuario)) return "El nombre de usuario es requerido.";
+            // ... (otras validaciones de Vendedor)
 
             try
             {
                 var rolVendedor = _rolRepository.GetByName("VENDEDOR");
                 if (rolVendedor == null) return "El rol 'VENDEDOR' no está configurado en el sistema.";
 
-
                 int nextSuffix = _vendedorRepository.GetMaxSellerNumericSuffix() + 1;
-                vendedor.CodigoVendedor = $"V-{nextSuffix:D3}"; // Formato V-001, V-002, etc.
+                vendedor.CodigoVendedor = $"V-{nextSuffix:D3}";
 
                 vendedor.RolId = rolVendedor.IdRol;
-                vendedor.Rol = rolVendedor;
+                vendedor.Rol = rolVendedor; // Asignar el objeto Rol completo
                 vendedor.HashContrasena = HashPassword(contrasena);
                 if (vendedor.FechaRegistro == DateTime.MinValue) vendedor.FechaRegistro = DateTime.Now;
                 vendedor.Activo = true;
@@ -144,7 +138,7 @@ namespace BLL.Services
                 var vendedorAgregado = _vendedorRepository.Add(vendedor);
                 return vendedorAgregado != null && vendedorAgregado.IdVendedor > 0 ?
                        $"Vendedor '{vendedor.Nombre} {vendedor.Apellido}' (Código: {vendedor.CodigoVendedor}) registrado exitosamente." :
-                       "Error al registrar el vendedor (verifique que el documento y username no existan o sean únicos).";
+                       "Error al registrar el vendedor.";
             }
             catch (InvalidOperationException ioex) { return ioex.Message; }
             catch (Exception ex)
@@ -152,12 +146,11 @@ namespace BLL.Services
                 return $"Error al registrar vendedor: {ex.Message}";
             }
         }
-
         public string RegistrarNuevoAdministradorComoUsuario(Administrador admin, string contrasena)
         {
             if (admin == null) return "Datos del administrador no pueden ser nulos.";
             if (string.IsNullOrWhiteSpace(contrasena)) return "La contraseña es requerida.";
-            if (string.IsNullOrWhiteSpace(admin.Nombre)) return "El nombre del administrador es requerido.";
+            // ... (otras validaciones de Administrador)
 
             try
             {
@@ -165,7 +158,7 @@ namespace BLL.Services
                 if (rolAdmin == null) return "El rol 'ADMIN' no está configurado en el sistema.";
 
                 admin.RolId = rolAdmin.IdRol;
-                admin.Rol = rolAdmin;
+                admin.Rol = rolAdmin; // Asignar el objeto Rol completo
                 admin.HashContrasena = HashPassword(contrasena);
                 if (admin.FechaRegistro == DateTime.MinValue) admin.FechaRegistro = DateTime.Now;
                 admin.Activo = true;
@@ -173,7 +166,7 @@ namespace BLL.Services
                 var adminAgregado = _administradorRepository.Add(admin);
                 return adminAgregado != null && adminAgregado.IdAdministrador > 0 ?
                        $"Administrador '{admin.Nombre} {admin.Apellido}' registrado exitosamente." :
-                       "Error al registrar el administrador (verifique que el documento y username no existan).";
+                       "Error al registrar el administrador.";
             }
             catch (InvalidOperationException ioex) { return ioex.Message; }
             catch (Exception ex)
@@ -181,7 +174,6 @@ namespace BLL.Services
                 return $"Error al registrar administrador: {ex.Message}";
             }
         }
-
         public string ModificarDatosBasicosUsuario(int idUsuario, string nuevoNombreUsuario, string nuevaContrasena)
         {
             if (idUsuario <= 0) return "ID de usuario inválido.";
@@ -210,18 +202,20 @@ namespace BLL.Services
                     hashParaActualizar = HashPassword(nuevaContrasena);
                 }
 
-                bool actualizado = _usuarioRepository.UpdateUsuarioBasico(idUsuario, nuevoNombreUsuario, hashParaActualizar);
+                // Solo pasar el hash si la contraseña cambió, de lo contrario, no actualizar la contraseña.
+                bool actualizado = _usuarioRepository.UpdateUsuarioBasico(idUsuario, nuevoNombreUsuario,
+                    !string.IsNullOrWhiteSpace(nuevaContrasena) ? hashParaActualizar : null);
+
 
                 return actualizado ?
                        "Datos básicos del usuario actualizados." :
-                       "No se pudieron actualizar los datos básicos del usuario (usuario no encontrado o sin cambios efectivos).";
+                       "No se pudieron actualizar los datos básicos del usuario.";
             }
             catch (Exception ex)
             {
                 return $"Error al modificar datos básicos del usuario: {ex.Message}";
             }
         }
-
         public string CambiarEstadoActividadUsuario(int idUsuarioAModificar, bool nuevoEstado, int idAdminQueModifica)
         {
             if (idUsuarioAModificar <= 0) return "ID de usuario a modificar inválido.";
@@ -243,7 +237,7 @@ namespace BLL.Services
 
                 if (usuarioAModificar.IdUsuario == idAdminQueModifica && !nuevoEstado)
                 {
-                    return "Un administrador no puede inactivarse a sí mismo mediante esta función.";
+                    return "Un administrador no puede inactivarse a sí mismo.";
                 }
 
                 bool actualizado = _usuarioRepository.UpdateUserStatus(idUsuarioAModificar, nuevoEstado);

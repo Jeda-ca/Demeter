@@ -7,76 +7,137 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BLL.Interfaces;
+using BLL.Services;
+using ENTITY;
 
 namespace GUI
 {
     public partial class Frm_Login : Form
     {
         public string UserRole { get; private set; }
+        public Usuario AuthenticatedUser { get; private set; } // Propiedad para almacenar el usuario autenticado
+        private readonly IUsuarioService _usuarioService; // Campo para el servicio de usuario
 
         public Frm_Login()
         {
             InitializeComponent();
+            try
+            {
+                // La GUI solo instancia el servicio. 
+                // El servicio (UsuarioService) se encarga de instanciar sus propias dependencias de DAL.
+                _usuarioService = new UsuarioService();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error crítico al inicializar UsuarioService: {ex.Message}\n\n{ex.StackTrace}", "Error de Inicialización", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Considerar deshabilitar el botón de login si la inicialización falla.
+                btn_Ingresar.Enabled = false;
+            }
         }
 
-        // EVENTOS
-        private void cbx_showPassword_CheckedChanged(object sender, EventArgs e) // Evento para mostrar/ocultar la contraseña
+        // Evento para mostrar/ocultar la contraseña
+        private void cbx_showPassword_CheckedChanged(object sender, EventArgs e)
         {
-            tbx_Password.PasswordChar = cbx_showPassword.Checked ? '\0' : '●'; // Cambia el carácter de la contraseña según el estado del checkbox (\0 es el carácter nulo, que muestra el texto sin ocultarlo)
+            tbx_Password.PasswordChar = cbx_showPassword.Checked ? '\0' : '●';
         }
-        private void btn_Ingresar_Click(object sender, EventArgs e) // Evento para iniciar sesión con valores de prueba
+
+        // Evento para iniciar sesión
+        private void btn_Ingresar_Click(object sender, EventArgs e)
         {
             IniciarSesion();
         }
-        private void ibtn_Minimized_LogIn_Click(object sender, EventArgs e) // Evento para minimizar la ventana
+
+        // Evento para minimizar la ventana
+        private void ibtn_Minimized_LogIn_Click(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Minimized;
         }
-        private void ibtn_Exit_LogIn_Click(object sender, EventArgs e) // Evento para cerrar la aplicación
+
+        // Evento para cerrar la aplicación
+        private void ibtn_Exit_LogIn_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
-        // Nuevo evento para abrir el formulario de registro de administrador
+        // Evento para abrir el formulario de registro de administrador
         private void lbl_RegisterAdmin_Click(object sender, EventArgs e)
         {
-            Frm_RegisterAdmin frmRegisterAdmin = new Frm_RegisterAdmin();
-            this.Hide(); // Oculta el formulario de Login
-            frmRegisterAdmin.ShowDialog(); // Muestra el formulario de registro como un diálogo modal
-            this.Show(); // Vuelve a mostrar el formulario de Login cuando el de registro se cierra
-            // Si el registro fue exitoso, podrías querer hacer algo aquí,
-            // por ejemplo, limpiar los campos del login o mostrar un mensaje.
+            using (Frm_RegisterAdmin frmRegisterAdmin = new Frm_RegisterAdmin())
+            {
+                this.Hide();
+                frmRegisterAdmin.ShowDialog();
+                this.Show();
+            }
         }
 
-        //MÉTODOS PRIVADOS
+        // Método para la lógica de inicio de sesión
         private void IniciarSesion()
         {
-            if (string.IsNullOrWhiteSpace(tbx_Username.Text) || string.IsNullOrWhiteSpace(tbx_Password.Text)) // Se valida que no haya campos vacíos
+            if (string.IsNullOrWhiteSpace(tbx_Username.Text) || string.IsNullOrWhiteSpace(tbx_Password.Text))
             {
-                MessageBox.Show("No pueden quedar campos vacíos", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("El nombre de usuario y la contraseña no pueden estar vacíos.", "Error de Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            // --- Valores de prueba para el usuario admin y vendedor (PLACEHOLDER) ---
-            // En un escenario real, aquí se llamaría a la capa BLL para validar las credenciales
-            // y obtener el rol del usuario desde la base de datos.
-            if (tbx_Username.Text == "admin" && tbx_Password.Text == "12345") // Valores de prueba para el usuario admin
+
+            string username = tbx_Username.Text.Trim();
+            string password = tbx_Password.Text;
+
+            try
             {
-                UserRole = "Admin";
-                this.DialogResult = DialogResult.OK;
-                this.Close();
-                return;
+                if (_usuarioService == null)
+                {
+                    MessageBox.Show("El servicio de autenticación no está disponible. Contacte al administrador.", "Error de Servicio", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                Usuario usuarioAutenticado = _usuarioService.AutenticarUsuario(username, password);
+
+                if (usuarioAutenticado != null)
+                {
+                    if (!usuarioAutenticado.Activo)
+                    {
+                        MessageBox.Show("El usuario está inactivo. Contacte al administrador.", "Usuario Inactivo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    if (usuarioAutenticado is ENTITY.Administrador)
+                    {
+                        UserRole = "Admin";
+                    }
+                    else if (usuarioAutenticado is ENTITY.Vendedor)
+                    {
+                        UserRole = "Vendedor";
+                    }
+                    else if (usuarioAutenticado.Rol != null && !string.IsNullOrEmpty(usuarioAutenticado.Rol.Nombre))
+                    {
+                        UserRole = usuarioAutenticado.Rol.Nombre.ToUpper() == "ADMIN" ? "Admin" :
+                                   usuarioAutenticado.Rol.Nombre.ToUpper() == "VENDEDOR" ? "Vendedor" : null;
+                    }
+
+                    if (UserRole != null)
+                    {
+                        this.AuthenticatedUser = usuarioAutenticado;
+                        this.DialogResult = DialogResult.OK;
+                        this.Close();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Rol de usuario no reconocido.", "Error de Autenticación", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Nombre de usuario o contraseña incorrectos.", "Error de Autenticación", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
-            else if (tbx_Username.Text == "vendedor" && tbx_Password.Text == "54321") // Valores de prueba para el usuario vendedor
+            catch (ApplicationException appEx)
             {
-                UserRole = "Vendedor";
-                this.DialogResult = DialogResult.OK;
-                this.Close();
-                return;
+                MessageBox.Show($"Error de aplicación durante el inicio de sesión: {appEx.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Usuario o contraseña incorrectos", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); // Mensaje de error si las credenciales no son correctas
-                return;
+                MessageBox.Show($"Se produjo un error inesperado: {ex.Message}", "Error Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace GUI
 {
-    partial class Frm_ModifyClient
+    partial class Frm_ModifyClientAdmin
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Frm_ModifyClient));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Frm_ModifyClientAdmin));
             this.ibtn_Cancel = new FontAwesome.Sharp.IconButton();
             this.ibtn_Clear = new FontAwesome.Sharp.IconButton();
             this.ibtn_Modify = new FontAwesome.Sharp.IconButton();
@@ -68,6 +68,7 @@
             this.ibtn_Cancel.TabIndex = 44;
             this.ibtn_Cancel.Text = "Cancelar";
             this.ibtn_Cancel.UseVisualStyleBackColor = false;
+            this.ibtn_Cancel.Click += new System.EventHandler(this.ibtn_Cancel_Click);
             // 
             // ibtn_Clear
             // 
@@ -86,6 +87,7 @@
             this.ibtn_Clear.TabIndex = 43;
             this.ibtn_Clear.Text = "Limpiar";
             this.ibtn_Clear.UseVisualStyleBackColor = false;
+            this.ibtn_Clear.Click += new System.EventHandler(this.ibtn_Clear_Click);
             // 
             // ibtn_Modify
             // 
@@ -104,6 +106,7 @@
             this.ibtn_Modify.TabIndex = 42;
             this.ibtn_Modify.Text = "Guardar cambios";
             this.ibtn_Modify.UseVisualStyleBackColor = false;
+            this.ibtn_Modify.Click += new System.EventHandler(this.ibtn_Modify_Click);
             // 
             // label1
             // 
@@ -274,7 +277,7 @@
             this.groupBox3.TabIndex = 48;
             this.groupBox3.TabStop = false;
             // 
-            // Frm_ModifyClient
+            // Frm_ModifyClientAdmin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -286,7 +289,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
-            this.Name = "Frm_ModifyClient";
+            this.Name = "Frm_ModifyClientAdmin";
             this.Text = "Demeter";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

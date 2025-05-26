@@ -8,10 +8,22 @@ namespace GUI
     public partial class Frm_MainAdmin : Frm_MainBase
     {
         private Form currentChildForm; // Variable para mantener una referencia al formulario hijo actualmente activo.
+        private int _currentAdminUserId; // Variable para almacenar el ID del administrador actual.
         public Frm_MainAdmin()
         {
             InitializeComponent();
             label1.Text = "Demeter - Sesión de Administrador";
+
+            if (SessionManager.IsUserAdminActive()) // Verifica que sea admin y esté activo
+            {
+                _currentAdminUserId = SessionManager.CurrentUserId;;
+            }
+            else
+            {
+                MessageBox.Show("Error: No se pudo identificar al administrador o no está activo. La aplicación se cerrará.", "Error de Sesión", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.Load += (s, e) => this.Close();    
+                return;
+            }
         }
 
         // EVENTOS
@@ -21,11 +33,12 @@ namespace GUI
         }
         private void ibtn_Clientes_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new Frm_GClientsAdmin()); // Abre el formulario del Gestor de clientes.
+            OpenChildForm(new Frm_GClientsAdmin(_currentAdminUserId)); // _currentAdminUserId es el IdUsuario del admin
         }
         private void ibtn_Vendedores_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new Frm_GVendorsAdmin()); // Abre el formulario del Gestor de vendedores.
+            // Pasas el _currentAdminUserId
+            OpenChildForm(new Frm_GVendorsAdmin(_currentAdminUserId));
         }
         private void ibtn_Ventas_Click(object sender, EventArgs e)
         {

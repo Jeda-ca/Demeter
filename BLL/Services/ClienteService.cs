@@ -1,5 +1,6 @@
 ﻿using BLL.Interfaces;
 using DAL.Interfaces;
+using DAL.Repositories;
 using ENTITY;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,12 @@ namespace BLL.Services
     {
         private readonly IClienteRepository _clienteRepository;
         private readonly IPersonaRepository _personaRepository;
+
+        public ClienteService()
+        {
+            _clienteRepository = new ClienteRepository();
+            _personaRepository = new PersonaRepository();
+        }
 
         public ClienteService(IClienteRepository clienteRepository, IPersonaRepository personaRepository)
         {
@@ -32,7 +39,6 @@ namespace BLL.Services
                 throw new ApplicationException("Error al obtener todos los clientes.", ex);
             }
         }
-
         public Cliente ObtenerClientePorId(int idCliente)
         {
             if (idCliente <= 0) throw new ArgumentException("El ID del cliente debe ser positivo.", nameof(idCliente));
@@ -58,7 +64,6 @@ namespace BLL.Services
                 throw new ApplicationException($"Error al obtener el cliente con código {codigoCliente}.", ex);
             }
         }
-
         public Cliente ObtenerClientePorDocumento(int tipoDocumentoId, string numeroDocumento)
         {
             if (tipoDocumentoId <= 0) throw new ArgumentException("El tipo de documento es inválido.", nameof(tipoDocumentoId));
@@ -85,7 +90,6 @@ namespace BLL.Services
                 throw new ApplicationException($"Error al buscar clientes con el término '{searchTerm}'.", ex);
             }
         }
-
         public string RegistrarOActualizarCliente(Cliente cliente, bool esNuevo)
         {
             if (cliente == null) throw new ArgumentNullException(nameof(cliente));
@@ -111,21 +115,23 @@ namespace BLL.Services
                     }
 
                     cliente.FechaRegistro = DateTime.Now;
-                    cliente.Activo = true;
+                    cliente.Activo = true; // Por defecto, los nuevos clientes están activos
                     var clienteAgregado = _clienteRepository.Add(cliente);
                     return clienteAgregado != null && clienteAgregado.IdCliente > 0 ?
                            $"Cliente '{cliente.Nombre} {cliente.Apellido}' registrado exitosamente."
                            : "Error al registrar el cliente.";
                 }
-                else
+                else // Actualizar
                 {
                     if (cliente.IdCliente <= 0 || cliente.IdPersona <= 0) return "IDs de cliente y persona son necesarios para actualizar.";
 
+                    // Validar unicidad de documento si ha cambiado
                     var clienteExistentePorDocumento = _clienteRepository.GetByNumeroDocumento(cliente.TipoDocumentoId, cliente.NumeroDocumento);
                     if (clienteExistentePorDocumento != null && clienteExistentePorDocumento.IdCliente != cliente.IdCliente)
                     {
                         return $"El documento {cliente.NumeroDocumento} ya pertenece a otro cliente.";
                     }
+                    // Validar unicidad de código de cliente si ha cambiado
                     var clienteExistentePorCodigo = _clienteRepository.GetByCodigoCliente(cliente.CodigoCliente);
                     if (clienteExistentePorCodigo != null && clienteExistentePorCodigo.IdCliente != cliente.IdCliente)
                     {
@@ -138,7 +144,7 @@ namespace BLL.Services
                            : "Error al actualizar el cliente.";
                 }
             }
-            catch (DataException dex)
+            catch (DataException dex) // Captura errores específicos de DAL si los hay
             {
                 return $"Error de base de datos: {dex.Message}";
             }
@@ -147,14 +153,13 @@ namespace BLL.Services
                 return $"Error inesperado: {ex.Message}";
             }
         }
-
         public bool CambiarEstadoActividadCliente(int idCliente, bool nuevoEstadoActivo)
         {
             if (idCliente <= 0) throw new ArgumentException("ID de cliente inválido.", nameof(idCliente));
             try
             {
                 var cliente = _clienteRepository.GetById(idCliente);
-                if (cliente == null) return false;
+                if (cliente == null) return false; // Cliente no encontrado
 
                 cliente.Activo = nuevoEstadoActivo;
                 return _clienteRepository.Update(cliente);
@@ -164,7 +169,6 @@ namespace BLL.Services
                 throw new ApplicationException($"Error al cambiar estado de actividad del cliente ID {idCliente}.", ex);
             }
         }
-
         private bool IsValidEmail(string email)
         {
             try { var addr = new System.Net.Mail.MailAddress(email); return addr.Address == email; }

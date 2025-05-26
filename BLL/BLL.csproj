@@ -44,11 +44,13 @@
     <Compile Include="Interfaces\IClienteService.cs" />
     <Compile Include="Interfaces\IProductoService.cs" />
     <Compile Include="Interfaces\IReporteService.cs" />
+    <Compile Include="Interfaces\ITipoDocumentoService.cs" />
     <Compile Include="Interfaces\IUsuarioService.cs" />
     <Compile Include="Interfaces\IVendedorService.cs" />
     <Compile Include="Interfaces\IVentaService.cs" />
     <Compile Include="Services\ClienteService.cs" />
     <Compile Include="Services\ReporteService.cs" />
+    <Compile Include="Services\TipoDocumentoSerivice.cs" />
     <Compile Include="Services\UsuarioService.cs" />
     <Compile Include="Services\VendedorServices.cs" />
     <Compile Include="Services\VentaService.cs" />
