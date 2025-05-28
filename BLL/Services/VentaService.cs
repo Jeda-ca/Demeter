@@ -20,7 +20,7 @@ namespace BLL.Services
 
         public VentaService()
         {
-            _productoRepository = new ProductoRepository();
+            _productoRepository = new ProductoRepository(); // VentaRepository lo necesita
             _ventaRepository = new VentaRepository(_productoRepository);
             _clienteRepository = new ClienteRepository();
             _vendedorRepository = new VendedorRepository();
@@ -40,10 +40,8 @@ namespace BLL.Services
             _estadoVentaRepository = estadoVentaRepository ?? throw new ArgumentNullException(nameof(estadoVentaRepository));
         }
 
-        // ... (resto de los métodos de VentaService sin cambios en su lógica interna) ...
         public string RegistrarNuevaVenta(Venta venta, int idVendedorLogueado)
         {
-            // ... (validaciones como antes) ...
             if (venta == null) return "Datos de la venta no pueden ser nulos.";
             if (venta.ClienteId <= 0) return "Se debe seleccionar un cliente.";
             if (idVendedorLogueado <= 0) return "Vendedor no identificado.";
@@ -65,20 +63,19 @@ namespace BLL.Services
                 {
                     return $"Stock insuficiente para '{productoEnRepo.Nombre}'. Disp: {productoEnRepo.Stock}, Sol: {detalle.Cantidad}.";
                 }
-                detalle.Producto = productoEnRepo; // Asignar el producto completo al detalle
+                detalle.Producto = productoEnRepo;
             }
-            // ... (cálculo de totales y asignación de estado como antes) ...
+
             venta.Subtotal = venta.DetallesVenta.Sum(d => d.TotalLinea);
             venta.Total = venta.Subtotal - venta.Descuento;
             if (venta.Total < 0) return "El total de la venta no puede ser negativo.";
 
-            if (venta.EstadoId == 0) // Si no se especificó un estado, por defecto es PENDIENTE
+            if (venta.EstadoId == 0)
             {
                 var estadoPendiente = _estadoVentaRepository.GetByName("PENDIENTE");
                 if (estadoPendiente == null) return "Estado de venta 'PENDIENTE' no configurado.";
                 venta.EstadoId = estadoPendiente.IdEstado;
             }
-
 
             try
             {
@@ -112,6 +109,27 @@ namespace BLL.Services
             }
             catch (InvalidOperationException ioex) { return ioex.Message; }
             catch (Exception ex) { return $"Error al cancelar la venta: {ex.Message}"; }
+        }
+
+        public bool ActualizarVenta(Venta venta)
+        {
+            if (venta == null || venta.IdVenta <= 0)
+            {
+                // Considera lanzar ArgumentNullException o ArgumentException
+                return false;
+            }
+            try
+            {
+                // El método Update en VentaRepository ya está diseñado para actualizar
+                // solo status_id y observations. Si necesitas actualizar más campos,
+                // ese método en el repositorio debería ser ajustado.
+                return _ventaRepository.Update(venta);
+            }
+            catch (Exception ex)
+            {
+                // Loggear el error ex
+                throw new ApplicationException($"Error al actualizar la venta ID {venta.IdVenta} en el servicio.", ex);
+            }
         }
     }
 }

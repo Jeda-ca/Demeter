@@ -41,16 +41,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\ICategoriaProductoService.cs" />
     <Compile Include="Interfaces\IClienteService.cs" />
+    <Compile Include="Interfaces\IEstadoVentaService.cs" />
     <Compile Include="Interfaces\IProductoService.cs" />
     <Compile Include="Interfaces\IReporteService.cs" />
+    <Compile Include="Interfaces\IRolServices.cs" />
     <Compile Include="Interfaces\ITipoDocumentoService.cs" />
+    <Compile Include="Interfaces\IUnidadMedidaService.cs" />
     <Compile Include="Interfaces\IUsuarioService.cs" />
     <Compile Include="Interfaces\IVendedorService.cs" />
     <Compile Include="Interfaces\IVentaService.cs" />
+    <Compile Include="Services\CategoriaProductoService.cs" />
     <Compile Include="Services\ClienteService.cs" />
+    <Compile Include="Services\EstadoVentaService.cs" />
     <Compile Include="Services\ReporteService.cs" />
+    <Compile Include="Services\RolServices.cs" />
     <Compile Include="Services\TipoDocumentoSerivice.cs" />
+    <Compile Include="Services\UnidadMedidaService.cs" />
     <Compile Include="Services\UsuarioService.cs" />
     <Compile Include="Services\VendedorServices.cs" />
     <Compile Include="Services\VentaService.cs" />

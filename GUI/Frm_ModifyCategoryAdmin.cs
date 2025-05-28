@@ -1,4 +1,7 @@
-﻿using System;
+﻿using BLL.Interfaces;
+using BLL.Services;
+using ENTITY;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,69 +15,96 @@ namespace GUI
 {
     public partial class Frm_ModifyCategoryAdmin : Form
     {
-        // Propiedad para almacenar el ID de la categoría que se está modificando.
-        public int CategoryId { get; private set; }
+        private readonly ICategoriaProductoService _categoriaService;
+        private CategoriaProducto _categoriaAModificar;
 
-        public Frm_ModifyCategoryAdmin()
+        public Frm_ModifyCategoryAdmin(CategoriaProducto categoria, int idAdminLogueado)
         {
             InitializeComponent();
-            // Configuración por defecto para un formulario de diálogo.
-            this.FormBorderStyle = FormBorderStyle.FixedDialog; // Borde fijo para diálogos
-            this.StartPosition = FormStartPosition.CenterParent; // Centrar respecto al padre
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
+            this.StartPosition = FormStartPosition.CenterParent;
+
+            _categoriaAModificar = categoria ?? throw new ArgumentNullException(nameof(categoria));
+
+            try
+            {
+                _categoriaService = new CategoriaProductoService();
+                LoadCategoryData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al inicializar servicio: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (ibtn_Modify != null) ibtn_Modify.Enabled = false;
+            }
         }
 
-        // Constructor para recibir información de la categoría (opcional, si necesitas precargar campos).
-        public Frm_ModifyCategoryAdmin(int categoryId, string categoryName) : this()
+        private void LoadCategoryData()
         {
-            CategoryId = categoryId;
-            tbx_Name.Text = categoryName;
+            if (_categoriaAModificar != null && tbx_Name != null)
+            {
+                tbx_Name.Text = _categoriaAModificar.Nombre;
+            }
         }
 
-        // Método para precargar la información de la categoría (si no se usa el constructor con parámetros).
-        public void SetCategoryInfo(int categoryId, string categoryName)
-        {
-            CategoryId = categoryId;
-            tbx_Name.Text = categoryName;
-        }
-
-        // Método para limpiar todos los TextBox del formulario
-        private void ClearFormFields()
-        {
-            tbx_Name.Clear();
-        }
-
-        // Evento Click del botón "Guardar cambios" (placeholder para la lógica de modificar categoría)
         private void ibtn_Modify_Click(object sender, EventArgs e)
         {
-            // --- Lógica placeholder para modificar una categoría existente ---
-            string newCategoryName = tbx_Name.Text;
-
-            if (string.IsNullOrWhiteSpace(newCategoryName))
+            string nuevoNombre = tbx_Name.Text.Trim();
+            if (string.IsNullOrWhiteSpace(nuevoNombre))
             {
-                MessageBox.Show("Por favor, ingrese el nuevo nombre de la categoría.", "Campo Incompleto", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("El nombre de la categoría no puede estar vacío.", "Campo Requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Aquí se llamaría a la capa BLL para modificar la categoría.
-            // Ejemplo: BLL.CategoryManager.UpdateCategory(CategoryId, newCategoryName);
+            if (nuevoNombre.Equals(_categoriaAModificar.Nombre, StringComparison.OrdinalIgnoreCase))
+            {
+                MessageBox.Show("No se realizaron cambios en el nombre.", "Sin Cambios", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                this.DialogResult = DialogResult.Cancel;
+                this.Close();
+                return;
+            }
 
-            MessageBox.Show($"Lógica para modificar categoría ID: {CategoryId} a '{newCategoryName}'.", "Modificar Categoría (Placeholder)", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            try
+            {
+                if (_categoriaService == null)
+                {
+                    MessageBox.Show("Servicio de categorías no disponible.", "Error de Servicio", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
-            this.DialogResult = DialogResult.OK; // Indica que la operación fue exitosa
-            this.Close(); // Cierra el formulario
+                _categoriaAModificar.Nombre = nuevoNombre;
+                string resultado = _categoriaService.ActualizarCategoria(_categoriaAModificar);
+
+                MessageBox.Show(resultado, "Modificar Categoría", MessageBoxButtons.OK,
+                                resultado.ToLower().Contains("exitosamente") ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+
+                if (resultado.ToLower().Contains("exitosamente"))
+                {
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+            }
+            catch (ApplicationException appEx)
+            {
+                MessageBox.Show($"Error de aplicación: {appEx.Message}", "Error al Modificar", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Se produjo un error inesperado: {ex.Message}", "Error Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        // Evento Click del botón "Limpiar"
         private void ibtn_Clear_Click(object sender, EventArgs e)
         {
-            ClearFormFields();
+            if (_categoriaAModificar != null && tbx_Name != null)
+            {
+                tbx_Name.Text = _categoriaAModificar.Nombre;
+            }
         }
 
-        // Evento Click del botón "Cancelar"
         private void ibtn_Cancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel; // Indica que la operación fue cancelada
-            this.Close(); // Cierra el formulario sin guardar cambios
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
         }
     }
 }

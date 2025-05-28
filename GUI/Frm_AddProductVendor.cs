@@ -1,4 +1,7 @@
-﻿using System;
+﻿using BLL.Interfaces;
+using BLL.Services;
+using ENTITY;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,86 +15,140 @@ namespace GUI
 {
     public partial class Frm_AddProductVendor : Form
     {
-        public Frm_AddProductVendor()
+        private readonly IProductoService _productoService;
+        private readonly ICategoriaProductoService _categoriaService;
+        private readonly IUnidadMedidaService _unidadMedidaService;
+        private readonly int _idUsuarioVendedorLogueado;
+        private readonly int _idVendedorTabla; // PK de la tabla 'sellers'
+
+        // Constructor actualizado
+        public Frm_AddProductVendor(int idUsuarioVendedor, int idVendedorTabla)
         {
             InitializeComponent();
-            // Configuración por defecto para un formulario de diálogo.
-            this.FormBorderStyle = FormBorderStyle.FixedDialog; // Borde fijo para diálogos
-            this.StartPosition = FormStartPosition.CenterParent; // Centrar respecto al padre
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
+            this.StartPosition = FormStartPosition.CenterParent;
 
-            // Inicializar ComboBox de Categoría (placeholder)
-            cbx_Category.Items.Add("-- Seleccione --");
-            cbx_Category.Items.Add("FRUTAS");
-            cbx_Category.Items.Add("VERDURAS Y HORTALIZAS");
-            cbx_Category.Items.Add("TUBÉRCULOS Y RAÍCES");
-            cbx_Category.SelectedIndex = 0;
+            _idUsuarioVendedorLogueado = idUsuarioVendedor;
+            _idVendedorTabla = idVendedorTabla;
 
-            // Inicializar ComboBox de Unidad de Medida (placeholder)
-            cbx_UnMedida.Items.Add("-- Seleccione --");
-            cbx_UnMedida.Items.Add("KILOGRAMO");
-            cbx_UnMedida.Items.Add("UNIDAD");
-            cbx_UnMedida.Items.Add("ATADO");
-            cbx_UnMedida.SelectedIndex = 0;
+            try
+            {
+                _productoService = new ProductoService();
+                _categoriaService = new CategoriaProductoService();
+                _unidadMedidaService = new UnidadMedidaService();
 
-            // Configurar NumericUpDowns
-            nud_Price.DecimalPlaces = 2; // Permitir dos decimales para el precio
-            nud_Price.Minimum = 0;
-            nud_Price.Maximum = 999999999; // Valor máximo alto
-            nud_Stock.Minimum = 0;
-            nud_Stock.Maximum = 99999; // Valor máximo de stock
+                CargarCategoriasComboBox();
+                CargarUnidadesMedidaComboBox();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error crítico al inicializar: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (ibtn_Add != null) ibtn_Add.Enabled = false;
+                if (ibtn_Clear != null) ibtn_Clear.Enabled = false;
+            }
         }
 
-        // Método para limpiar todos los campos del formulario
-        private void ClearFormFields()
+        private void CargarCategoriasComboBox()
         {
-            tbx_Name.Clear();
-            tbx_NumDoc.Clear(); // Descripción
-            nud_Price.Value = 0;
-            nud_Stock.Value = 0;
-            cbx_Category.SelectedIndex = 0;
-            cbx_UnMedida.SelectedIndex = 0;
+            try
+            {
+                if (_categoriaService == null) return;
+                var categorias = _categoriaService.ObtenerTodas().ToList();
+                if (cbx_Category != null)
+                {
+                    cbx_Category.DataSource = null;
+                    cbx_Category.Items.Clear();
+                    cbx_Category.DisplayMember = "Nombre";
+                    cbx_Category.ValueMember = "IdCategoria";
+                    var listaConDefault = categorias;
+                    listaConDefault.Insert(0, new CategoriaProducto { IdCategoria = 0, Nombre = "-- Seleccione Categoría --" });
+                    cbx_Category.DataSource = listaConDefault;
+                    cbx_Category.SelectedIndex = 0;
+                }
+            }
+            catch (Exception ex) { MessageBox.Show($"Error al cargar categorías: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
 
-        // Evento Click del botón "Agregar" (placeholder para la lógica de agregar producto)
+        private void CargarUnidadesMedidaComboBox()
+        {
+            try
+            {
+                if (_unidadMedidaService == null) return;
+                var unidades = _unidadMedidaService.ObtenerTodas().ToList();
+                if (cbx_UnMedida != null)
+                {
+                    cbx_UnMedida.DataSource = null;
+                    cbx_UnMedida.Items.Clear();
+                    cbx_UnMedida.DisplayMember = "Nombre";
+                    cbx_UnMedida.ValueMember = "IdUnidadMedida";
+                    var listaConDefault = unidades;
+                    listaConDefault.Insert(0, new UnidadMedida { IdUnidadMedida = 0, Nombre = "-- Seleccione Unidad --" });
+                    cbx_UnMedida.DataSource = listaConDefault;
+                    cbx_UnMedida.SelectedIndex = 0;
+                }
+            }
+            catch (Exception ex) { MessageBox.Show($"Error al cargar unidades de medida: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+        }
+
+
         private void ibtn_Add_Click(object sender, EventArgs e)
         {
-            // --- Lógica placeholder para agregar un nuevo producto ---
-            string name = tbx_Name.Text;
-            string description = tbx_NumDoc.Text; // Asumiendo tbx_NumDoc es el de descripción
-            decimal price = nud_Price.Value;
-            int stock = (int)nud_Stock.Value;
-            string category = cbx_Category.SelectedIndex > 0 ? cbx_Category.SelectedItem.ToString() : string.Empty;
-            string unit = cbx_UnMedida.SelectedIndex > 0 ? cbx_UnMedida.SelectedItem.ToString() : string.Empty;
-
-            // Validaciones básicas
-            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(description) ||
-                cbx_Category.SelectedIndex == 0 || cbx_UnMedida.SelectedIndex == 0 ||
-                price <= 0)
+            if (string.IsNullOrWhiteSpace(tbx_Name.Text) ||
+                cbx_Category.SelectedValue == null || !(cbx_Category.SelectedValue is int) || ((int)cbx_Category.SelectedValue) <= 0 ||
+                cbx_UnMedida.SelectedValue == null || !(cbx_UnMedida.SelectedValue is int) || ((int)cbx_UnMedida.SelectedValue) <= 0 ||
+                nud_Price.Value <= 0 || nud_Stock.Value < 0)
             {
-                MessageBox.Show("Por favor, complete todos los campos obligatorios y asegure que el precio sea mayor a 0.", "Campos Incompletos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Nombre, Categoría, Unidad de Medida son obligatorios. Precio debe ser mayor a 0 y Stock no puede ser negativo.", "Campos Inválidos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Aquí se llamaría a la capa BLL para agregar el producto.
-            // Ejemplo: BLL.ProductManager.AddProduct(name, description, price, unit, category, stock, sellerId); // Necesitarías el sellerId del vendedor logueado
+            var nuevoProducto = new Producto
+            {
+                Nombre = tbx_Name.Text.Trim(),
+                Descripcion = tbx_NumDoc.Text.Trim(), // tbx_NumDoc es Descripción
+                Precio = nud_Price.Value,
+                Stock = (int)nud_Stock.Value,
+                CategoriaId = (int)cbx_Category.SelectedValue,
+                UnidadMedidaId = (int)cbx_UnMedida.SelectedValue,
+                VendedorId = _idVendedorTabla // ID de la tabla 'sellers'
+            };
 
-            MessageBox.Show($"Lógica para agregar nuevo producto:\nNombre: {name}\nPrecio: {price}\nStock: {stock}", "Agregar Producto (Placeholder)", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            try
+            {
+                if (_productoService == null) { MessageBox.Show("Servicio de productos no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
-            this.DialogResult = DialogResult.OK; // Indica que la operación fue exitosa
-            this.Close(); // Cierra el formulario
+                // El servicio RegistrarNuevoProducto espera el IdUsuario del que registra
+                string resultado = _productoService.RegistrarNuevoProducto(nuevoProducto, _idUsuarioVendedorLogueado);
+
+                MessageBox.Show(resultado, "Agregar Producto", MessageBoxButtons.OK,
+                                resultado.ToLower().Contains("exitosamente") ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+
+                if (resultado.ToLower().Contains("exitosamente"))
+                {
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al agregar producto: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        // Evento Click del botón "Limpiar"
         private void ibtn_Clear_Click(object sender, EventArgs e)
         {
-            ClearFormFields();
+            tbx_Name.Clear();
+            tbx_NumDoc.Clear();
+            nud_Price.Value = 0;
+            nud_Stock.Value = 0;
+            if (cbx_Category.Items.Count > 0) cbx_Category.SelectedIndex = 0;
+            if (cbx_UnMedida.Items.Count > 0) cbx_UnMedida.SelectedIndex = 0;
         }
 
-        // Evento Click del botón "Cancelar"
         private void ibtn_Cancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel; // Indica que la operación fue cancelada
-            this.Close(); // Cierra el formulario sin guardar cambios
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
         }
     }
 }

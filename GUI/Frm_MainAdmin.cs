@@ -27,9 +27,10 @@ namespace GUI
         }
 
         // EVENTOS
+        // En Frm_MainAdmin.cs
         private void ibtn_Dashboard_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new Frm_DashboardAdmin()); // Abre el formulario del Dashboard.
+            OpenChildForm(new Frm_DashboardAdmin(_currentAdminUserId));
         }
         private void ibtn_Clientes_Click(object sender, EventArgs e)
         {
@@ -42,7 +43,7 @@ namespace GUI
         }
         private void ibtn_Ventas_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new Frm_GSalesAdmin()); // Abre el formulario del Gestor de ventas.
+            OpenChildForm(new Frm_GSalesAdmin(_currentAdminUserId));
         }
         private void ibtn_Manten_Click(object sender, EventArgs e)
         {
@@ -50,15 +51,15 @@ namespace GUI
         }
         private void categoria_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new Frm_GCategoriesAdmin()); // Abre el formulario del Gestor de productos.
+            OpenChildForm(new Frm_GCategoriesAdmin(_currentAdminUserId));
         }
         private void producto_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new Frm_GProductsAdmin()); // Abre el formulario del Gestor de categorías.
+            OpenChildForm(new Frm_GProductsAdmin(_currentAdminUserId));
         }
         private void ibtn_Usuarios_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new Frm_GUsersAdmin()); // Abre el formulario del Gestor de usuarios.
+            OpenChildForm(new Frm_GUsersAdmin(_currentAdminUserId));
         }
         private void ibtn_Reportes_Click(object sender, EventArgs e)
         {
@@ -66,27 +67,27 @@ namespace GUI
         }
         private void Ventas_general_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new Frm_GeneralSalesReport()); // Abre el formulario del reporte de ventas general.
+            OpenChildForm(new Frm_GeneralSalesReport(_currentAdminUserId));
         }
         private void Ventas_porVendedor_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new Frm_SalesByVendorReport()); // Abre el formulario del reporte de ventas por vendedor.
+            OpenChildForm(new Frm_SalesByVendorReport(_currentAdminUserId));
         }
         private void Inventario_general_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new Frm_GeneralInventoryReport()); // Abre el formulario del reporte de inventario general.
+            OpenChildForm(new Frm_GeneralInventoryReport(_currentAdminUserId));
         }
         private void Inventario_porVendedor_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new Frm_InventoryByVendorReport()); // Abre el formulario del reporte de inventario por vendedor.
+            OpenChildForm(new Frm_InventoryByVendorReport(_currentAdminUserId));
         }
-        private void vendedores_Click(object sender, EventArgs e)
+        private void vendedores_Click(object sender, EventArgs e) // Este es el ToolStripMenuItem para el reporte de vendedores
         {
-            OpenChildForm(new Frm_VendorsReport()); // Abre el formulario del Gestor de vendedores desde el menú desplegable de Reportes.
+            OpenChildForm(new Frm_VendorsReport(_currentAdminUserId));
         }
-        private void clientes_Click(object sender, EventArgs e)
+        private void clientes_Click(object sender, EventArgs e) // Este es el ToolStripMenuItem para el reporte de clientes
         {
-            OpenChildForm(new Frm_ClientsReport()); // Abre el formulario del Gestor de clientes desde el menú desplegable de Reportes.
+            OpenChildForm(new Frm_ClientsReport(_currentAdminUserId));
         }
         private void ibtn_CerrarSesion_Click(object sender, EventArgs e) // Evento Click para el botón de Cerrar Sesión.
         {

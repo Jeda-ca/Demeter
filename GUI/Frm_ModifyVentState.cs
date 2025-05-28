@@ -1,4 +1,7 @@
-﻿using System;
+﻿using BLL.Interfaces;
+using BLL.Services;
+using ENTITY;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,116 +15,153 @@ namespace GUI
 {
     public partial class Frm_ModifyVentState : Form
     {
-        // Propiedad para almacenar el ID de la venta que se está modificando.
-        // Puedes añadir más propiedades si necesitas pasar más datos (ej. estado actual).
-        public int SaleId { get; private set; }
+        private readonly IVentaService _ventaService;
+        private readonly IEstadoVentaService _estadoVentaService; // Usar el servicio
+        private readonly Venta _ventaAModificar;
+        private readonly int _idAdminLogueado;
 
-        public Frm_ModifyVentState()
+        public Frm_ModifyVentState(Venta venta, int idAdminLogueado)
         {
             InitializeComponent();
-            // Configuración por defecto para un formulario de diálogo.
-            this.FormBorderStyle = FormBorderStyle.FixedDialog; // Borde fijo para diálogos
-            this.StartPosition = FormStartPosition.CenterParent; // Centrar respecto al padre
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
+            this.StartPosition = FormStartPosition.CenterParent;
 
-            // Asignar eventos a los botones.
-            ibtn_Modify.Click += ibtn_Modify_Click;
-            ibtn_Cancel.Click += ibtn_Cancel_Click;
+            _ventaAModificar = venta ?? throw new ArgumentNullException(nameof(venta));
+            _idAdminLogueado = idAdminLogueado;
 
-            // Inicializar ComboBox de estados de venta.
-            cbx_VentState.Items.Add("-- Seleccione un estado --");
-            cbx_VentState.Items.Add("PENDIENTE");
-            cbx_VentState.Items.Add("COMPLETADA");
-            cbx_VentState.Items.Add("CANCELADA");
-            cbx_VentState.SelectedIndex = 0; // Seleccionar la opción por defecto
+            try
+            {
+                _ventaService = new VentaService();
+                _estadoVentaService = new EstadoVentaService(); // Instanciar el servicio
+                LoadSaleData();
+                CargarEstadosVentaComboBox();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error crítico al inicializar: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (ibtn_Modify != null) ibtn_Modify.Enabled = false;
+            }
         }
 
-        // Constructor para recibir información de la venta (opcional, si necesitas precargar campos).
-        public Frm_ModifyVentState(int saleId, DateTime saleDate, decimal saleTotal, string currentStatus) : this()
+        private void LoadSaleData()
         {
-            SaleId = saleId;
-            tbx_Date.Text = saleDate.ToShortDateString(); // Asumiendo formato de fecha corta
-            tbx_Code.Text = saleId.ToString(); // Usar el ID como código de ejemplo
-            tbx_TotVent.Text = saleTotal.ToString("C"); // Formato de moneda
-
-            // Seleccionar el estado actual en el ComboBox.
-            int index = cbx_VentState.FindStringExact(currentStatus);
-            if (index != -1)
+            if (_ventaAModificar != null)
             {
-                cbx_VentState.SelectedIndex = index;
-            }
-            else
-            {
-                cbx_VentState.SelectedIndex = 0; // Si no encuentra el estado, selecciona el por defecto
+                if (tbx_Date != null) tbx_Date.Text = _ventaAModificar.FechaOcurrencia.ToShortDateString();
+                if (tbx_Code != null) tbx_Code.Text = _ventaAModificar.IdVenta.ToString();
+                if (tbx_TotVent != null) tbx_TotVent.Text = _ventaAModificar.Total.ToString("C");
             }
         }
 
-        // Método para precargar la información de la venta (si no se usa el constructor con parámetros).
-        public void SetSaleInfo(int saleId, DateTime saleDate, decimal saleTotal, string currentStatus)
+        private void CargarEstadosVentaComboBox()
         {
-            SaleId = saleId;
-            tbx_Date.Text = saleDate.ToShortDateString();
-            tbx_Code.Text = saleId.ToString();
-            tbx_TotVent.Text = saleTotal.ToString("C");
+            try
+            {
+                if (_estadoVentaService == null)
+                {
+                    MessageBox.Show("Servicio de estados de venta no disponible.", "Error de Carga", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    if (cbx_VentState != null) cbx_VentState.Enabled = false;
+                    return;
+                }
+                var estados = _estadoVentaService.ObtenerTodos().ToList();
 
-            int index = cbx_VentState.FindStringExact(currentStatus);
-            if (index != -1)
-            {
-                cbx_VentState.SelectedIndex = index;
+                if (cbx_VentState != null)
+                {
+                    cbx_VentState.DataSource = null;
+                    cbx_VentState.Items.Clear();
+                    cbx_VentState.DisplayMember = "Nombre";
+                    cbx_VentState.ValueMember = "IdEstado";
+                    cbx_VentState.DataSource = estados;
+
+                    if (_ventaAModificar != null && _ventaAModificar.EstadoId > 0 && estados.Any(e => e.IdEstado == _ventaAModificar.EstadoId))
+                    {
+                        cbx_VentState.SelectedValue = _ventaAModificar.EstadoId;
+                    }
+                    else if (cbx_VentState.Items.Count > 0)
+                    {
+                        cbx_VentState.SelectedIndex = 0; // O -1 para ninguna selección si no hay estado actual
+                    }
+                }
             }
-            else
+            catch (Exception ex)
             {
-                cbx_VentState.SelectedIndex = 0;
+                MessageBox.Show($"Error al cargar estados de venta: {ex.Message}", "Error de Carga", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (cbx_VentState != null) cbx_VentState.Enabled = false;
             }
         }
 
-        // Evento Click del botón "Guardar cambios".
         private void ibtn_Modify_Click(object sender, EventArgs e)
         {
-            // --- Lógica placeholder para guardar los cambios de estado de la venta ---
-            string newStatus = cbx_VentState.SelectedItem?.ToString();
-
-            if (cbx_VentState.SelectedIndex == 0)
+            if (cbx_VentState.SelectedValue == null || !(cbx_VentState.SelectedValue is int) || ((int)cbx_VentState.SelectedValue) <= 0)
             {
-                MessageBox.Show("Por favor, seleccione un estado de venta válido.", "Estado Inválido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Por favor, seleccione un nuevo estado válido para la venta.", "Estado Inválido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            MessageBox.Show($"Lógica para modificar el estado de la venta ID: {SaleId} a '{newStatus}'.", "Guardar Cambios (Placeholder)", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            int nuevoEstadoId = (int)cbx_VentState.SelectedValue;
+            string nuevoEstadoNombre = (cbx_VentState.SelectedItem as EstadoVenta)?.Nombre ?? "Desconocido";
 
-            // Aquí se llamaría a la capa BLL para actualizar el estado de la venta.
-            // Ejemplo: BLL.SalesManager.UpdateSaleStatus(SaleId, newStatus);
+            if (_ventaAModificar.EstadoId == nuevoEstadoId)
+            {
+                MessageBox.Show("El estado seleccionado es el mismo que el actual. No se realizaron cambios.", "Sin Cambios", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                this.DialogResult = DialogResult.Cancel;
+                this.Close();
+                return;
+            }
 
-            this.DialogResult = DialogResult.OK; // Indica que la operación fue exitosa
-            this.Close(); // Cierra el formulario
+            if (nuevoEstadoNombre.ToUpper() == "CANCELADA")
+            {
+                DialogResult confirmCancel = MessageBox.Show($"Está a punto de cambiar el estado a CANCELADA. Esto también intentará revertir el stock de los productos involucrados.\n¿Desea continuar?", "Confirmar Cancelación", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                if (confirmCancel == DialogResult.OK)
+                {
+                    string motivo = $"Estado cambiado a CANCELADA por Admin ID: {_idAdminLogueado} el {DateTime.Now.ToString("g")}";
+                    string resultadoCancelacion = _ventaService.CancelarVenta(_ventaAModificar.IdVenta, motivo);
+                    MessageBox.Show(resultadoCancelacion, "Cancelar Venta", MessageBoxButtons.OK,
+                                   resultadoCancelacion.ToLower().Contains("exitosa") ? MessageBoxIcon.Information : MessageBoxIcon.Error); // "exitosamente" o "exitosa"
+                    if (resultadoCancelacion.ToLower().Contains("exitosa"))
+                    {
+                        this.DialogResult = DialogResult.OK;
+                        this.Close();
+                    }
+                }
+                return;
+            }
+
+            _ventaAModificar.EstadoId = nuevoEstadoId;
+            _ventaAModificar.Observaciones = (_ventaAModificar.Observaciones ?? "") + $"\nEstado actualizado a '{nuevoEstadoNombre}' por Admin ID: {_idAdminLogueado} el {DateTime.Now.ToString("g")}";
+
+            try
+            {
+                if (_ventaService == null) { MessageBox.Show("Servicio de ventas no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                bool actualizado = _ventaService.ActualizarVenta(_ventaAModificar);
+
+                string resultado = actualizado ? $"Estado de la venta ID {_ventaAModificar.IdVenta} actualizado a '{nuevoEstadoNombre}'."
+                                             : "No se pudo actualizar el estado de la venta.";
+
+                MessageBox.Show(resultado, "Modificación de Estado", MessageBoxButtons.OK,
+                                actualizado ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+
+                if (actualizado)
+                {
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+            }
+            catch (ApplicationException appEx)
+            {
+                MessageBox.Show($"Error de aplicación: {appEx.Message}", "Error de Modificación", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Se produjo un error inesperado: {ex.Message}", "Error Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        // Evento Click del botón "Cancelar".
         private void ibtn_Cancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel; // Indica que la operación fue cancelada
-            this.Close(); // Cierra el formulario sin guardar cambios
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
         }
     }
 }
-
-
-//using System;
-//using System.Collections.Generic;
-//using System.ComponentModel;
-//using System.Data;
-//using System.Drawing;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
-//using System.Windows.Forms;
-
-//namespace GUI
-//{
-//    public partial class Frm_ModifyVentState : Form
-//    {
-//        public Frm_ModifyVentState()
-//        {
-//            InitializeComponent();
-//        }
-//    }
-//}

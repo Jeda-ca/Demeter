@@ -34,12 +34,15 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.ibtn_OKCustomDate = new FontAwesome.Sharp.IconButton();
+            this.label2 = new System.Windows.Forms.Label();
+            this.cbx_DateFilter = new System.Windows.Forms.ComboBox();
             this.dtp_FFin = new System.Windows.Forms.DateTimePicker();
             this.dtp_FInicio = new System.Windows.Forms.DateTimePicker();
             this.label5 = new System.Windows.Forms.Label();
             this.dgv_ReportesVentxVend = new System.Windows.Forms.DataGridView();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.ibtn_Add = new FontAwesome.Sharp.IconButton();
+            this.ibtn_GenReport = new FontAwesome.Sharp.IconButton();
             this.label3 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_ReportesVentxVend)).BeginInit();
@@ -64,6 +67,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
+            this.panel1.Controls.Add(this.ibtn_OKCustomDate);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.cbx_DateFilter);
             this.panel1.Controls.Add(this.dtp_FFin);
             this.panel1.Controls.Add(this.dtp_FInicio);
             this.panel1.Controls.Add(this.label5);
@@ -74,12 +80,53 @@
             this.panel1.Size = new System.Drawing.Size(1064, 381);
             this.panel1.TabIndex = 23;
             // 
+            // ibtn_OKCustomDate
+            // 
+            this.ibtn_OKCustomDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ibtn_OKCustomDate.BackColor = System.Drawing.Color.Teal;
+            this.ibtn_OKCustomDate.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ibtn_OKCustomDate.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+            this.ibtn_OKCustomDate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ibtn_OKCustomDate.IconChar = FontAwesome.Sharp.IconChar.Check;
+            this.ibtn_OKCustomDate.IconColor = System.Drawing.Color.White;
+            this.ibtn_OKCustomDate.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            this.ibtn_OKCustomDate.IconSize = 30;
+            this.ibtn_OKCustomDate.Location = new System.Drawing.Point(995, 14);
+            this.ibtn_OKCustomDate.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.ibtn_OKCustomDate.Name = "ibtn_OKCustomDate";
+            this.ibtn_OKCustomDate.Size = new System.Drawing.Size(48, 38);
+            this.ibtn_OKCustomDate.TabIndex = 16;
+            this.ibtn_OKCustomDate.UseVisualStyleBackColor = false;
+            this.ibtn_OKCustomDate.Click += new System.EventHandler(this.ibtn_OKCustomDate_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.label2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
+            this.label2.Location = new System.Drawing.Point(18, 8);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(90, 18);
+            this.label2.TabIndex = 14;
+            this.label2.Text = "Filtrar por:";
+            // 
+            // cbx_DateFilter
+            // 
+            this.cbx_DateFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbx_DateFilter.Font = new System.Drawing.Font("Tahoma", 11F);
+            this.cbx_DateFilter.FormattingEnabled = true;
+            this.cbx_DateFilter.Location = new System.Drawing.Point(21, 28);
+            this.cbx_DateFilter.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.cbx_DateFilter.Name = "cbx_DateFilter";
+            this.cbx_DateFilter.Size = new System.Drawing.Size(251, 30);
+            this.cbx_DateFilter.TabIndex = 15;
+            // 
             // dtp_FFin
             // 
             this.dtp_FFin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.dtp_FFin.CustomFormat = "MMM dd, yyyy";
             this.dtp_FFin.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtp_FFin.Location = new System.Drawing.Point(875, 20);
+            this.dtp_FFin.Location = new System.Drawing.Point(805, 20);
             this.dtp_FFin.Margin = new System.Windows.Forms.Padding(4);
             this.dtp_FFin.Name = "dtp_FFin";
             this.dtp_FFin.Size = new System.Drawing.Size(168, 22);
@@ -90,7 +137,7 @@
             this.dtp_FInicio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.dtp_FInicio.CustomFormat = "MMM dd, yyyy";
             this.dtp_FInicio.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtp_FInicio.Location = new System.Drawing.Point(661, 20);
+            this.dtp_FInicio.Location = new System.Drawing.Point(591, 20);
             this.dtp_FInicio.Margin = new System.Windows.Forms.Padding(4);
             this.dtp_FInicio.Name = "dtp_FInicio";
             this.dtp_FInicio.Size = new System.Drawing.Size(168, 22);
@@ -166,7 +213,7 @@
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
-            this.panel2.Controls.Add(this.ibtn_Add);
+            this.panel2.Controls.Add(this.ibtn_GenReport);
             this.panel2.Controls.Add(this.label3);
             this.panel2.Location = new System.Drawing.Point(43, 475);
             this.panel2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -174,28 +221,28 @@
             this.panel2.Size = new System.Drawing.Size(1064, 174);
             this.panel2.TabIndex = 24;
             // 
-            // ibtn_Add
+            // ibtn_GenReport
             // 
-            this.ibtn_Add.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
-            this.ibtn_Add.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.ibtn_Add.FlatAppearance.BorderSize = 0;
-            this.ibtn_Add.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
-            this.ibtn_Add.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ibtn_Add.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
-            this.ibtn_Add.ForeColor = System.Drawing.Color.White;
-            this.ibtn_Add.IconChar = FontAwesome.Sharp.IconChar.FileExport;
-            this.ibtn_Add.IconColor = System.Drawing.Color.White;
-            this.ibtn_Add.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            this.ibtn_Add.IconSize = 42;
-            this.ibtn_Add.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.ibtn_Add.Location = new System.Drawing.Point(20, 54);
-            this.ibtn_Add.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.ibtn_Add.Name = "ibtn_Add";
-            this.ibtn_Add.Size = new System.Drawing.Size(228, 95);
-            this.ibtn_Add.TabIndex = 9;
-            this.ibtn_Add.Text = "Generar";
-            this.ibtn_Add.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.ibtn_Add.UseVisualStyleBackColor = false;
+            this.ibtn_GenReport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
+            this.ibtn_GenReport.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ibtn_GenReport.FlatAppearance.BorderSize = 0;
+            this.ibtn_GenReport.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
+            this.ibtn_GenReport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ibtn_GenReport.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.ibtn_GenReport.ForeColor = System.Drawing.Color.White;
+            this.ibtn_GenReport.IconChar = FontAwesome.Sharp.IconChar.FileExport;
+            this.ibtn_GenReport.IconColor = System.Drawing.Color.White;
+            this.ibtn_GenReport.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            this.ibtn_GenReport.IconSize = 42;
+            this.ibtn_GenReport.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.ibtn_GenReport.Location = new System.Drawing.Point(20, 54);
+            this.ibtn_GenReport.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.ibtn_GenReport.Name = "ibtn_GenReport";
+            this.ibtn_GenReport.Size = new System.Drawing.Size(228, 95);
+            this.ibtn_GenReport.TabIndex = 9;
+            this.ibtn_GenReport.Text = "Generar";
+            this.ibtn_GenReport.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.ibtn_GenReport.UseVisualStyleBackColor = false;
             // 
             // label3
             // 
@@ -220,6 +267,7 @@
             this.Name = "Frm_VendorsReport";
             this.Load += new System.EventHandler(this.Frm_VendorsReport_Load);
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_ReportesVentxVend)).EndInit();
             this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -235,7 +283,10 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.DataGridView dgv_ReportesVentxVend;
         private System.Windows.Forms.Panel panel2;
-        private FontAwesome.Sharp.IconButton ibtn_Add;
+        private FontAwesome.Sharp.IconButton ibtn_GenReport;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ComboBox cbx_DateFilter;
+        private FontAwesome.Sharp.IconButton ibtn_OKCustomDate;
     }
 }

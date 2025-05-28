@@ -1,4 +1,7 @@
-﻿using System;
+﻿using BLL.Interfaces;
+using BLL.Services;
+using ENTITY;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,120 +15,236 @@ namespace GUI
 {
     public partial class Frm_GProductsVendor : Form
     {
-        public Frm_GProductsVendor()
+        private readonly IProductoService _productoService;
+        private readonly ICategoriaProductoService _categoriaProductoService;
+        private readonly IUnidadMedidaService _unidadMedidaService;
+        private readonly int _idUsuarioVendedorLogueado; // ID del usuario (tabla users) del vendedor logueado
+        private readonly int _idVendedorTabla; // ID de la tabla 'sellers' del vendedor logueado
+
+        // Constructor actualizado para recibir ambos IDs del vendedor
+        public Frm_GProductsVendor(int idUsuarioVendedor, int idVendedorTabla)
         {
             InitializeComponent();
-            // Configuración esencial para que este formulario pueda ser incrustado como un control.
-            this.TopLevel = false; // Indica que no es una ventana de nivel superior independiente.
-            this.FormBorderStyle = FormBorderStyle.None; // Elimina el borde y la barra de título.
-            this.Dock = DockStyle.Fill; // Hace que el formulario llene el control contenedor.
+            this.TopLevel = false;
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.Dock = DockStyle.Fill;
 
-            // Inicializar ComboBox de filtro (placeholder)
-            cbx_FiltroV.Items.Add("-- Seleccione --");
-            cbx_FiltroV.Items.Add("Nombre");
-            cbx_FiltroV.Items.Add("Categoría");
-            cbx_FiltroV.Items.Add("Stock Bajo");
-            cbx_FiltroV.SelectedIndex = 0;
-        }
+            _idUsuarioVendedorLogueado = idUsuarioVendedor;
+            _idVendedorTabla = idVendedorTabla;
 
-        // Evento Load del formulario.
-        private void Frm_GProductsVendor_Load(object sender, EventArgs e)
-        {
-            LoadProductsData(); // Carga los datos iniciales al cargar el formulario.
-        }
 
-        // Método placeholder para cargar/recargar datos de productos.
-        private void LoadProductsData()
-        {
-            // --- Lógica para cargar datos de productos desde la capa BLL y llenar el DataGridView. ---
-            // Por ahora, el DataGridView estará vacío o con columnas definidas.
-            DataTable dt = new DataTable();
-            dt.Columns.Add("ID", typeof(int));
-            dt.Columns.Add("Nombre", typeof(string));
-            dt.Columns.Add("Categoría", typeof(string));
-            dt.Columns.Add("Precio", typeof(decimal));
-            dt.Columns.Add("Stock", typeof(int));
-            // No se añaden filas de datos de prueba.
-            // Para probar:
-            // dt.Rows.Add(1, "Manzana", "FRUTAS", 2500.00m, 50); // DATOS DE PRUEBA
-            // dt.Rows.Add(2, "Lechuga", "VERDURAS", 1200.00m, 15); // DATOS DE PRUEBA
-
-            dgv_ListaCategorías.DataSource = dt; // Asignar el DataTable al DataGridView
-        }
-
-        // Evento Click del botón "Agregar" para abrir Frm_AddProductVendor
-        private void ibtn_Add_Click(object sender, EventArgs e)
-        {
-            // Lógica para abrir un formulario de agregar producto.
-            Frm_AddProductVendor frmAddProduct = new Frm_AddProductVendor();
-            DialogResult result = frmAddProduct.ShowDialog(); // Abre el formulario como un diálogo modal
-
-            // Si el formulario se cerró con DialogResult.OK (indicando que se agregó algo)
-            // if (result == DialogResult.OK)
-            // {
-            //    LoadProductsData(); // Recargar la lista de productos si es necesario.
-            // }
-        }
-
-        // Evento Click del botón "Modificar" para abrir Frm_ModifyProductAdmin_Vendor
-        private void ibtn_Modify_Click(object sender, EventArgs e)
-        {
-            // Lógica para verificar si hay un producto seleccionado y abrir el formulario de modificación.
-            if (dgv_ListaCategorías.SelectedRows.Count > 0)
+            if (_idUsuarioVendedorLogueado <= 0 || _idVendedorTabla <= 0)
             {
-                // --- Lógica para pasar la información del producto seleccionado a Frm_ModifyProductAdmin_Vendor ---
-                // Ejemplo:
-                // int productId = (int)dgv_ListaCategorías.SelectedRows[0].Cells["ID"].Value;
-                // string productName = dgv_ListaCategorías.SelectedRows[0].Cells["Nombre"].Value.ToString();
-                // string productDescription = dgv_ListaCategorías.SelectedRows[0].Cells["Descripción"].Value.ToString(); // Asumiendo que esta columna existe
-                // decimal productPrice = (decimal)dgv_ListaCategorías.SelectedRows[0].Cells["Precio"].Value;
-                // string productUnit = dgv_ListaCategorías.SelectedRows[0].Cells["Unidad Medida"].Value.ToString(); // Asumiendo que esta columna existe
-                // string productCategory = dgv_ListaCategorías.SelectedRows[0].Cells["Categoría"].Value.ToString();
-                // int productStock = (int)dgv_ListaCategorías.SelectedRows[0].Cells["Stock"].Value;
-
-                // Frm_ModifyProductAdmin_Vendor frmModifyProduct = new Frm_ModifyProductAdmin_Vendor(productId, productName, productDescription, productPrice, productUnit, productCategory, productStock);
-                Frm_ModifyProductAdmin_Vendor frmModifyProduct = new Frm_ModifyProductAdmin_Vendor(); // Si no pasas datos en el constructor, usa el método SetProductInfo
-                // frmModifyProduct.SetProductInfo(productId, productName, productDescription, productPrice, productUnit, productCategory, productStock); // Si necesitas pasar datos
-                DialogResult result = frmModifyProduct.ShowDialog();
-
-                // Si el formulario se cerró con DialogResult.OK
-                // if (result == DialogResult.OK)
-                // {
-                //     LoadProductsData(); // Recargar la lista de productos si es necesario.
-                // }
-            }
-            else
-            {
-                MessageBox.Show("Por favor, seleccione un producto para modificar.", "Modificar Producto", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
-        // Evento Click del botón "Buscar" (placeholder para la lógica de búsqueda)
-        private void ibtn_Buscar_Click(object sender, EventArgs e)
-        {
-            // --- Lógica para buscar productos basada en el texto y el criterio de búsqueda. ---
-            string searchText = tbx_Busqueda.Text;
-            string searchCriteria = cbx_FiltroV.SelectedItem?.ToString();
-
-            if (cbx_FiltroV.SelectedIndex == 0 || (searchCriteria != "Stock Bajo" && string.IsNullOrWhiteSpace(searchText)))
-            {
-                MessageBox.Show("Por favor, seleccione un criterio de búsqueda y/o ingrese un texto (a menos que sea 'Stock Bajo').", "Búsqueda incompleta", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                LoadProductsData(); // Recargar todos los productos si la búsqueda es inválida o vacía.
+                MessageBox.Show("Error: Información del vendedor no válida.", "Error de Sesión", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.BeginInvoke(new MethodInvoker(this.Close));
                 return;
             }
 
-            MessageBox.Show($"Lógica de búsqueda para '{searchText}' por '{searchCriteria}'.", "Buscar Producto (Placeholder)", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            // Aquí llamarías a la capa BLL para filtrar los datos y actualizar el DataGridView.
-            // Ejemplo: dgv_ListaCategorías.DataSource = BLL.ProductManager.SearchProducts(searchText, searchCriteria);
+            try
+            {
+                _productoService = new ProductoService();
+                _categoriaProductoService = new CategoriaProductoService();
+                _unidadMedidaService = new UnidadMedidaService();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error crítico al inicializar servicios: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Deshabilitar controles
+                if (ibtn_Add != null) ibtn_Add.Enabled = false;
+                if (ibtn_Modify != null) ibtn_Modify.Enabled = false;
+                if (ibtn_Buscar != null) ibtn_Buscar.Enabled = false;
+                if (cbx_FiltroV != null) cbx_FiltroV.Enabled = false;
+                if (ibtn_Clear != null) ibtn_Clear.Enabled = false;
+            }
         }
 
-        // Evento Click del botón "Limpiar"
+        private void Frm_GProductsVendor_Load(object sender, EventArgs e)
+        {
+            if (_idUsuarioVendedorLogueado > 0 && _productoService != null)
+            {
+                CargarFiltrosComboBox();
+                LoadProductsData(); // Cargar productos del vendedor logueado
+            }
+        }
+
+        private void CargarFiltrosComboBox()
+        {
+            if (cbx_FiltroV == null) return;
+            cbx_FiltroV.Items.Clear();
+            cbx_FiltroV.Items.Add("-- Seleccione Criterio --");
+            cbx_FiltroV.Items.Add("Nombre");
+            cbx_FiltroV.Items.Add("Categoría");
+            cbx_FiltroV.Items.Add("Stock Bajo (menor a 10)");
+            cbx_FiltroV.SelectedIndex = 0;
+        }
+
+        private void LoadProductsData(IEnumerable<Producto> productosFiltrados = null)
+        {
+            try
+            {
+                if (_productoService == null) { MessageBox.Show("Servicio de productos no inicializado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                IEnumerable<Producto> productosAMostrar;
+
+                if (productosFiltrados != null)
+                {
+                    productosAMostrar = productosFiltrados.ToList();
+                }
+                else
+                {
+                    // Cargar solo productos del vendedor logueado y que estén activos
+                    productosAMostrar = _productoService.ObtenerProductosPorVendedor(_idVendedorTabla)
+                                                     .Where(p => p.Activo).ToList();
+                }
+
+                DataTable dt = new DataTable();
+                dt.Columns.Add("IdProducto", typeof(int));
+                dt.Columns.Add("Nombre", typeof(string));
+                // dt.Columns.Add("Descripcion", typeof(string)); // Opcional para la grilla principal
+                dt.Columns.Add("Precio", typeof(decimal));
+                dt.Columns.Add("UnidadMedida", typeof(string));
+                dt.Columns.Add("Categoria", typeof(string));
+                dt.Columns.Add("Stock", typeof(int));
+                // No es necesario mostrar "VendedorCodigo" ni "Estado" si solo se ven productos activos del propio vendedor
+
+                foreach (var producto in productosAMostrar.OrderBy(p => p.Nombre))
+                {
+                    dt.Rows.Add(
+                        producto.IdProducto,
+                        producto.Nombre,
+                        // producto.Descripcion,
+                        producto.Precio,
+                        producto.UnidadMedida?.Nombre ?? "N/A",
+                        producto.Categoria?.Nombre ?? "N/A",
+                        producto.Stock
+                    );
+                }
+
+                // dgv_ListaCategorías es el nombre de tu DataGridView en Frm_GProductsVendor.cs
+                if (dgv_ListaCategorías != null)
+                {
+                    dgv_ListaCategorías.DataSource = dt;
+                    if (dgv_ListaCategorías.Columns["IdProducto"] != null) dgv_ListaCategorías.Columns["IdProducto"].Visible = false;
+                    if (dgv_ListaCategorías.Columns["Precio"] != null) dgv_ListaCategorías.Columns["Precio"].DefaultCellStyle.Format = "C2";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar productos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ibtn_Add_Click(object sender, EventArgs e)
+        {
+            // Frm_AddProductVendor necesitará el IdUsuario del vendedor y su IdVendedor (de la tabla sellers)
+            using (Frm_AddProductVendor frmAdd = new Frm_AddProductVendor(_idUsuarioVendedorLogueado, _idVendedorTabla))
+            {
+                if (frmAdd.ShowDialog() == DialogResult.OK)
+                {
+                    LoadProductsData();
+                }
+            }
+        }
+
+        // CORREGIDO: Evento para el botón Modificar
+        private void ibtn_Modify_Click(object sender, EventArgs e)
+        {
+            if (dgv_ListaCategorías.SelectedRows.Count > 0)
+            {
+                try
+                {
+                    int idProductoSeleccionado = Convert.ToInt32(dgv_ListaCategorías.SelectedRows[0].Cells["IdProducto"].Value);
+                    if (_productoService == null) { MessageBox.Show("Servicio de productos no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                    Producto productoAModificar = _productoService.ObtenerProductoPorId(idProductoSeleccionado);
+
+                    if (productoAModificar != null)
+                    {
+                        // El vendedor solo puede modificar sus propios productos.
+                        // La validación de si es su producto ya está implícita porque solo carga sus productos.
+                        // Se pasa el _idUsuarioVendedorLogueado para el parámetro idUsuarioQueModifica del constructor.
+                        using (Frm_ModifyProductAdmin_Vendor frmModify = new Frm_ModifyProductAdmin_Vendor(productoAModificar, _idUsuarioVendedorLogueado))
+                        {
+                            if (frmModify.ShowDialog() == DialogResult.OK)
+                            {
+                                LoadProductsData(); // Recargar los productos del vendedor
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo encontrar el producto seleccionado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al preparar modificación: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Seleccione un producto de la lista para modificar.", "Selección Requerida", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void ibtn_Buscar_Click(object sender, EventArgs e)
+        {
+            string criterio = cbx_FiltroV.SelectedItem?.ToString();
+            string textoBusqueda = tbx_Busqueda.Text.Trim();
+            IEnumerable<Producto> productosFiltrados = new List<Producto>();
+
+            if (string.IsNullOrEmpty(criterio) || criterio == "-- Seleccione Criterio --")
+            {
+                if (string.IsNullOrWhiteSpace(textoBusqueda)) LoadProductsData(); // Carga todos los del vendedor si no hay texto
+                else criterio = "Nombre"; // Si hay texto pero no criterio, busca por nombre
+            }
+            if (_productoService == null) { MessageBox.Show("Servicio de productos no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+            try
+            {
+                // Siempre filtrar sobre los productos del vendedor logueado y que estén activos
+                var productosDelVendedor = _productoService.ObtenerProductosPorVendedor(_idVendedorTabla).Where(p => p.Activo);
+
+                switch (criterio)
+                {
+                    case "Nombre":
+                        if (!string.IsNullOrWhiteSpace(textoBusqueda))
+                            productosFiltrados = productosDelVendedor.Where(p => p.Nombre.IndexOf(textoBusqueda, StringComparison.OrdinalIgnoreCase) >= 0);
+                        else { LoadProductsData(); return; }
+                        break;
+                    case "Categoría":
+                        if (!string.IsNullOrWhiteSpace(textoBusqueda) && _categoriaProductoService != null)
+                        {
+                            // Buscar por nombre de categoría es más amigable para el usuario
+                            var categoria = _categoriaProductoService.ObtenerPorNombre(textoBusqueda);
+                            if (categoria != null)
+                                productosFiltrados = productosDelVendedor.Where(p => p.CategoriaId == categoria.IdCategoria);
+                            else
+                                MessageBox.Show($"Categoría '{textoBusqueda}' no encontrada.", "Búsqueda", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else { LoadProductsData(); return; }
+                        break;
+                    case "Stock Bajo (menor a 10)":
+                        productosFiltrados = productosDelVendedor.Where(p => p.Stock < 10);
+                        break;
+                    default:
+                        productosFiltrados = productosDelVendedor; // Si el criterio no es reconocido o es default
+                        break;
+                }
+                LoadProductsData(productosFiltrados);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al buscar productos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Asegúrate que el nombre de tu botón Limpiar en el Designer sea ibtn_Clear
         private void ibtn_Clear_Click(object sender, EventArgs e)
         {
-            tbx_Busqueda.Clear();
-            cbx_FiltroV.SelectedIndex = 0;
-            LoadProductsData(); // Recargar todos los productos al limpiar la búsqueda.
-            MessageBox.Show("Campos de búsqueda limpiados.", "Limpiar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            if (tbx_Busqueda != null) tbx_Busqueda.Clear();
+            if (cbx_FiltroV != null && cbx_FiltroV.Items.Count > 0) cbx_FiltroV.SelectedIndex = 0;
+            LoadProductsData();
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using BLL.Interfaces;
+using BLL.Services;
+using ENTITY;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,89 +15,173 @@ namespace GUI
 {
     public partial class Frm_GClientsVendor : Form
     {
-        public Frm_GClientsVendor()
+        private readonly int _idUsuarioVendedorLogueado;
+        private readonly int _idVendedorTabla;
+        private IClienteService _clienteService;
+        private ITipoDocumentoService _tipoDocumentoService; // Para el ComboBox en Frm_AddClientVendor
+
+        public Frm_GClientsVendor(int idUsuarioVendedor, int idVendedorTabla)
         {
             InitializeComponent();
-            // Configuración esencial para que este formulario pueda ser incrustado como un control.
-            this.TopLevel = false; // Indica que no es una ventana de nivel superior independiente.
-            this.FormBorderStyle = FormBorderStyle.None; // Elimina el borde y la barra de título.
-            this.Dock = DockStyle.Fill; // Hace que el formulario llene el control contenedor.
+            this.TopLevel = false;
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.Dock = DockStyle.Fill;
 
-            // Inicializar ComboBox de búsqueda (placeholder)
-            cbx_Buscar.Items.Add("-- Seleccione --");
-            cbx_Buscar.Items.Add("Nombre");
-            cbx_Buscar.Items.Add("Apellido");
+            _idUsuarioVendedorLogueado = idUsuarioVendedor;
+            _idVendedorTabla = idVendedorTabla;
+
+            if (_idUsuarioVendedorLogueado <= 0)
+            {
+                MessageBox.Show("Error: Información de vendedor no válida para el gestor de clientes.", "Error de Sesión", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.BeginInvoke(new MethodInvoker(this.Close));
+                return;
+            }
+
+            try
+            {
+                _clienteService = new ClienteService();
+                _tipoDocumentoService = new TipoDocumentoService(); // Para Frm_AddClientVendor
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al inicializar servicios en Gestor de Clientes Vendedor: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Deshabilitar controles si falla la inicialización
+                if (ibtn_Add != null) ibtn_Add.Enabled = false;
+                if (ibtn_Buscar != null) ibtn_Buscar.Enabled = false;
+                if (ibtn_Clear != null) ibtn_Clear.Enabled = false;
+                if (cbx_Buscar != null) cbx_Buscar.Enabled = false;
+            }
+        }
+
+        private void Frm_GClientsVendor_Load(object sender, EventArgs e)
+        {
+            if (_idUsuarioVendedorLogueado > 0 && _clienteService != null)
+            {
+                CargarFiltrosComboBox();
+                LoadClientsData();
+            }
+        }
+
+        private void CargarFiltrosComboBox()
+        {
+            if (cbx_Buscar == null) return;
+            cbx_Buscar.Items.Clear();
+            cbx_Buscar.Items.Add("-- Seleccione Criterio --");
+            cbx_Buscar.Items.Add("Nombre o Apellido");
             cbx_Buscar.Items.Add("Número de Documento");
-            cbx_Buscar.Items.Add("Teléfono");
             cbx_Buscar.Items.Add("Email");
             cbx_Buscar.SelectedIndex = 0;
         }
 
-        // Evento Load del formulario.
-        private void Frm_GClientsVendor_Load(object sender, EventArgs e)
+        private void LoadClientsData(IEnumerable<Cliente> clientes = null)
         {
-            LoadClientsData(); // Carga los datos iniciales al cargar el formulario.
+            try
+            {
+                if (_clienteService == null) { MessageBox.Show("Servicio de clientes no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (clientes == null)
+                {
+                    // Por defecto, el vendedor ve todos los clientes activos del sistema.
+                    // Si la lógica fuera que un vendedor solo ve los clientes que ÉL registró,
+                    // necesitarías un método en ClienteService que filtre por VendedorId (si esa relación existe).
+                    // Por ahora, se asume que ve todos los clientes activos.
+                    clientes = _clienteService.ObtenerTodosLosClientes().Where(c => c.Activo).ToList();
+                }
+
+                DataTable dt = new DataTable();
+                dt.Columns.Add("IdCliente", typeof(int));
+                dt.Columns.Add("NombreCompleto", typeof(string));
+                dt.Columns.Add("TipoDocumento", typeof(string));
+                dt.Columns.Add("NumeroDocumento", typeof(string));
+                dt.Columns.Add("Telefono", typeof(string));
+                dt.Columns.Add("Email", typeof(string));
+
+                foreach (var cliente in clientes.OrderBy(c => c.Apellido).ThenBy(c => c.Nombre))
+                {
+                    dt.Rows.Add(
+                        cliente.IdCliente,
+                        $"{cliente.Nombre} {cliente.Apellido}",
+                        cliente.TipoDocumento?.Nombre ?? "N/A", // Asume que TipoDocumento se carga
+                        cliente.NumeroDocumento,
+                        cliente.Telefono,
+                        cliente.Correo
+                    );
+                }
+                if (dgv_ListaClientes != null)
+                {
+                    dgv_ListaClientes.DataSource = dt;
+                    if (dgv_ListaClientes.Columns["IdCliente"] != null) dgv_ListaClientes.Columns["IdCliente"].Visible = false;
+                }
+            }
+            catch (Exception ex) { MessageBox.Show($"Error al cargar clientes: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
 
-        // Método placeholder para cargar/recargar datos de clientes.
-        private void LoadClientsData()
-        {
-            // --- Lógica para cargar datos de clientes desde la capa BLL y llenar el DataGridView. ---
-            // Por ahora, el DataGridView estará vacío o con columnas definidas.
-            DataTable dt = new DataTable();
-            dt.Columns.Add("ID", typeof(int));
-            dt.Columns.Add("Nombre Completo", typeof(string));
-            dt.Columns.Add("Documento", typeof(string));
-            dt.Columns.Add("Teléfono", typeof(string));
-            dt.Columns.Add("Email", typeof(string));
-            // No se añaden filas de datos de prueba.
-            // Para probar:
-            // dt.Rows.Add(1, "Cliente A Apellido A", "12345", "3001234567", "clienteA@mail.com"); // DATOS DE PRUEBA
-            // dt.Rows.Add(2, "Cliente B Apellido B", "67890", "3109876543", "clienteB@mail.com"); // DATOS DE PRUEBA
-
-            dgv_ListaClientes.DataSource = dt; // Asignar el DataTable al DataGridView
-        }
-
-        // Evento Click del botón "Agregar" para abrir Frm_AddClientVendor
+        // Este es el método que el Designer.cs está buscando para el botón ibtn_Add
         private void ibtn_Add_Click(object sender, EventArgs e)
         {
-            // Lógica para abrir un formulario de agregar cliente.
-            Frm_AddClientVendor frmAddClient = new Frm_AddClientVendor();
-            DialogResult result = frmAddClient.ShowDialog(); // Abre el formulario como un diálogo modal
-
-            // Si el formulario se cerró con DialogResult.OK (indicando que se agregó algo)
-            // if (result == DialogResult.OK)
-            // {
-            //    LoadClientsData(); // Recargar la lista de clientes si es necesario.
-            // }
+            // Frm_AddClientVendor necesitará el _idUsuarioVendedorLogueado para auditoría
+            // y _idVendedorTabla si el cliente se asocia al vendedor que lo registra (esto último no está en tu modelo actual de Cliente).
+            // Por ahora, solo pasamos el ID del usuario vendedor.
+            using (Frm_AddClientVendor frmAdd = new Frm_AddClientVendor(_idUsuarioVendedorLogueado /*, _idVendedorTabla (si es necesario)*/))
+            {
+                if (frmAdd.ShowDialog() == DialogResult.OK)
+                {
+                    LoadClientsData(); // Recargar la lista de clientes
+                }
+            }
         }
 
-        // Evento Click del botón "Buscar" (placeholder para la lógica de búsqueda)
         private void ibtn_Buscar_Click(object sender, EventArgs e)
         {
-            // --- Lógica para buscar clientes basada en el texto y el criterio de búsqueda. ---
-            string searchText = tbx_Busqueda.Text;
-            string searchCriteria = cbx_Buscar.SelectedItem?.ToString();
+            string criterio = cbx_Buscar.SelectedItem?.ToString();
+            string textoBusqueda = tbx_Busqueda.Text.Trim();
+            IEnumerable<Cliente> clientesFiltrados = new List<Cliente>();
 
-            if (cbx_Buscar.SelectedIndex == 0 || string.IsNullOrWhiteSpace(searchText))
+            if (string.IsNullOrEmpty(criterio) || criterio == "-- Seleccione Criterio --")
             {
-                MessageBox.Show("Por favor, seleccione un criterio de búsqueda y/o ingrese un texto.", "Búsqueda incompleta", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                LoadClientsData(); // Recargar todos los clientes si la búsqueda es inválida o vacía.
-                return;
+                if (string.IsNullOrWhiteSpace(textoBusqueda)) LoadClientsData();
+                else criterio = "Nombre o Apellido";
             }
+            if (_clienteService == null) { MessageBox.Show("Servicio de clientes no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
-            MessageBox.Show($"Lógica de búsqueda para '{searchText}' por '{searchCriteria}'.", "Buscar Cliente (Placeholder)", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            // Aquí llamarías a la capa BLL para filtrar los datos y actualizar el DataGridView.
-            // Ejemplo: dgv_ListaClientes.DataSource = BLL.ClientManager.SearchClients(searchText, searchCriteria);
+            try
+            {
+                // Siempre buscar sobre los clientes activos para la vista del vendedor
+                var todosLosClientesActivos = _clienteService.ObtenerTodosLosClientes().Where(c => c.Activo);
+
+                switch (criterio)
+                {
+                    case "Nombre o Apellido":
+                        if (!string.IsNullOrWhiteSpace(textoBusqueda))
+                            clientesFiltrados = todosLosClientesActivos.Where(c =>
+                                (c.Nombre.IndexOf(textoBusqueda, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                                 c.Apellido.IndexOf(textoBusqueda, StringComparison.OrdinalIgnoreCase) >= 0)
+                            ).ToList();
+                        else { LoadClientsData(); return; }
+                        break;
+                    case "Número de Documento":
+                        if (!string.IsNullOrWhiteSpace(textoBusqueda))
+                            clientesFiltrados = todosLosClientesActivos.Where(c => c.NumeroDocumento.Contains(textoBusqueda)).ToList();
+                        else { LoadClientsData(); return; }
+                        break;
+                    case "Email":
+                        if (!string.IsNullOrWhiteSpace(textoBusqueda))
+                            clientesFiltrados = todosLosClientesActivos.Where(c => c.Correo != null && c.Correo.IndexOf(textoBusqueda, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+                        else { LoadClientsData(); return; }
+                        break;
+                    default:
+                        clientesFiltrados = todosLosClientesActivos.ToList();
+                        break;
+                }
+                LoadClientsData(clientesFiltrados);
+            }
+            catch (Exception ex) { MessageBox.Show($"Error al buscar clientes: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
 
-        // Evento Click del botón "Limpiar"
         private void ibtn_Clear_Click(object sender, EventArgs e)
         {
-            tbx_Busqueda.Clear();
-            cbx_Buscar.SelectedIndex = 0;
-            LoadClientsData(); // Recargar todos los clientes al limpiar la búsqueda.
-            MessageBox.Show("Campos de búsqueda limpiados.", "Limpiar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            if (tbx_Busqueda != null) tbx_Busqueda.Clear();
+            if (cbx_Buscar != null && cbx_Buscar.Items.Count > 0) cbx_Buscar.SelectedIndex = 0;
+            LoadClientsData();
         }
     }
 }

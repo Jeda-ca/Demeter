@@ -1,4 +1,7 @@
-﻿using System;
+﻿using BLL.Interfaces;
+using BLL.Services;
+using ENTITY;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,74 +15,137 @@ namespace GUI
 {
     public partial class Frm_AddClientVendor : Form
     {
+        private readonly int _idUsuarioVendedor;
+        private readonly IClienteService _clienteService;
+        private readonly ITipoDocumentoService _tipoDocumentoService;
+
+        public Frm_AddClientVendor(int idUsuarioVendedor)
+        {
+            InitializeComponent();
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
+            this.StartPosition = FormStartPosition.CenterParent;
+
+            _idUsuarioVendedor = idUsuarioVendedor;
+
+            try
+            {
+                _clienteService = new ClienteService();
+                _tipoDocumentoService = new TipoDocumentoService();
+                CargarTiposDocumento();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al inicializar servicios: {ex.Message}", "Error de Inicialización", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (this.Controls.Find("ibtn_Add", true).FirstOrDefault() is Button btnAdd) btnAdd.Enabled = false;
+            }
+        }
+
         public Frm_AddClientVendor()
         {
             InitializeComponent();
-            // Configuración por defecto para un formulario de diálogo.
-            this.FormBorderStyle = FormBorderStyle.FixedDialog; // Borde fijo para diálogos
-            this.StartPosition = FormStartPosition.CenterParent; // Centrar respecto al padre
-
-            // Inicializar ComboBox de Tipo de Documento (placeholder)
-            cbx_TypeDoc.Items.Add("-- Seleccione --");
-            cbx_TypeDoc.Items.Add("Cédula de Ciudadanía");
-            cbx_TypeDoc.Items.Add("NIT");
-            cbx_TypeDoc.Items.Add("Cédula de Extranjería");
-            cbx_TypeDoc.Items.Add("Pasaporte");
-            cbx_TypeDoc.SelectedIndex = 0; // Seleccionar la opción por defecto
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
+            this.StartPosition = FormStartPosition.CenterParent;
+            _idUsuarioVendedor = 0;
+            try
+            {
+                _clienteService = new ClienteService();
+                _tipoDocumentoService = new TipoDocumentoService();
+                CargarTiposDocumento();
+            }
+            catch (Exception ex) { }
         }
 
-        // Método para limpiar todos los TextBox y ComboBox del formulario
-        private void ClearFormFields()
+
+        private void CargarTiposDocumento()
         {
-            tbx_Name.Clear();
-            tbx_LastName.Clear();
-            cbx_TypeDoc.SelectedIndex = 0; // Vuelve a la opción por defecto
-            tbx_NumDoc.Clear();
-            tbx_Cellphone.Clear();
-            textBox1.Clear(); // Campo de Email (asumiendo textBox1 es el de email)
+            try
+            {
+                if (_tipoDocumentoService == null) { MessageBox.Show("Servicio de tipos de documento no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                var tiposDocumento = _tipoDocumentoService.ObtenerTodos().ToList();
+
+                // cbx_TypeDoc es el ComboBox para Tipo de Documento
+                if (cbx_TypeDoc != null)
+                {
+                    cbx_TypeDoc.DataSource = null;
+                    cbx_TypeDoc.Items.Clear();
+                    cbx_TypeDoc.DisplayMember = "Nombre";
+                    cbx_TypeDoc.ValueMember = "IdTipoDocumento";
+
+                    var listaConDefault = tiposDocumento;
+                    listaConDefault.Insert(0, new TipoDocumento { IdTipoDocumento = 0, Nombre = "-- Seleccione --" });
+                    cbx_TypeDoc.DataSource = listaConDefault;
+                    cbx_TypeDoc.SelectedIndex = 0;
+                }
+            }
+            catch (Exception ex) { MessageBox.Show($"Error al cargar tipos de documento: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
 
-        // Evento Click del botón "Agregar" (placeholder para la lógica de agregar cliente)
         private void ibtn_Add_Click(object sender, EventArgs e)
         {
-            // --- Lógica placeholder para agregar un nuevo cliente ---
-            // Recopilar datos de los campos
-            string nombre = tbx_Name.Text;
-            string apellido = tbx_LastName.Text;
-            string tipoDoc = cbx_TypeDoc.SelectedIndex > 0 ? cbx_TypeDoc.SelectedItem.ToString() : string.Empty;
-            string numDoc = tbx_NumDoc.Text;
-            string telefono = tbx_Cellphone.Text;
-            string email = textBox1.Text; // Asumiendo textBox1 es el de email
+            string nombre = tbx_Name.Text.Trim();
+            string apellido = tbx_LastName.Text.Trim();
+            string numDoc = tbx_NumDoc.Text.Trim();
+            string telefono = tbx_Cellphone.Text.Trim();
+            string email = textBox1.Text.Trim(); // textBox1 es el de Email en Frm_AddClientVendor.Designer.cs
 
-            // Validaciones básicas
             if (string.IsNullOrWhiteSpace(nombre) || string.IsNullOrWhiteSpace(apellido) ||
-                cbx_TypeDoc.SelectedIndex == 0 || string.IsNullOrWhiteSpace(numDoc) ||
-                string.IsNullOrWhiteSpace(telefono) || string.IsNullOrWhiteSpace(email))
+                cbx_TypeDoc.SelectedValue == null || !(cbx_TypeDoc.SelectedValue is int) || ((int)cbx_TypeDoc.SelectedValue) <= 0 ||
+                string.IsNullOrWhiteSpace(numDoc) ||
+                string.IsNullOrWhiteSpace(email) )
             {
-                MessageBox.Show("Por favor, complete todos los campos obligatorios.", "Campos Incompletos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Nombre, Apellido, Tipo y N° Documento, y Email son obligatorios.", "Campos Incompletos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Aquí se llamaría a la capa BLL para registrar al nuevo cliente.
-            // Ejemplo: BLL.ClientManager.AddClient(nombre, apellido, tipoDoc, numDoc, telefono, email, sellerId); // Necesitarías el sellerId del vendedor logueado
+            // Generar código de cliente
+            string codigoCliente = $"CLI-{DateTime.Now.Ticks.ToString().Substring(10)}";
 
-            MessageBox.Show($"Lógica para registrar nuevo cliente:\nNombre: {nombre} {apellido}\nDocumento: {numDoc}\nEmail: {email}", "Registrar Cliente (Placeholder)", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            var nuevoCliente = new Cliente
+            {
+                Nombre = nombre,
+                Apellido = apellido,
+                TipoDocumentoId = (int)cbx_TypeDoc.SelectedValue,
+                NumeroDocumento = numDoc,
+                Telefono = string.IsNullOrWhiteSpace(telefono) ? null : telefono,
+                Correo = email,
+                CodigoCliente = codigoCliente,
+            };
 
-            this.DialogResult = DialogResult.OK; // Indica que la operación fue exitosa
-            this.Close(); // Cierra el formulario
+            try
+            {
+                if (_clienteService == null) { MessageBox.Show("Servicio de clientes no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                string resultado = _clienteService.RegistrarOActualizarCliente(nuevoCliente, true); // true porque es nuevo
+
+                MessageBox.Show(resultado, "Registrar Cliente", MessageBoxButtons.OK,
+                                resultado.ToLower().Contains("exitosamente") ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+
+                if (resultado.ToLower().Contains("exitosamente"))
+                {
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al registrar cliente: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        // Evento Click del botón "Limpiar"
         private void ibtn_Clear_Click(object sender, EventArgs e)
         {
-            ClearFormFields();
+            tbx_Name.Clear();
+            tbx_LastName.Clear();
+            if (cbx_TypeDoc.Items.Count > 0) cbx_TypeDoc.SelectedIndex = 0;
+            tbx_NumDoc.Clear();
+            tbx_Cellphone.Clear();
+            if (textBox1 != null) textBox1.Clear(); // Email
         }
 
-        // Evento Click del botón "Cancelar"
         private void ibtn_Cancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel; // Indica que la operación fue cancelada
-            this.Close(); // Cierra el formulario sin guardar cambios
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BLL.Interfaces;
+using BLL.Services;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,214 +15,246 @@ namespace GUI
 {
     public partial class Frm_DashboardAdmin : Form
     {
-        public Frm_DashboardAdmin() // Constructor del formulario.
+        private readonly IReporteService _reporteService;
+        private readonly int _idAdminLogueado;
+        private DateTime _fechaInicioActual;
+        private DateTime _fechaFinActual;
+
+        public Frm_DashboardAdmin(int idAdminLogueado)
         {
             InitializeComponent();
-
-            // Configuración para que este formulario pueda ser incrustado como un control al Frm_MainAdmin:
             this.TopLevel = false;
             this.FormBorderStyle = FormBorderStyle.None;
             this.Dock = DockStyle.Fill;
 
-            SetDateRange(DateTime.Today, DateTime.Today); // Inicializar el rango de fechas a "Hoy" por defecto.
-            DisableCustomDateControls(); // Deshabilita los controles de fecha personalizada al inicio.
+            _idAdminLogueado = idAdminLogueado;
 
-            ApplyChartStyles();// Aplicar estilos generales a los gráficos una sola vez al inicio.
+            if (_idAdminLogueado <= 0)
+            {
+                MessageBox.Show("Error: ID de administrador no válido.", "Error de Sesión", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.BeginInvoke(new MethodInvoker(this.Close));
+                return;
+            }
+
+            try
+            {
+                _reporteService = new ReporteService();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error crítico al inicializar servicios: {ex.Message}", "Error de Inicialización", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
         }
-        private void Frm_DashboardAdmin_Load(object sender, EventArgs e) // Evento Load del formulario.
+        public Frm_DashboardAdmin()
         {
-            LoadDashboardData(); // Carga los datos iniciales al cargar el formulario (sin datos por ahora).
+            InitializeComponent();
+            this.TopLevel = false;
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.Dock = DockStyle.Fill;
+            _idAdminLogueado = 1; // Placeholder, solo para diseño o pruebas limitadas
+            try { _reporteService = new ReporteService(); } catch (Exception ex) { MessageBox.Show($"Error servicios (constructor por defecto): {ex.Message}"); }
         }
 
-        // Método principal para cargar todos los datos del dashboard.
-        private void LoadDashboardData()
-        {
-            // Las llamadas a los métodos de actualización se mantienen, pero estos no poblarán datos por ahora.
-            DateTime startDate = dtpStartDate.Value;
-            DateTime endDate = dtpEndDate.Value;
 
-            UpdateSummaryCards(startDate, endDate);
-            UpdateTotalCounters();
-            LoadSalesChart(startDate, endDate); // Solo define la serie y el título
-            LoadTopSellingProductsChart(); // Solo define la serie y el título
-            LoadLowStockProducts();
+        private void Frm_DashboardAdmin_Load(object sender, EventArgs e)
+        {
+            if (_idAdminLogueado > 0 && _reporteService != null)
+            {
+                SetDateRange(DateTime.Today, DateTime.Today);
+                DisableCustomDateControls();
+                ApplyChartStyles();
+                LoadAllDashboardData();
+            }
+            else if (_reporteService == null)
+            {
+                MessageBox.Show("Servicio de reportes no pudo ser inicializado.", "Error Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        // --- EVENTOS DEL FORMULARIO Y BOTONES ---
-        private void ibtn_Today_Click(object sender, EventArgs e) // Evento Click del botón "Hoy".
+        private void SetDateRange(DateTime startDate, DateTime endDate)
         {
-            DisableCustomDateControls();
+            _fechaInicioActual = startDate.Date;
+            _fechaFinActual = endDate.Date.AddDays(1).AddTicks(-1);
+
+            if (dtpStartDate != null) dtpStartDate.Value = _fechaInicioActual;
+            if (dtpEndDate != null) dtpEndDate.Value = _fechaFinActual.Date;
+        }
+
+        private void DisableCustomDateControls()
+        {
+            if (dtpStartDate != null) dtpStartDate.Enabled = false;
+            if (dtpEndDate != null) dtpEndDate.Enabled = false;
+            if (ibtn_OKCustomDate != null) ibtn_OKCustomDate.Visible = false;
+        }
+
+        private void EnableCustomDateControls()
+        {
+            if (dtpStartDate != null) dtpStartDate.Enabled = true;
+            if (dtpEndDate != null) dtpEndDate.Enabled = true;
+            if (ibtn_OKCustomDate != null) ibtn_OKCustomDate.Visible = true;
+        }
+
+        private void ApplyChartStyles()
+        {
+            if (chart_IngresoPorFecha != null && chart_IngresoPorFecha.ChartAreas.Any())
+            {
+                chart_IngresoPorFecha.Series.Clear();
+                chart_IngresoPorFecha.Titles.Clear();
+                Title titleIngreso = new Title("Ingresos por Fecha", Docking.Top, new Font("Tahoma", 12F, FontStyle.Bold), Color.FromArgb(37, 60, 48));
+                chart_IngresoPorFecha.Titles.Add(titleIngreso);
+                chart_IngresoPorFecha.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.LightGray;
+                chart_IngresoPorFecha.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.LightGray;
+                chart_IngresoPorFecha.ChartAreas[0].BackColor = Color.FromArgb(237, 233, 221);
+                chart_IngresoPorFecha.BackColor = Color.FromArgb(237, 233, 221);
+                if (chart_IngresoPorFecha.Legends.Any()) chart_IngresoPorFecha.Legends[0].Enabled = false;
+            }
+
+            if (chart_Top10Products != null && chart_Top10Products.ChartAreas.Any())
+            {
+                chart_Top10Products.Series.Clear();
+                chart_Top10Products.Titles.Clear();
+                Title titleTop = new Title("Top 10 Productos Vendidos", Docking.Top, new Font("Tahoma", 12F, FontStyle.Bold), Color.FromArgb(37, 60, 48));
+                chart_Top10Products.Titles.Add(titleTop);
+                chart_Top10Products.ChartAreas[0].BackColor = Color.FromArgb(237, 233, 221);
+                chart_Top10Products.BackColor = Color.FromArgb(237, 233, 221);
+                if (chart_Top10Products.Legends.Any())
+                {
+                    chart_Top10Products.Legends[0].Docking = Docking.Bottom;
+                    chart_Top10Products.Legends[0].Alignment = StringAlignment.Center;
+                }
+            }
+        }
+
+        private void LoadAllDashboardData()
+        {
+            if (_reporteService == null) { MessageBox.Show("Servicio de reportes no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+            string mensajeError;
+
+            // 1. Tarjetas de Resumen (Nombres de Labels Corregidos)
+            var resumenVentas = _reporteService.ObtenerResumenVentasDashboard(_idAdminLogueado, _fechaInicioActual, _fechaFinActual, out mensajeError);
+            if (resumenVentas != null)
+            {
+                if (lblVentas != null) lblVentas.Text = resumenVentas.NumeroDeVentas.ToString(); // CORREGIDO
+                if (lblGanancias != null) lblGanancias.Text = resumenVentas.TotalGanancias.ToString("C"); // CORREGIDO
+            }
+            else
+            {
+                if (lblVentas != null) lblVentas.Text = "0";
+                if (lblGanancias != null) lblGanancias.Text = "$0.00";
+                // Podrías mostrar 'mensajeError' si es relevante para el usuario
+                // MessageBox.Show(mensajeError, "Error Resumen Ventas"); 
+            }
+
+            // 2. Gráfico de Ingresos por Fecha
+            var ingresosData = _reporteService.ObtenerIngresosPorFechaDashboard(_idAdminLogueado, _fechaInicioActual, _fechaFinActual, out mensajeError);
+            if (ingresosData != null && chart_IngresoPorFecha != null)
+            {
+                chart_IngresoPorFecha.Series.Clear();
+                Series seriesIngresos = new Series("Ingresos") { ChartType = SeriesChartType.Area, Color = Color.FromArgb(150, 75, 150, 225), BorderColor = Color.FromArgb(45, 66, 98), BorderWidth = 2 };
+                if (ingresosData.Any())
+                {
+                    foreach (var dataPoint in ingresosData) { seriesIngresos.Points.AddXY(dataPoint.Fecha.ToShortDateString(), dataPoint.Ingreso); }
+                }
+                else // Añadir puntos dummy si no hay datos para que el gráfico no esté vacío
+                {
+                    seriesIngresos.Points.AddXY(_fechaInicioActual.ToShortDateString(), 0);
+                    if (_fechaInicioActual.Date != _fechaFinActual.Date) seriesIngresos.Points.AddXY(_fechaFinActual.ToShortDateString(), 0);
+                }
+                chart_IngresoPorFecha.Series.Add(seriesIngresos);
+                if (chart_IngresoPorFecha.ChartAreas.Any()) chart_IngresoPorFecha.ChartAreas[0].AxisX.LabelStyle.Format = "MMM dd";
+            }
+            else { /* MessageBox.Show(mensajeError, "Error Gráfico Ingresos"); */ }
+
+            // 3. Gráfico Top 10 Productos
+            var topProductos = _reporteService.ObtenerTopProductosVendidosDashboard(_idAdminLogueado, _fechaInicioActual, _fechaFinActual, 10, out mensajeError);
+            if (topProductos != null && chart_Top10Products != null)
+            {
+                chart_Top10Products.Series.Clear();
+                Series seriesTopProductos = new Series("TopProductos") { ChartType = SeriesChartType.Doughnut, IsValueShownAsLabel = true, LabelFormat = "#VALX (#PERCENT{P0})", Font = new Font("Tahoma", 8F) };
+                if (topProductos.Any())
+                {
+                    foreach (var producto in topProductos) { seriesTopProductos.Points.AddXY(producto.NombreProducto, producto.CantidadVendida); }
+                }
+                else
+                {
+                    seriesTopProductos.Points.AddXY("Sin Datos", 1); // Placeholder para gráfico vacío
+                    seriesTopProductos.Points[0].Label = "Sin Datos";
+                    seriesTopProductos.Points[0].LegendText = "Sin Datos";
+                }
+                chart_Top10Products.Series.Add(seriesTopProductos);
+            }
+            else { /* MessageBox.Show(mensajeError, "Error Gráfico Top Productos"); */ }
+
+            // 4. Contadores Generales (Nombres de Labels Corregidos)
+            var contadores = _reporteService.ObtenerContadoresGeneralesDashboard(_idAdminLogueado, out mensajeError);
+            if (contadores != null)
+            {
+                if (lblClientes != null) lblClientes.Text = contadores.TotalClientesActivos.ToString(); // CORREGIDO
+                if (lblVendedores != null) lblVendedores.Text = contadores.TotalVendedoresActivos.ToString(); // CORREGIDO
+                if (lblProductos != null) lblProductos.Text = contadores.TotalProductosActivos.ToString(); // CORREGIDO
+            }
+            else { /* MessageBox.Show(mensajeError, "Error Contadores"); */ }
+
+            // 5. Grilla Productos Bajo Stock
+            var bajoStock = _reporteService.ObtenerProductosConBajoStockDashboard(_idAdminLogueado, 10, out mensajeError); // Umbral de 10
+            if (bajoStock != null && dgv_PBajoStock != null)
+            {
+                DataTable dtBajoStock = new DataTable();
+                dtBajoStock.Columns.Add("Producto", typeof(string));
+                dtBajoStock.Columns.Add("Stock Actual", typeof(int));
+                dtBajoStock.Columns.Add("Vendedor", typeof(string));
+                foreach (var prod in bajoStock) { dtBajoStock.Rows.Add(prod.Nombre, prod.Stock, prod.Vendedor?.CodigoVendedor ?? "N/A"); }
+                dgv_PBajoStock.DataSource = dtBajoStock;
+            }
+            else { /* MessageBox.Show(mensajeError, "Error Productos Bajo Stock"); */ }
+        }
+
+        // --- MANEJADORES DE EVENTOS PARA BOTONES DE FILTRO DE FECHA ---
+        private void ibtn_Today_Click(object sender, EventArgs e)
+        {
             SetDateRange(DateTime.Today, DateTime.Today);
-        }
-        private void ibtn_7Days_Click(object sender, EventArgs e) // Evento Click del botón "Últ. 7 días".
-        {
             DisableCustomDateControls();
-            SetDateRange(DateTime.Today.AddDays(-6), DateTime.Today); // Últimos 7 días incluyendo hoy.
+            LoadAllDashboardData();
         }
-        private void ibtn_30Days_Click(object sender, EventArgs e) // Evento Click del botón "Últ. 30 días".
+
+        private void ibtn_7Days_Click(object sender, EventArgs e)
         {
+            SetDateRange(DateTime.Today.AddDays(-6), DateTime.Today);
             DisableCustomDateControls();
-            SetDateRange(DateTime.Today.AddDays(-29), DateTime.Today); // Últimos 30 días incluyendo hoy.
+            LoadAllDashboardData();
         }
-        private void ibtn_ThisMonth_Click(object sender, EventArgs e) // Evento Click del botón "Este mes".
+
+        private void ibtn_30Days_Click(object sender, EventArgs e)
         {
+            SetDateRange(DateTime.Today.AddDays(-29), DateTime.Today);
             DisableCustomDateControls();
-            DateTime firstDayOfMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-            SetDateRange(firstDayOfMonth, DateTime.Today);
+            LoadAllDashboardData();
         }
-        private void ibtn_CustomDate_Click(object sender, EventArgs e) // Evento Click del botón "Fecha personalizada".
+
+        private void ibtn_ThisMonth_Click(object sender, EventArgs e)
+        {
+            DateTime today = DateTime.Today;
+            DateTime firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
+            SetDateRange(firstDayOfMonth, today);
+            DisableCustomDateControls();
+            LoadAllDashboardData();
+        }
+
+        private void ibtn_CustomDate_Click(object sender, EventArgs e)
         {
             EnableCustomDateControls();
         }
-        private void ibtn_OKCustomDate_Click(object sender, EventArgs e) // Evento Click del botón "OK" para fecha personalizada.
+
+        private void ibtn_OKCustomDate_Click(object sender, EventArgs e)
         {
-            if (dtpStartDate.Value > dtpEndDate.Value)
+            if (dtpStartDate.Value.Date > dtpEndDate.Value.Date)
             {
                 MessageBox.Show("La fecha de inicio no puede ser posterior a la fecha de fin.", "Error de Fecha", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            LoadDashboardData(); // Recarga los datos con el rango de fechas personalizado (sin datos por ahora).
+            SetDateRange(dtpStartDate.Value, dtpEndDate.Value);
+            LoadAllDashboardData();
         }
-
-        // --- MÉTODOS PRIVADOS ---
-        private void UpdateSummaryCards(DateTime startDate, DateTime endDate) // Actualiza los valores de las tarjetas de resumen (Ventas y Ganancias).
-        {
-            // Valores de ejemplo vacíos o "N/A" por ahora.
-            lblVentas.Text = "N/A";
-            lblGanancias.Text = "N/A";
-        }
-        private void UpdateTotalCounters() // Actualiza los contadores totales (Clientes, Vendedores, Productos).
-        {
-            // Valores de ejemplo vacíos o "N/A" por ahora.
-            lblClientes.Text = "N/A";
-            lblVendedores.Text = "N/A";
-            lblProductos.Text = "N/A";
-        }
-
-        // Carga datos en el gráfico de ventas por fecha (chart_IngresoPorFecha).
-        // Este método se enfoca en la serie de datos y el título, los estilos generales están en ApplyChartStyles().
-        private void LoadSalesChart(DateTime startDate, DateTime endDate)
-        {
-            chart_IngresoPorFecha.Series.Clear();
-            chart_IngresoPorFecha.Titles.Clear();
-
-            // Título del gráfico
-            Title title = new Title("Ingreso bruto por Fecha", Docking.Top);
-            title.Font = new Font("Tahoma", 12F, FontStyle.Bold);
-            title.ForeColor = Color.FromArgb(37, 60, 48); // Verde oscuro
-            chart_IngresoPorFecha.Titles.Add(title);
-
-            // Serie de datos (vacía por ahora, solo se define el tipo y color de la serie)
-            Series series = new Series("Ingresos");
-            series.ChartType = SeriesChartType.Area; // Gráfico de área para tendencia
-            series.Color = Color.FromArgb(49, 133, 201); // Azul claro
-            series.BorderColor = Color.FromArgb(45, 66, 98); // Azul oscuro
-            series.BorderWidth = 2;
-            series.MarkerStyle = MarkerStyle.Circle;
-            series.MarkerSize = 8;
-            series.MarkerColor = Color.FromArgb(251, 203, 91); // Amarillo
-            // No se añaden puntos de datos por ahora.
-            chart_IngresoPorFecha.Series.Add(series);
-        }
-
-        // Carga datos en el gráfico de pastel de productos más vendidos (chart_Top10Products).
-        // Este método se enfoca en la serie de datos y el título, los estilos generales están en ApplyChartStyles().
-        private void LoadTopSellingProductsChart()
-        {
-            chart_Top10Products.Series.Clear();
-            chart_Top10Products.Titles.Clear();
-
-            // Título del gráfico
-            Title title = new Title("Top 10 productos más vendidos", Docking.Top);
-            title.Font = new Font("Tahoma", 12F, FontStyle.Bold);
-            title.ForeColor = Color.FromArgb(37, 60, 48); // Verde oscuro
-            chart_Top10Products.Titles.Add(title);
-
-            // Serie de datos (vacía por ahora, solo se define el tipo y formato de la serie)
-            Series series = new Series("Productos");
-            series.ChartType = SeriesChartType.Doughnut; // Gráfico de anillo
-            series.IsValueShownAsLabel = true; // Mostrar valores en las etiquetas
-            series.LabelFormat = "#VALX (#PERCENT{P0})"; // Formato: Nombre (Porcentaje)
-            series.Font = new Font("Tahoma", 9F, FontStyle.Bold);
-            series.LabelForeColor = Color.White; // Color de las etiquetas
-            series.BorderWidth = 2;
-            series.BorderColor = Color.FromArgb(237, 233, 221); // Color del borde de los segmentos
-            series["DoughnutRadius"] = "60"; // Tamaño del agujero central
-
-            // No se añaden puntos de datos por ahora.
-            chart_Top10Products.Series.Add(series);
-        }
-
-        // Carga datos en la tabla de productos con bajo stock (dgv_PBajoStock).
-        // Este método se enfoca en la definición de columnas.
-        private void LoadLowStockProducts()
-        {
-            DataTable dtBajoStock = new DataTable();
-            dtBajoStock.Columns.Add("Producto", typeof(string));
-            dtBajoStock.Columns.Add("Stock", typeof(int));
-
-            // La tabla estará vacía por ahora.
-            dgv_PBajoStock.DataSource = dtBajoStock;
-
-            // Ajustar el estilo de las columnas si es necesario (HeaderText)
-            dgv_PBajoStock.Columns["Producto"].HeaderText = "Producto";
-            dgv_PBajoStock.Columns["Stock"].HeaderText = "Stock";
-        }
-
-        // Método para aplicar estilos generales a los gráficos (llamado desde el constructor).
-        // Contiene estilos que no cambian con los datos y son comunes a las áreas/leyendas.
-        private void ApplyChartStyles()
-        {
-            // Estilos para chart_IngresoPorFecha
-            chart_IngresoPorFecha.ChartAreas[0].AxisX.IsLabelAutoFit = true;
-            chart_IngresoPorFecha.ChartAreas[0].AxisY.IsLabelAutoFit = true;
-            chart_IngresoPorFecha.ChartAreas[0].AxisX.LabelStyle.Font = new Font("Tahoma", 8.25F, FontStyle.Regular);
-            chart_IngresoPorFecha.ChartAreas[0].AxisY.LabelStyle.Font = new Font("Tahoma", 8.25F, FontStyle.Regular);
-            chart_IngresoPorFecha.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.LightGray;
-            chart_IngresoPorFecha.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.LightGray;
-            chart_IngresoPorFecha.ChartAreas[0].AxisX.LineColor = Color.FromArgb(45, 66, 98); // Azul oscuro
-            chart_IngresoPorFecha.ChartAreas[0].AxisY.LineColor = Color.FromArgb(45, 66, 98); // Azul oscuro
-            chart_IngresoPorFecha.ChartAreas[0].AxisX.LabelStyle.ForeColor = Color.FromArgb(45, 66, 98); // Azul oscuro
-            chart_IngresoPorFecha.ChartAreas[0].AxisY.LabelStyle.ForeColor = Color.FromArgb(45, 66, 98); // Azul oscuro
-            chart_IngresoPorFecha.ChartAreas[0].BackColor = Color.FromArgb(237, 233, 221); // Fondo del área de gráfico
-            chart_IngresoPorFecha.BackColor = Color.FromArgb(237, 233, 221); // Fondo del control Chart
-            if (chart_IngresoPorFecha.Legends.Any())
-            {
-                chart_IngresoPorFecha.Legends[0].LegendStyle = LegendStyle.Table;
-                chart_IngresoPorFecha.Legends[0].BackColor = Color.FromArgb(237, 233, 221); // Fondo de la leyenda
-                chart_IngresoPorFecha.Legends[0].ForeColor = Color.FromArgb(37, 60, 48); // Color de texto de la leyenda
-            }
-
-            // Estilos para chart_Top10Products
-            chart_Top10Products.ChartAreas[0].BackColor = Color.FromArgb(237, 233, 221); // Fondo del área de gráfico
-            chart_Top10Products.BackColor = Color.FromArgb(237, 233, 221); // Fondo del control Chart
-            if (chart_Top10Products.Legends.Any())
-            {
-                chart_Top10Products.Legends[0].BackColor = Color.FromArgb(237, 233, 221); // Fondo de la leyenda
-                chart_Top10Products.Legends[0].ForeColor = Color.FromArgb(37, 60, 48); // Color de texto de la leyenda
-                chart_Top10Products.Legends[0].Docking = Docking.Bottom; // Leyenda en la parte inferior
-                chart_Top10Products.Legends[0].Alignment = StringAlignment.Center; // Centrar leyenda
-            }
-        }
-
-        // --- MANEJO DE RANGO DE FECHAS ---
-        private void SetDateRange(DateTime startDate, DateTime endDate) // Establece el rango de fechas en los DateTimePicker y recarga los datos.
-        {
-            dtpStartDate.Value = startDate;
-            dtpEndDate.Value = endDate;
-            LoadDashboardData(); // Recarga los datos con el nuevo rango (que ahora no poblará datos).
-        }
-        private void EnableCustomDateControls() // Habilita los controles de fecha personalizada.
-        {
-            dtpStartDate.Enabled = true;
-            dtpEndDate.Enabled = true;
-            ibtn_OKCustomDate.Visible = true; // Hacer visible el botón OK
-        }
-        private void DisableCustomDateControls() // Deshabilita los controles de fecha personalizada.
-        {
-            dtpStartDate.Enabled = false;
-            dtpEndDate.Enabled = false;
-            ibtn_OKCustomDate.Visible = false; // Ocultar el botón OK
-        }        
     }
 }

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using BLL.Interfaces;
+using BLL.Services;
+using ENTITY;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,52 +15,78 @@ namespace GUI
 {
     public partial class Frm_AddCategoryAdmin : Form
     {
-        public Frm_AddCategoryAdmin()
+        private readonly ICategoriaProductoService _categoriaService;
+        // private readonly int _idAdminLogueado; // No se usa en este servicio específico, pero podría pasarse
+
+        public Frm_AddCategoryAdmin(/* int idAdminLogueado */)
         {
             InitializeComponent();
-            // Configuración por defecto para un formulario de diálogo.
-            this.FormBorderStyle = FormBorderStyle.FixedDialog; // Borde fijo para diálogos
-            this.StartPosition = FormStartPosition.CenterParent; // Centrar respecto al padre
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
+            this.StartPosition = FormStartPosition.CenterParent;
+
+            // _idAdminLogueado = idAdminLogueado;
+            try
+            {
+                _categoriaService = new CategoriaProductoService();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al inicializar servicio de categorías: {ex.Message}", "Error de Inicialización", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Asumiendo que tu botón de agregar se llama ibtn_Add
+                if (this.Controls.Find("ibtn_Add", true).FirstOrDefault() is Button btn) btn.Enabled = false;
+            }
         }
 
-        // Método para limpiar todos los TextBox del formulario
-        private void ClearFormFields()
-        {
-            tbx_Name.Clear();
-        }
-
-        // Evento Click del botón "Agregar" (placeholder para la lógica de agregar categoría)
         private void ibtn_Add_Click(object sender, EventArgs e)
         {
-            // --- Lógica placeholder para agregar una nueva categoría ---
-            string categoryName = tbx_Name.Text;
+            // Asumiendo que tu TextBox para el nombre de la categoría se llama tbx_Name
+            string nombreCategoria = tbx_Name.Text.Trim();
 
-            if (string.IsNullOrWhiteSpace(categoryName))
+            if (string.IsNullOrWhiteSpace(nombreCategoria))
             {
-                MessageBox.Show("Por favor, ingrese el nombre de la categoría.", "Campo Incompleto", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("El nombre de la categoría no puede estar vacío.", "Campo Requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Aquí se llamaría a la capa BLL para agregar la nueva categoría.
-            // Ejemplo: BLL.CategoryManager.AddCategory(categoryName);
+            try
+            {
+                if (_categoriaService == null)
+                {
+                    MessageBox.Show("Servicio de categorías no disponible.", "Error de Servicio", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
-            MessageBox.Show($"Lógica para agregar nueva categoría: '{categoryName}'.", "Agregar Categoría (Placeholder)", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                var nuevaCategoria = new CategoriaProducto { Nombre = nombreCategoria };
+                string resultado = _categoriaService.AgregarCategoria(nuevaCategoria);
 
-            this.DialogResult = DialogResult.OK; // Indica que la operación fue exitosa
-            this.Close(); // Cierra el formulario
+                MessageBox.Show(resultado, "Agregar Categoría", MessageBoxButtons.OK,
+                                resultado.ToLower().Contains("exitosamente") ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+
+                if (resultado.ToLower().Contains("exitosamente"))
+                {
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+            }
+            catch (ApplicationException appEx)
+            {
+                MessageBox.Show($"Error de aplicación: {appEx.Message}", "Error al Agregar", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Se produjo un error inesperado: {ex.Message}", "Error Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        // Evento Click del botón "Limpiar"
         private void ibtn_Clear_Click(object sender, EventArgs e)
         {
-            ClearFormFields();
+            if (tbx_Name != null) tbx_Name.Clear();
         }
 
-        // Evento Click del botón "Cancelar"
         private void ibtn_Cancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel; // Indica que la operación fue cancelada
-            this.Close(); // Cierra el formulario sin guardar cambios
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
         }
     }
 }

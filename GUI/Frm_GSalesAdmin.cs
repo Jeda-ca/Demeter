@@ -1,355 +1,358 @@
-﻿using System;
+﻿using BLL.Interfaces;
+using BLL.Services;
+using ENTITY;
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace GUI
 {
     public partial class Frm_GSalesAdmin : Form
     {
-        public Frm_GSalesAdmin()
+        private readonly IVentaService _ventaService;
+        private readonly IClienteService _clienteService;
+        private readonly IVendedorService _vendedorService;
+        // private readonly IEstadoVentaService _estadoVentaService; // No se usa directamente aquí, sino en Frm_ModifyVentState
+        private readonly int _idAdminLogueado;
+
+        public Frm_GSalesAdmin(int idAdminLogueado)
         {
             InitializeComponent();
+            this.TopLevel = false;
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.Dock = DockStyle.Fill;
 
-            // Configuración esencial para que este formulario pueda ser incrustado como un control:
-            this.TopLevel = false; // Indica que no es una ventana de nivel superior independiente.
-            this.FormBorderStyle = FormBorderStyle.None; // Elimina el borde y la barra de título.
-            this.Dock = DockStyle.Fill; // Hace que el formulario llene el control contenedor.
+            _idAdminLogueado = idAdminLogueado;
 
+            if (_idAdminLogueado <= 0)
+            {
+                MessageBox.Show("Error: ID de administrador no válido. No se pueden realizar operaciones.", "Error de Sesión", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.BeginInvoke(new MethodInvoker(this.Close)); // Cerrar de forma segura
+                return;
+            }
+
+            try
+            {
+                _ventaService = new VentaService();
+                _clienteService = new ClienteService();
+                _vendedorService = new VendedorService();
+                // _estadoVentaService = new EstadoVentaService(); // No es necesario instanciarlo aquí
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error crítico al inicializar servicios: {ex.Message}", "Error de Inicialización", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Deshabilitar controles si la inicialización falla
+                if (ibtn_Buscar != null) ibtn_Buscar.Enabled = false;
+                if (ibtn_StatusVenta != null) ibtn_StatusVenta.Enabled = false;
+                if (ibtn_CancelVenta != null) ibtn_CancelVenta.Enabled = false;
+                if (cbx_TipoV != null) cbx_TipoV.Enabled = false;
+            }
         }
 
-        // Evento Load del formulario.
         private void Frm_GSalesAdmin_Load(object sender, EventArgs e)
         {
-            // Inicializar cbx_TipoV con tipos de reporte de ventas.
-            cbx_TipoV.Items.Add("-- Seleccione un tipo de reporte --"); // Índice 0
-            cbx_TipoV.Items.Add("VENTAS GENERALES"); // Índice 1
-            cbx_TipoV.Items.Add("VENTAS POR VENDEDOR"); // Índice 2
-            cbx_TipoV.Items.Add("VENTAS POR CLIENTE"); // Índice 3
-            // Puedes añadir más tipos de reporte aquí si es necesario.
-            cbx_TipoV.SelectedIndex = 0; // Seleccionar la opción por defecto al inicio
-
-            // Asegurar que los paneles y DateTimePickers estén ocultos al inicio.
-            panelFiltro.Visible = false;
-            dtp_FInicio.Visible = false;
-            dtp_FFin.Visible = false;
-
-            LoadSalesData(); // Carga los datos iniciales en el DataGridView de ventas.
+            if (_idAdminLogueado > 0 && _ventaService != null)
+            {
+                CargarTiposConsultaComboBox(); // Carga cbx_TipoV
+                panelFiltro.Visible = false;
+                dtp_FInicio.Visible = false;
+                dtp_FFin.Visible = false;
+                tbx_Busqueda.Visible = false;
+                // Si tienes un label para el placeholder de tbx_Busqueda, ocúltalo también.
+                // Ejemplo: if (label_tbx_busqueda_placeholder != null) label_tbx_busqueda_placeholder.Visible = false;
+                LoadSalesData(); // Cargar todas las ventas por defecto
+            }
         }
 
-        // --- EVENTOS DE CONTROLES ---
+        private void CargarTiposConsultaComboBox()
+        {
+            if (cbx_TipoV == null) return;
+            cbx_TipoV.Items.Clear();
+            cbx_TipoV.Items.Add("-- Seleccione Tipo de Consulta --");
+            cbx_TipoV.Items.Add("VENTAS GENERALES");
+            cbx_TipoV.Items.Add("VENTAS POR VENDEDOR");
+            cbx_TipoV.Items.Add("VENTAS POR CLIENTE");
+            cbx_TipoV.SelectedIndex = 0;
+        }
 
-        // Evento SelectedIndexChanged del ComboBox cbx_TipoV.
-        // El Designer.cs espera un método llamado cbx_TipoReport_SelectedIndexChanged.
-        private void cbx_TipoReport_SelectedIndexChanged(object sender, EventArgs e) // <-- Nombre del método corregido
+        // Event handler para cbx_TipoV (nombre del Designer.cs)
+        private void cbx_TipoReport_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateFilterPanelVisibility();
         }
 
-        // Evento SelectedIndexChanged del ComboBox cbx_FiltroV.
-        // El Designer.cs espera un método llamado cbx_FiltroReport_SelectedIndexChanged.
-        private void cbx_FiltroReport_SelectedIndexChanged(object sender, EventArgs e) // <-- Nombre del método corregido
+        // Event handler para cbx_FiltroV (nombre del Designer.cs)
+        private void cbx_FiltroReport_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateDateTimePickerVisibility();
         }
 
-        // Evento Click del botón "Modificar estado de venta".
-        private void ibtn_StatusVenta_Click(object sender, EventArgs e)
-        {
-            if (dgv_ListaVentas.SelectedRows.Count > 0)
-            {
-                // Lógica para obtener el ID de la venta seleccionada
-                // int ventaId = (int)dgv_ListaVentas.SelectedRows[0].Cells["ID Venta"].Value;
-                // string fechaVenta = dgv_ListaVentas.SelectedRows[0].Cells["Fecha"].Value.ToString();
-                // decimal totalVenta = (decimal)dgv_ListaVentas.SelectedRows[0].Cells["Total"].Value;
-
-                // Abre el formulario Frm_ModifyVentState
-                Frm_ModifyVentState frmModifyState = new Frm_ModifyVentState();
-                // Puedes pasarle los datos de la venta seleccionada al constructor de frmModifyState
-                // frmModifyState.SetSaleInfo(ventaId, fechaVenta, totalVenta);
-                DialogResult result = frmModifyState.ShowDialog();
-
-                // Si el estado se modificó con éxito, recargar los datos
-                // if (result == DialogResult.OK)
-                // {
-                //     LoadSalesData();
-                // }
-            }
-            else
-            {
-                MessageBox.Show("Por favor, seleccione una venta para modificar su estado.", "Modificar Estado", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
-        // Evento Click del botón "Cancelar venta".
-        private void ibtn_CancelVenta_Click(object sender, EventArgs e)
-        {
-            if (dgv_ListaVentas.SelectedRows.Count > 0)
-            {
-                DialogResult confirmResult = MessageBox.Show("¿Está seguro que desea cancelar la venta seleccionada?", "Confirmar Cancelación", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (confirmResult == DialogResult.Yes)
-                {
-                    // Lógica para obtener el ID de la venta seleccionada
-                    // int ventaId = (int)dgv_ListaVentas.SelectedRows[0].Cells["ID Venta"].Value;
-
-                    // Lógica placeholder para cancelar la venta en la base de datos
-                    // BLL.SalesManager.CancelSale(ventaId);
-
-                    MessageBox.Show("Venta cancelada con éxito (Placeholder).", "Venta Cancelada", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LoadSalesData(); // Recargar los datos después de la cancelación
-                }
-            }
-            else
-            {
-                MessageBox.Show("Por favor, seleccione una venta para cancelar.", "Cancelar Venta", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
-        // Evento Click del botón "Buscar".
-        private void ibtn_Buscar_Click(object sender, EventArgs e)
-        {
-            // --- Lógica de búsqueda de ventas basada en el tipo de reporte, filtro y fechas/texto. ---
-            string tipoReporte = cbx_TipoV.SelectedItem?.ToString();
-            string filtroSeleccionado = cbx_FiltroV.SelectedItem?.ToString();
-            string textoBusqueda = tbx_Busqueda.Text;
-            DateTime? fechaInicio = dtp_FInicio.Visible ? dtp_FInicio.Value : (DateTime?)null;
-            DateTime? fechaFin = dtp_FFin.Visible ? dtp_FFin.Value : (DateTime?)null;
-
-            // Validaciones básicas antes de buscar (pueden ser más robustas)
-            if (cbx_TipoV.SelectedIndex == 0) // Si no se ha seleccionado un tipo de reporte
-            {
-                MessageBox.Show("Por favor, seleccione un tipo de reporte de ventas.", "Búsqueda incompleta", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            MessageBox.Show($"Buscando Ventas:\nTipo: {tipoReporte}\nFiltro: {filtroSeleccionado ?? "N/A"}\nTexto: {textoBusqueda}\nFecha Inicio: {fechaInicio?.ToShortDateString() ?? "N/A"}\nFecha Fin: {fechaFin?.ToShortDateString() ?? "N/A"}", "Búsqueda de Ventas (Placeholder)", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            // Aquí llamarías a la capa BLL para obtener los datos de ventas y llenar el dgv_ListaVentas.
-            LoadSalesData(); // Por ahora, solo recarga los datos placeholder
-        }
-
-        // Evento Click del botón "Limpiar".
-        private void ibtn_Clear_Click(object sender, EventArgs e)
-        {
-            tbx_Busqueda.Clear();
-            cbx_TipoV.SelectedIndex = 0; // Volver a la opción por defecto del tipo de venta
-            cbx_FiltroV.Items.Clear(); // Limpiar opciones del filtro secundario
-            panelFiltro.Visible = false; // Ocultar panel de filtro
-            dtp_FInicio.Visible = false;
-            dtp_FFin.Visible = false;
-            LoadSalesData(); // Recargar todos los datos de ventas al limpiar.
-            MessageBox.Show("Campos de búsqueda y filtro limpiados.", "Limpiar", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        // --- MÉTODOS PRIVADOS AUXILIARES ---
-
-        // Método para actualizar la visibilidad del panelFiltro y las opciones de cbx_FiltroV.
         private void UpdateFilterPanelVisibility()
         {
-            // Limpiar opciones de filtro previas.
+            if (cbx_TipoV == null || cbx_FiltroV == null || panelFiltro == null || tbx_Busqueda == null) return;
+
             cbx_FiltroV.Items.Clear();
+            cbx_FiltroV.Enabled = false;
             dtp_FInicio.Visible = false;
             dtp_FFin.Visible = false;
+            tbx_Busqueda.Visible = false;
+            tbx_Busqueda.Clear();
+            panelFiltro.Visible = false;
 
             string selectedReportType = cbx_TipoV.SelectedItem?.ToString();
 
-            // Mostrar panelFiltro solo para tipos de reporte que requieren filtros adicionales.
-            // Para "VENTAS POR VENDEDOR" y "VENTAS POR CLIENTE" se ofrecerán filtros de fecha.
-            if (selectedReportType == "VENTAS POR VENDEDOR" || selectedReportType == "VENTAS POR CLIENTE")
+            if (selectedReportType == "VENTAS GENERALES")
             {
                 panelFiltro.Visible = true;
-                cbx_FiltroV.Items.Add("-- Seleccione un filtro --"); // Índice 0
-                cbx_FiltroV.Items.Add("Fecha"); // Índice 1
-                cbx_FiltroV.Items.Add("Rango de fecha"); // Índice 2
-                // Puedes añadir más filtros aquí, por ejemplo:
-                // cbx_FiltroV.Items.Add("Por Vendedor Específico");
-                // cbx_FiltroV.Items.Add("Por Cliente Específico");
-                cbx_FiltroV.SelectedIndex = 0; // Seleccionar la opción por defecto
+                cbx_FiltroV.Enabled = true;
+                cbx_FiltroV.Items.Add("-- Sin Filtro de Fecha --");
+                cbx_FiltroV.Items.Add("Por Fecha Específica");
+                cbx_FiltroV.Items.Add("Por Rango de Fechas");
+                cbx_FiltroV.SelectedIndex = 0;
             }
-            else
+            else if (selectedReportType == "VENTAS POR VENDEDOR" || selectedReportType == "VENTAS POR CLIENTE")
             {
-                panelFiltro.Visible = false;
+                panelFiltro.Visible = true;
+                cbx_FiltroV.Enabled = true;
+                cbx_FiltroV.Items.Add("-- Sin Filtro de Fecha --");
+                cbx_FiltroV.Items.Add("Por Fecha Específica");
+                cbx_FiltroV.Items.Add("Por Rango de Fechas");
+                cbx_FiltroV.SelectedIndex = 0;
+                tbx_Busqueda.Visible = true;
             }
         }
 
-        // Método para actualizar la visibilidad de los DateTimePicker.
         private void UpdateDateTimePickerVisibility()
         {
+            if (cbx_FiltroV == null || dtp_FInicio == null || dtp_FFin == null) return;
             string selectedFilter = cbx_FiltroV.SelectedItem?.ToString();
 
             dtp_FInicio.Visible = false;
             dtp_FFin.Visible = false;
 
-            if (selectedFilter == "Fecha")
+            if (selectedFilter == "Por Fecha Específica")
             {
                 dtp_FInicio.Visible = true;
-                dtp_FFin.Visible = false; // Asegurarse de que el segundo esté oculto
             }
-            else if (selectedFilter == "Rango de fecha")
+            else if (selectedFilter == "Por Rango de Fechas")
             {
                 dtp_FInicio.Visible = true;
                 dtp_FFin.Visible = true;
             }
-            // Para otros filtros, ambos DateTimePicker permanecerán ocultos.
         }
 
-        // Método placeholder para cargar/recargar datos de ventas.
-        private void LoadSalesData()
+        private void LoadSalesData(IEnumerable<Venta> ventas = null)
         {
-            // --- Lógica para cargar datos de ventas desde la capa BLL y llenar el dgv_ListaVentas. ---
-            // Por ahora, el DataGridView estará vacío o con columnas definidas.
-            DataTable dt = new DataTable();
-            dt.Columns.Add("ID Venta", typeof(int));
-            dt.Columns.Add("Fecha", typeof(DateTime));
-            dt.Columns.Add("Total", typeof(decimal));
-            dt.Columns.Add("Vendedor", typeof(string));
-            dt.Columns.Add("Cliente", typeof(string));
-            dt.Columns.Add("Estado", typeof(string)); // Añadir columna de estado
-            // No se añaden filas de datos de prueba, solo las columnas.
-            // Para probar:
-            // dt.Rows.Add(1, DateTime.Now.AddDays(-5), 150.00m, "Juan Pérez", "Ana López", "COMPLETADA"); // DATOS DE PRUEBA
-            // dt.Rows.Add(2, DateTime.Now.AddDays(-2), 230.50m, "María Gómez", "Carlos Ramírez", "PENDIENTE"); // DATOS DE PRUEBA
+            try
+            {
+                if (_ventaService == null) { MessageBox.Show("Servicio de ventas no inicializado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
-            dgv_ListaVentas.DataSource = dt; // Asignar el DataTable al DataGridView
+                if (ventas == null)
+                {
+                    ventas = _ventaService.ObtenerTodasLasVentasParaAdmin();
+                }
+
+                DataTable dt = new DataTable();
+                dt.Columns.Add("IdVenta", typeof(int));
+                dt.Columns.Add("Fecha", typeof(DateTime));
+                dt.Columns.Add("Subtotal", typeof(decimal));
+                dt.Columns.Add("Descuento", typeof(decimal));
+                dt.Columns.Add("Total", typeof(decimal));
+                dt.Columns.Add("VendedorCodigo", typeof(string));
+                dt.Columns.Add("ClienteNombre", typeof(string));
+                dt.Columns.Add("Estado", typeof(string));
+                dt.Columns.Add("Observaciones", typeof(string));
+
+                foreach (var venta in ventas.OrderByDescending(v => v.FechaOcurrencia)) // Ordenar por fecha más reciente
+                {
+                    dt.Rows.Add(
+                        venta.IdVenta,
+                        venta.FechaOcurrencia,
+                        venta.Subtotal,
+                        venta.Descuento,
+                        venta.Total,
+                        venta.Vendedor?.CodigoVendedor ?? "N/A",
+                        (venta.Cliente != null) ? $"{venta.Cliente.Nombre} {venta.Cliente.Apellido}" : "N/A",
+                        venta.EstadoVenta?.Nombre ?? "N/A",
+                        venta.Observaciones
+                    );
+                }
+                if (dgv_ListaVentas != null)
+                {
+                    dgv_ListaVentas.DataSource = dt;
+                    if (dgv_ListaVentas.Columns["IdVenta"] != null) dgv_ListaVentas.Columns["IdVenta"].Visible = false;
+                    if (dgv_ListaVentas.Columns["Subtotal"] != null) dgv_ListaVentas.Columns["Subtotal"].DefaultCellStyle.Format = "C2";
+                    if (dgv_ListaVentas.Columns["Descuento"] != null) dgv_ListaVentas.Columns["Descuento"].DefaultCellStyle.Format = "C2";
+                    if (dgv_ListaVentas.Columns["Total"] != null) dgv_ListaVentas.Columns["Total"].DefaultCellStyle.Format = "C2";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar datos de ventas: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ibtn_Buscar_Click(object sender, EventArgs e)
+        {
+            if (_ventaService == null || cbx_TipoV.SelectedItem == null) return;
+
+            string tipoConsulta = cbx_TipoV.SelectedItem.ToString();
+            string filtroFecha = cbx_FiltroV.SelectedItem?.ToString();
+            string textoBusqueda = tbx_Busqueda.Text.Trim();
+            DateTime fechaInicio = dtp_FInicio.Value.Date;
+            DateTime fechaFin = dtp_FFin.Value.Date.AddDays(1).AddTicks(-1);
+
+            IEnumerable<Venta> ventasResultado = new List<Venta>();
+
+            try
+            {
+                switch (tipoConsulta)
+                {
+                    case "VENTAS GENERALES":
+                        if (filtroFecha == "Por Fecha Específica")
+                            ventasResultado = _ventaService.ObtenerVentasPorRangoFechas(fechaInicio, fechaInicio.AddDays(1).AddTicks(-1));
+                        else if (filtroFecha == "Por Rango de Fechas")
+                            ventasResultado = _ventaService.ObtenerVentasPorRangoFechas(fechaInicio, fechaFin);
+                        else
+                            ventasResultado = _ventaService.ObtenerTodasLasVentasParaAdmin();
+                        break;
+
+                    case "VENTAS POR VENDEDOR":
+                        if (string.IsNullOrWhiteSpace(textoBusqueda)) { MessageBox.Show("Ingrese un código de vendedor.", "Información Requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                        var vendedor = _vendedorService.ObtenerVendedorPorCodigo(textoBusqueda);
+                        if (vendedor == null) { MessageBox.Show("Vendedor no encontrado.", "Búsqueda", MessageBoxButtons.OK, MessageBoxIcon.Information); LoadSalesData(new List<Venta>()); return; }
+
+                        if (filtroFecha == "Por Fecha Específica")
+                            ventasResultado = _ventaService.ObtenerVentasPorVendedorYFechas(vendedor.IdVendedor, fechaInicio, fechaInicio.AddDays(1).AddTicks(-1));
+                        else if (filtroFecha == "Por Rango de Fechas")
+                            ventasResultado = _ventaService.ObtenerVentasPorVendedorYFechas(vendedor.IdVendedor, fechaInicio, fechaFin);
+                        else
+                            ventasResultado = _ventaService.ObtenerVentasPorVendedor(vendedor.IdVendedor);
+                        break;
+
+                    case "VENTAS POR CLIENTE":
+                        if (string.IsNullOrWhiteSpace(textoBusqueda)) { MessageBox.Show("Ingrese nombre, apellido o documento del cliente.", "Información Requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+
+                        var clientes = _clienteService.BuscarClientesPorNombreOApellido(textoBusqueda).ToList();
+                        // Intenta buscar también por número de documento si no se encontraron por nombre/apellido
+                        if (!clientes.Any())
+                        {
+                            // Asumimos que el servicio puede manejar un tipo de documento 0 o null para buscar por número en todos los tipos
+                            var clientePorDoc = _clienteService.ObtenerClientePorDocumento(0, textoBusqueda);
+                            if (clientePorDoc != null) clientes.Add(clientePorDoc);
+                        }
+                        clientes = clientes.Where(c => c != null).Distinct().ToList();
+
+                        if (!clientes.Any()) { MessageBox.Show("Cliente no encontrado.", "Búsqueda", MessageBoxButtons.OK, MessageBoxIcon.Information); LoadSalesData(new List<Venta>()); return; }
+
+                        var ventasClientes = new List<Venta>();
+                        foreach (var cliente in clientes)
+                        {
+                            IEnumerable<Venta> ventasDeCliente;
+                            if (filtroFecha == "Por Fecha Específica")
+                                ventasDeCliente = _ventaService.ObtenerVentasPorRangoFechas(fechaInicio, fechaInicio.AddDays(1).AddTicks(-1));
+                            else if (filtroFecha == "Por Rango de Fechas")
+                                ventasDeCliente = _ventaService.ObtenerVentasPorRangoFechas(fechaInicio, fechaFin);
+                            else
+                                ventasDeCliente = _ventaService.ObtenerVentasPorCliente(cliente.IdCliente);
+
+                            ventasClientes.AddRange(ventasDeCliente.Where(v => v.ClienteId == cliente.IdCliente));
+                        }
+                        ventasResultado = ventasClientes.Distinct().OrderByDescending(v => v.FechaOcurrencia);
+                        break;
+                    default:
+                        LoadSalesData();
+                        return;
+                }
+                LoadSalesData(ventasResultado);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al buscar ventas: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ibtn_StatusVenta_Click(object sender, EventArgs e)
+        {
+            if (dgv_ListaVentas.SelectedRows.Count > 0)
+            {
+                try
+                {
+                    int idVenta = Convert.ToInt32(dgv_ListaVentas.SelectedRows[0].Cells["IdVenta"].Value);
+                    if (_ventaService == null) { MessageBox.Show("Servicio de ventas no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                    Venta ventaAModificar = _ventaService.ObtenerVentaPorId(idVenta);
+
+                    if (ventaAModificar != null)
+                    {
+                        using (Frm_ModifyVentState frmModifyState = new Frm_ModifyVentState(ventaAModificar, _idAdminLogueado))
+                        {
+                            if (frmModifyState.ShowDialog() == DialogResult.OK)
+                            {
+                                ibtn_Buscar_Click(sender, e); // Refrescar la vista actual
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo encontrar la venta seleccionada.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al modificar estado: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Seleccione una venta para modificar su estado.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void ibtn_CancelVenta_Click(object sender, EventArgs e)
+        {
+            if (dgv_ListaVentas.SelectedRows.Count > 0)
+            {
+                try
+                {
+                    int idVenta = Convert.ToInt32(dgv_ListaVentas.SelectedRows[0].Cells["IdVenta"].Value);
+                    string clienteNombre = dgv_ListaVentas.SelectedRows[0].Cells["ClienteNombre"].Value?.ToString() ?? "N/A";
+                    string estadoActual = dgv_ListaVentas.SelectedRows[0].Cells["Estado"].Value?.ToString() ?? "DESCONOCIDO";
+
+                    if (estadoActual.Equals("CANCELADA", StringComparison.OrdinalIgnoreCase))
+                    {
+                        MessageBox.Show("Esta venta ya ha sido cancelada.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+
+                    DialogResult confirm = MessageBox.Show($"¿Está seguro que desea cancelar la venta ID {idVenta} del cliente '{clienteNombre}'?", "Confirmar Cancelación", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (confirm == DialogResult.Yes)
+                    {
+                        if (_ventaService == null) { MessageBox.Show("Servicio de ventas no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                        string motivo = $"Cancelada por Admin ID: {_idAdminLogueado} el {DateTime.Now.ToString("g")}";
+                        string resultado = _ventaService.CancelarVenta(idVenta, motivo);
+                        MessageBox.Show(resultado, "Cancelar Venta", MessageBoxButtons.OK, resultado.ToLower().Contains("exitosamente") ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+                        ibtn_Buscar_Click(sender, e); // Refrescar la vista actual
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al cancelar venta: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Seleccione una venta para cancelar.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void ibtn_Clear_Click(object sender, EventArgs e)
+        {
+            if (cbx_TipoV != null && cbx_TipoV.Items.Count > 0) cbx_TipoV.SelectedIndex = 0;
+            // El evento SelectedIndexChanged de cbx_TipoV llamará a UpdateFilterPanelVisibility,
+            // que a su vez limpiará cbx_FiltroV y tbx_Busqueda, y ocultará los filtros.
+            LoadSalesData(); // Cargar todas las ventas
         }
     }
 }
-
-
-//using System;
-//using System.Data;
-//using System.Windows.Forms;
-
-//namespace GUI
-//{
-//    public partial class Frm_GSalesAdmin : Form
-//    {
-//        public Frm_GSalesAdmin()
-//        {
-//            InitializeComponent();
-
-//            // Configuración esencial para que este formulario pueda ser incrustado como un control:
-//            this.TopLevel = false; // Indica que no es una ventana de nivel superior independiente.
-//            this.FormBorderStyle = FormBorderStyle.None; // Elimina el borde y la barra de título.
-//            this.Dock = DockStyle.Fill; // Hace que el formulario llene el control contenedor.
-//        }
-//        private void Frm_GSalesAdmin_Load(object sender, EventArgs e) // Evento Load del formulario.
-//        {
-//            // Inicializar cbx_TipoReport con tipos de reporte de ventas.
-//            //cbx_TipoV.Items.Add("-- Seleccione un tipo de reporte --"); // Índice 0
-//            //cbx_TipoV.Items.Add("VENTAS GENERALES"); // Índice 1
-//            //cbx_TipoV.Items.Add("VENTAS POR VENDEDOR"); // Índice 2
-//            //cbx_TipoV.Items.Add("VENTAS POR CLIENTE"); // Índice 3
-//            // Puedes añadir más tipos de reporte aquí si es necesario.
-//            // cbx_TipoV.SelectedIndex = 0; // Seleccionar la opción por defecto al inicio
-
-//            // Asegurar que los paneles y DateTimePickers estén ocultos al inicio.
-//            panelFiltro.Visible = false;
-//            dtp_FInicio.Visible = false;
-//            dtp_FFin.Visible = false;
-//        }
-
-//        //EVENTOS
-//        private void cbx_TipoReport_SelectedIndexChanged(object sender, EventArgs e) // Evento SelectedIndexChanged del ComboBox cbx_TipoReport.
-//        {
-//            UpdateFilterPanelVisibility();
-//        }
-//        private void cbx_FiltroReport_SelectedIndexChanged(object sender, EventArgs e) // Evento SelectedIndexChanged del ComboBox cbx_FiltroReport.
-//        {
-//            UpdateDateTimePickerVisibility();
-//        }
-//        private void ibtn_StatusVenta_Click(object sender, EventArgs e)
-//        {
-
-//        }
-//        private void ibtn_CancelVenta_Click(object sender, EventArgs e)
-//        {
-
-//        }
-
-//        // MÉTODOS PRIVADOS
-//        private void UpdateFilterPanelVisibility() // Método para actualizar la visibilidad del panelFiltro y las opciones de cbx_FiltroReport.
-//        {
-//            // Limpiar opciones de filtro previas.
-//            cbx_FiltroV.Items.Clear();
-//            dtp_FInicio.Visible = false;
-//            dtp_FFin.Visible = false;
-
-//            string selectedReportType = cbx_TipoV.SelectedItem?.ToString();
-
-//            // Mostrar panelFiltro solo para tipos de reporte que requieren filtros adicionales.
-//            // Para "VENTAS POR VENDEDOR" y "VENTAS POR CLIENTE" se ofrecerán filtros de fecha.
-//            if (selectedReportType == "VENTAS POR VENDEDOR" || selectedReportType == "VENTAS POR CLIENTE")
-//            {
-//                panelFiltro.Visible = true;
-//                cbx_FiltroV.Items.Add("-- Seleccione un filtro --"); // Índice 0
-//                cbx_FiltroV.Items.Add("Fecha"); // Índice 1
-//                cbx_FiltroV.Items.Add("Rango de fecha"); // Índice 2
-//                // Puedes añadir más filtros aquí, por ejemplo:
-//                // cbx_FiltroReport.Items.Add("Por Vendedor Específico");
-//                // cbx_FiltroReport.Items.Add("Por Cliente Específico");
-//                cbx_FiltroV.SelectedIndex = 0; // Seleccionar la opción por defecto
-//            }
-//            else
-//            {
-//                panelFiltro.Visible = false;
-//            }
-//        }
-//        private void UpdateDateTimePickerVisibility() // Método para actualizar la visibilidad de los DateTimePicker.
-//        {
-//            string selectedFilter = cbx_FiltroV.SelectedItem?.ToString();
-
-//            dtp_FInicio.Visible = false;
-//            dtp_FFin.Visible = false;
-
-//            if (selectedFilter == "Fecha")
-//            {
-//                dtp_FInicio.Visible = true;
-//                dtp_FFin.Visible = false; // Asegurarse de que el segundo esté oculto
-//            }
-//            else if (selectedFilter == "Rango de fecha")
-//            {
-//                dtp_FInicio.Visible = true;
-//                dtp_FFin.Visible = true;
-//            }
-//            // Para otros filtros, ambos DateTimePicker permanecerán ocultos.
-//        }
-//        private void ibtn_Buscar_Click(object sender, EventArgs e) // Método placeholder para el botón de búsqueda.
-//        {
-//            // --- Lógica de búsqueda de ventas basada en el tipo de reporte, filtro y fechas/texto. ---
-//            string tipoReporte = cbx_TipoV.SelectedItem?.ToString();
-//            string filtroSeleccionado = cbx_FiltroV.SelectedItem?.ToString();
-//            string textoBusqueda = tbx_Busqueda.Text;
-//            DateTime? fechaInicio = dtp_FInicio.Visible ? dtp_FInicio.Value : (DateTime?)null;
-//            DateTime? fechaFin = dtp_FFin.Visible ? dtp_FFin.Value : (DateTime?)null;
-
-//            // Validaciones básicas antes de buscar (pueden ser más robustas)
-//            if (cbx_TipoV.SelectedIndex == 0) // Si no se ha seleccionado un tipo de reporte
-//            {
-//                MessageBox.Show("Por favor, seleccione un tipo de reporte de ventas.", "Búsqueda incompleta", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-//                return;
-//            }
-
-//            MessageBox.Show($"Buscando Ventas:\nTipo: {tipoReporte}\nFiltro: {filtroSeleccionado ?? "N/A"}\nTexto: {textoBusqueda}\nFecha Inicio: {fechaInicio?.ToShortDateString() ?? "N/A"}\nFecha Fin: {fechaFin?.ToShortDateString() ?? "N/A"}", "Búsqueda de Ventas (Placeholder)", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-//            // Aquí llamarías a la capa BLL para obtener los datos de ventas y llenar el dgv_Reportes.
-//            LoadSalesData(); // Por ahora, solo recarga los datos placeholder
-//        }
-//        private void LoadSalesData() // Método placeholder para cargar/recargar datos de ventas.
-//        {
-//            // --- Lógica para cargar datos de ventas desde la capa BLL y llenar el dgv_Reportes. ---
-//            // Por ahora, el DataGridView estará vacío o con columnas definidas.
-//            DataTable dt = new DataTable();
-//            dt.Columns.Add("ID Venta", typeof(int));
-//            dt.Columns.Add("Fecha", typeof(DateTime));
-//            dt.Columns.Add("Total", typeof(decimal));
-//            dt.Columns.Add("Vendedor", typeof(string));
-//            dt.Columns.Add("Cliente", typeof(string));
-//            // No se añaden filas de datos de prueba, solo las columnas.
-//            // Para probar:
-//            // dt.Rows.Add(1, DateTime.Now.AddDays(-5), 150.00m, "Juan Pérez", "Ana López"); // DATOS DE PRUEBA
-//            // dt.Rows.Add(2, DateTime.Now.AddDays(-2), 230.50m, "María Gómez", "Carlos Ramírez"); // DATOS DE PRUEBA
-
-//            dgv_ListaVentas.DataSource = dt; // Asignar el DataTable al DataGridView
-//        }
-//    }
-//}

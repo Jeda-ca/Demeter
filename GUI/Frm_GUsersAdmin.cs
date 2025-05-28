@@ -1,4 +1,7 @@
-﻿using System;
+﻿using BLL.Interfaces;
+using BLL.Services;
+using ENTITY;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,99 +15,252 @@ namespace GUI
 {
     public partial class Frm_GUsersAdmin : Form
     {
-        public Frm_GUsersAdmin()
+        private readonly IUsuarioService _usuarioService;
+        private readonly IRolService _rolService; // Para el filtro por rol
+        private readonly int _idAdminLogueado;
+        private Usuario _usuarioSeleccionadoParaModificar = null; // Para guardar el usuario seleccionado
+
+        public Frm_GUsersAdmin(int idAdminLogueado)
         {
             InitializeComponent();
-            // Configuración esencial para que este formulario pueda ser incrustado como un control.
-            this.TopLevel = false; // Indica que no es una ventana de nivel superior independiente.
-            this.FormBorderStyle = FormBorderStyle.None; // Elimina el borde y la barra de título.
-            this.Dock = DockStyle.Fill; // Hace que el formulario llene el control contenedor.
+            this.TopLevel = false;
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.Dock = DockStyle.Fill;
 
-            // Inicializar ComboBox de búsqueda (placeholder)
-            cbx_Buscar.Items.Add("-- Seleccione --");
-            cbx_Buscar.Items.Add("Nombre completo");
-            cbx_Buscar.Items.Add("Usuario");
+            _idAdminLogueado = idAdminLogueado;
+
+            if (_idAdminLogueado <= 0)
+            {
+                MessageBox.Show("Error: ID de administrador no válido.", "Error de Sesión", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.BeginInvoke(new MethodInvoker(this.Close));
+                return;
+            }
+
+            try
+            {
+                _usuarioService = new UsuarioService();
+                _rolService = new RolService();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error crítico al inicializar servicios: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Deshabilitar controles
+                if (ibtn_Buscar != null) ibtn_Buscar.Enabled = false;
+                if (ibtn_Cambio != null) ibtn_Cambio.Enabled = false; // Botón para realizar cambio de credenciales
+                if (cbx_Buscar != null) cbx_Buscar.Enabled = false;
+            }
+        }
+
+        private void Frm_GUsersAdmin_Load(object sender, EventArgs e)
+        {
+            if (_idAdminLogueado > 0 && _usuarioService != null && _rolService != null)
+            {
+                CargarFiltrosComboBox();
+                LoadUsersData();
+                // Evento para cuando cambia la selección en la grilla
+                if (dgv_ListaUsuarios != null)
+                {
+                    dgv_ListaUsuarios.SelectionChanged += Dgv_ListaUsuarios_SelectionChanged;
+                }
+            }
+        }
+
+        private void CargarFiltrosComboBox()
+        {
+            if (cbx_Buscar == null) return; // cbx_Buscar es el ComboBox principal de criterios
+            cbx_Buscar.Items.Clear();
+            cbx_Buscar.Items.Add("-- Seleccione Criterio --");
             cbx_Buscar.Items.Add("Rol");
+            cbx_Buscar.Items.Add("Username");
+            cbx_Buscar.Items.Add("Nombre Completo");
             cbx_Buscar.SelectedIndex = 0;
         }
 
-        // Evento Load del formulario.
-        private void Frm_GUsersAdmin_Load(object sender, EventArgs e)
+        private void LoadUsersData(IEnumerable<Usuario> usuarios = null)
         {
-            // Lógica para cargar datos de usuarios en el DataGridView.
-            LoadUsersData();
+            try
+            {
+                if (_usuarioService == null) { MessageBox.Show("Servicio de usuarios no inicializado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                if (usuarios == null)
+                {
+                    usuarios = _usuarioService.ObtenerTodosLosUsuariosDelSistema();
+                }
+
+                DataTable dt = new DataTable();
+                dt.Columns.Add("IdUsuario", typeof(int)); // Para uso interno
+                dt.Columns.Add("NombreCompleto", typeof(string));
+                dt.Columns.Add("Username", typeof(string));
+                dt.Columns.Add("Rol", typeof(string));
+                dt.Columns.Add("Estado", typeof(string)); // Añadido para ver si está activo
+
+                foreach (var usuario in usuarios.OrderBy(u => u.NombreUsuario))
+                {
+                    dt.Rows.Add(
+                        usuario.IdUsuario,
+                        $"{usuario.Nombre} {usuario.Apellido}",
+                        usuario.NombreUsuario,
+                        usuario.Rol?.Nombre ?? "N/A", // Asume que la entidad Usuario tiene Rol poblado
+                        usuario.Activo ? "Activo" : "Inactivo"
+                    );
+                }
+
+                if (dgv_ListaUsuarios != null) // dgv_ListaUsuarios es tu DataGridView
+                {
+                    dgv_ListaUsuarios.SelectionChanged -= Dgv_ListaUsuarios_SelectionChanged; // Desuscribir temporalmente
+                    dgv_ListaUsuarios.DataSource = dt;
+                    if (dgv_ListaUsuarios.Columns["IdUsuario"] != null) dgv_ListaUsuarios.Columns["IdUsuario"].Visible = false;
+                    dgv_ListaUsuarios.SelectionChanged += Dgv_ListaUsuarios_SelectionChanged; // Volver a suscribir
+                    if (dgv_ListaUsuarios.Rows.Count > 0) dgv_ListaUsuarios.ClearSelection(); // Limpiar selección inicial
+                    _usuarioSeleccionadoParaModificar = null; // Limpiar selección
+                    LimpiarCamposCredenciales();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar datos de usuarios: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        // Método placeholder para cargar/recargar datos de usuarios.
-        private void LoadUsersData()
+        private void Dgv_ListaUsuarios_SelectionChanged(object sender, EventArgs e)
         {
-            // --- Lógica para cargar datos de usuarios desde la capa BLL y llenar el DataGridView. ---
-            // Por ahora, el DataGridView estará vacío o con columnas definidas.
-            DataTable dt = new DataTable();
-            dt.Columns.Add("ID", typeof(int));
-            dt.Columns.Add("Nombre completo", typeof(string));
-            dt.Columns.Add("Usuario", typeof(string));
-            dt.Columns.Add("Rol", typeof(string));
-            // No se añaden filas de datos de prueba.
-            // Para probar:
-            // dt.Rows.Add(1, "Admin Demeter", "admin_demeter", "Admin"); // DATOS DE PRUEBA
-            // dt.Rows.Add(2, "Carlos Vargas", "cvargas_vende", "Vendedor"); // DATOS DE PRUEBA
+            if (dgv_ListaUsuarios.SelectedRows.Count > 0)
+            {
+                try
+                {
+                    int idUsuarioSeleccionado = Convert.ToInt32(dgv_ListaUsuarios.SelectedRows[0].Cells["IdUsuario"].Value);
+                    _usuarioSeleccionadoParaModificar = _usuarioService.ObtenerUsuarioPorId(idUsuarioSeleccionado);
 
-            dgv_ListaUsuarios.DataSource = dt; // Asignar el DataTable al DataGridView
+                    if (_usuarioSeleccionadoParaModificar != null)
+                    {
+                        // tbx_NameUser es el TextBox para el nuevo nombre de usuario
+                        // tbx_PassUser es el TextBox para la nueva contraseña
+                        if (tbx_NameUser != null) tbx_NameUser.Text = _usuarioSeleccionadoParaModificar.NombreUsuario;
+                        if (tbx_PassUser != null) tbx_PassUser.Clear(); // No mostrar la contraseña actual
+                    }
+                    else
+                    {
+                        LimpiarCamposCredenciales();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al seleccionar usuario: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    LimpiarCamposCredenciales();
+                }
+            }
+            else
+            {
+                _usuarioSeleccionadoParaModificar = null;
+                LimpiarCamposCredenciales();
+            }
         }
 
-        // Evento Click del botón "Buscar" (placeholder para la lógica de búsqueda)
+        private void LimpiarCamposCredenciales()
+        {
+            if (tbx_NameUser != null) tbx_NameUser.Clear();
+            if (tbx_PassUser != null) tbx_PassUser.Clear();
+        }
+
         private void ibtn_Buscar_Click(object sender, EventArgs e)
         {
-            // --- Lógica para buscar usuarios basada en el texto y el criterio de búsqueda. ---
-            string searchText = tbx_Busqueda.Text;
-            string searchCriteria = cbx_Buscar.SelectedItem?.ToString(); // Asumiendo que cbx_Buscar existe y tiene opciones
+            string criterio = cbx_Buscar.SelectedItem?.ToString();
+            string textoBusqueda = tbx_Busqueda.Text.Trim(); // tbx_Busqueda es el TextBox para el texto a buscar
+            IEnumerable<Usuario> usuariosFiltrados = new List<Usuario>();
 
-            if (cbx_Buscar.SelectedIndex == 0 || string.IsNullOrWhiteSpace(searchText))
+            if (_usuarioService == null) { MessageBox.Show("Servicio de usuarios no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+            if (string.IsNullOrEmpty(criterio) || criterio == "-- Seleccione Criterio --")
             {
-                MessageBox.Show("Por favor, seleccione un criterio de búsqueda y/o ingrese un texto.", "Búsqueda incompleta", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                LoadUsersData(); // Recargar todos los usuarios si la búsqueda es inválida o vacía.
-                return;
+                if (string.IsNullOrWhiteSpace(textoBusqueda)) LoadUsersData(); // Carga todos si no hay criterio ni texto
+                else criterio = "Nombre Completo"; // Búsqueda por defecto si hay texto
             }
 
-            MessageBox.Show($"Lógica de búsqueda para '{searchText}' por '{searchCriteria}'.", "Buscar Usuario (Placeholder)", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            // Aquí llamarías a la capa BLL para filtrar los datos y actualizar el DataGridView.
-            // Ejemplo: dgv_ListaUsuarios.DataSource = BLL.UserManager.SearchUsers(searchText, searchCriteria);
+            try
+            {
+                var todosLosUsuarios = _usuarioService.ObtenerTodosLosUsuariosDelSistema();
+
+                switch (criterio)
+                {
+                    case "Rol":
+                        if (!string.IsNullOrWhiteSpace(textoBusqueda))
+                            usuariosFiltrados = todosLosUsuarios.Where(u => u.Rol?.Nombre.IndexOf(textoBusqueda, StringComparison.OrdinalIgnoreCase) >= 0);
+                        else { LoadUsersData(); return; }
+                        break;
+                    case "Username":
+                        if (!string.IsNullOrWhiteSpace(textoBusqueda))
+                            usuariosFiltrados = todosLosUsuarios.Where(u => u.NombreUsuario.IndexOf(textoBusqueda, StringComparison.OrdinalIgnoreCase) >= 0);
+                        else { LoadUsersData(); return; }
+                        break;
+                    case "Nombre Completo":
+                        if (!string.IsNullOrWhiteSpace(textoBusqueda))
+                            usuariosFiltrados = todosLosUsuarios.Where(u =>
+                                (u.Nombre + " " + u.Apellido).IndexOf(textoBusqueda, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                                u.Nombre.IndexOf(textoBusqueda, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                                u.Apellido.IndexOf(textoBusqueda, StringComparison.OrdinalIgnoreCase) >= 0
+                            );
+                        else { LoadUsersData(); return; }
+                        break;
+                    default:
+                        usuariosFiltrados = todosLosUsuarios;
+                        break;
+                }
+                LoadUsersData(usuariosFiltrados);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al buscar usuarios: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        // Evento Click del botón "Realizar cambio" (ibtn_Cambio) para guardar credenciales.
+        // ibtn_Cambio es el botón para "Realizar cambio" de credenciales
         private void ibtn_Cambio_Click(object sender, EventArgs e)
         {
-            // Lógica para obtener el usuario seleccionado del DataGridView
-            if (dgv_ListaUsuarios.SelectedRows.Count == 0)
+            if (_usuarioSeleccionadoParaModificar == null)
             {
-                MessageBox.Show("Por favor, seleccione un usuario para modificar sus credenciales.", "Usuario no seleccionado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Por favor, seleccione un usuario de la lista para modificar sus credenciales.", "Selección Requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Aquí se obtendría el ID del usuario seleccionado
-            // int userId = (int)dgv_ListaUsuarios.SelectedRows[0].Cells["ID"].Value;
+            string nuevoUsername = tbx_NameUser.Text.Trim();
+            string nuevaPassword = tbx_PassUser.Text; // No trimear contraseña
 
-            string newUsername = tbx_NameUser.Text; // Asumiendo tbx_NameUser es el TextBox para el nuevo nombre de usuario
-            string newPassword = tbx_PassUser.Text; // Asumiendo tbx_PassUser es el TextBox para la nueva contraseña
-
-            // Validaciones básicas (pueden ser más robustas)
-            if (string.IsNullOrWhiteSpace(newUsername) || string.IsNullOrWhiteSpace(newPassword))
+            if (string.IsNullOrWhiteSpace(nuevoUsername) && string.IsNullOrWhiteSpace(nuevaPassword))
             {
-                MessageBox.Show("Por favor, ingrese el nuevo nombre de usuario y contraseña.", "Campos incompletos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Debe ingresar un nuevo nombre de usuario o una nueva contraseña.", "Datos Insuficientes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+            if (string.IsNullOrWhiteSpace(nuevoUsername)) // Si no se cambia el username, usar el actual
+            {
+                nuevoUsername = _usuarioSeleccionadoParaModificar.NombreUsuario;
+            }
 
-            // --- Lógica placeholder para guardar los cambios de credenciales en la base de datos ---
-            // Aquí se llamaría a la capa BLL para actualizar las credenciales del usuario.
-            // Ejemplo: BLL.UserManager.UpdateUserCredentials(userId, newUsername, newPassword);
 
-            MessageBox.Show($"Lógica para guardar cambios de credenciales para el usuario: '{newUsername}'.", "Guardar Credenciales (Placeholder)", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // Opcional: Añadir un campo para confirmar la nueva contraseña
+            // if (nuevaPassword != tbx_ConfirmPassword.Text) { MessageBox.Show("Las nuevas contraseñas no coinciden."); return; }
 
-            // Opcional: Limpiar los campos después de guardar
-            tbx_NameUser.Clear();
-            tbx_PassUser.Clear();
-            LoadUsersData(); // Recargar la lista de usuarios para reflejar los cambios
+            try
+            {
+                if (_usuarioService == null) { MessageBox.Show("Servicio de usuarios no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                string resultado = _usuarioService.ModificarDatosBasicosUsuario(_usuarioSeleccionadoParaModificar.IdUsuario, nuevoUsername, nuevaPassword);
+
+                MessageBox.Show(resultado, "Actualizar Credenciales", MessageBoxButtons.OK,
+                                resultado.ToLower().Contains("actualizados") ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+
+                if (resultado.ToLower().Contains("actualizados"))
+                {
+                    LoadUsersData(); // Recargar para ver cambios y limpiar selección
+                }
+            }
+            catch (ApplicationException appEx)
+            {
+                MessageBox.Show($"Error de aplicación: {appEx.Message}", "Error al Actualizar", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Se produjo un error inesperado: {ex.Message}", "Error Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

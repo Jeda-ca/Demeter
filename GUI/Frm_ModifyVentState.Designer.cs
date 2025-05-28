@@ -30,15 +30,15 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Frm_ModifyVentState));
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.cbx_VentState = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.tbx_Date = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.tbx_Code = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.tbx_TotVent = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.cbx_VentState = new System.Windows.Forms.ComboBox();
+            this.tbx_Code = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.tbx_Date = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.ibtn_Modify = new FontAwesome.Sharp.IconButton();
             this.ibtn_Cancel = new FontAwesome.Sharp.IconButton();
             this.groupBox3.SuspendLayout();
@@ -57,6 +57,14 @@
             this.groupBox3.TabIndex = 53;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Estado de venta";
+            // 
+            // cbx_VentState
+            // 
+            this.cbx_VentState.FormattingEnabled = true;
+            this.cbx_VentState.Location = new System.Drawing.Point(34, 60);
+            this.cbx_VentState.Name = "cbx_VentState";
+            this.cbx_VentState.Size = new System.Drawing.Size(258, 32);
+            this.cbx_VentState.TabIndex = 0;
             // 
             // label1
             // 
@@ -89,25 +97,25 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Información de la venta";
             // 
-            // tbx_Date
+            // tbx_TotVent
             // 
-            this.tbx_Date.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbx_Date.Location = new System.Drawing.Point(34, 65);
-            this.tbx_Date.Margin = new System.Windows.Forms.Padding(4);
-            this.tbx_Date.Name = "tbx_Date";
-            this.tbx_Date.ReadOnly = true;
-            this.tbx_Date.Size = new System.Drawing.Size(225, 30);
-            this.tbx_Date.TabIndex = 14;
+            this.tbx_TotVent.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbx_TotVent.Location = new System.Drawing.Point(512, 65);
+            this.tbx_TotVent.Margin = new System.Windows.Forms.Padding(4);
+            this.tbx_TotVent.Name = "tbx_TotVent";
+            this.tbx_TotVent.ReadOnly = true;
+            this.tbx_TotVent.Size = new System.Drawing.Size(225, 30);
+            this.tbx_TotVent.TabIndex = 20;
             // 
-            // label2
+            // label4
             // 
-            this.label2.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(30, 33);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(231, 28);
-            this.label2.TabIndex = 17;
-            this.label2.Text = "Fecha";
+            this.label4.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(508, 33);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(231, 28);
+            this.label4.TabIndex = 21;
+            this.label4.Text = "Total venta";
             // 
             // tbx_Code
             // 
@@ -129,33 +137,25 @@
             this.label3.TabIndex = 19;
             this.label3.Text = "Código";
             // 
-            // tbx_TotVent
+            // tbx_Date
             // 
-            this.tbx_TotVent.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbx_TotVent.Location = new System.Drawing.Point(512, 65);
-            this.tbx_TotVent.Margin = new System.Windows.Forms.Padding(4);
-            this.tbx_TotVent.Name = "tbx_TotVent";
-            this.tbx_TotVent.ReadOnly = true;
-            this.tbx_TotVent.Size = new System.Drawing.Size(225, 30);
-            this.tbx_TotVent.TabIndex = 20;
+            this.tbx_Date.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbx_Date.Location = new System.Drawing.Point(34, 65);
+            this.tbx_Date.Margin = new System.Windows.Forms.Padding(4);
+            this.tbx_Date.Name = "tbx_Date";
+            this.tbx_Date.ReadOnly = true;
+            this.tbx_Date.Size = new System.Drawing.Size(225, 30);
+            this.tbx_Date.TabIndex = 14;
             // 
-            // label4
+            // label2
             // 
-            this.label4.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(508, 33);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(231, 28);
-            this.label4.TabIndex = 21;
-            this.label4.Text = "Total venta";
-            // 
-            // cbx_VentState
-            // 
-            this.cbx_VentState.FormattingEnabled = true;
-            this.cbx_VentState.Location = new System.Drawing.Point(34, 60);
-            this.cbx_VentState.Name = "cbx_VentState";
-            this.cbx_VentState.Size = new System.Drawing.Size(258, 32);
-            this.cbx_VentState.TabIndex = 0;
+            this.label2.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(30, 33);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(231, 28);
+            this.label2.TabIndex = 17;
+            this.label2.Text = "Fecha";
             // 
             // ibtn_Modify
             // 
@@ -174,6 +174,7 @@
             this.ibtn_Modify.TabIndex = 42;
             this.ibtn_Modify.Text = "Guardar cambios";
             this.ibtn_Modify.UseVisualStyleBackColor = false;
+            this.ibtn_Modify.Click += new System.EventHandler(this.ibtn_Modify_Click);
             // 
             // ibtn_Cancel
             // 
@@ -192,6 +193,7 @@
             this.ibtn_Cancel.TabIndex = 44;
             this.ibtn_Cancel.Text = "Cancelar";
             this.ibtn_Cancel.UseVisualStyleBackColor = false;
+            this.ibtn_Cancel.Click += new System.EventHandler(this.ibtn_Cancel_Click);
             // 
             // Frm_ModifyVentState
             // 

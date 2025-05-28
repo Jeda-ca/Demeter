@@ -10,8 +10,6 @@ namespace BLL.Interfaces
     public interface IVentaService
     {
         string RegistrarNuevaVenta(Venta venta, int idVendedorLogueado);
-
-        // Para Frm_Admin_GVentas, Frm_Admin_VentasxVendedor, Frm_Admin_InformeVCompleto, Frm_Vendor_Ventas
         IEnumerable<Venta> ObtenerVentasPorVendedor(int idVendedor);
         IEnumerable<Venta> ObtenerVentasPorCliente(int idCliente);
         IEnumerable<Venta> ObtenerVentasPorRangoFechas(DateTime inicio, DateTime fin);
@@ -19,5 +17,6 @@ namespace BLL.Interfaces
         IEnumerable<Venta> ObtenerTodasLasVentasParaAdmin();
         Venta ObtenerVentaPorId(int idVenta);
         string CancelarVenta(int idVenta, string motivo);
+        bool ActualizarVenta(Venta venta);
     }
 }
