@@ -1,7 +1,7 @@
 # 🌱 Demeter: Sistema de Gestión para Mercados Agrícolas 🌾
 
 <p align="center">
-  <img src="GUI/image/LogoDemeter_ORIGINAL (2).png" alt="Logo Demeter"/>
+  <img src="GUI/image/LogoDemeter_ORIGINAL.png" alt="Logo Demeter"/>
 </p>
 
 **Demeter** es un sistema de escritorio diseñado para la gestión integral de mercados agrícolas físicos en Colombia. Este proyecto, desarrollado como una iniciativa académica, sienta las bases para una visión más amplia: transformar y modernizar el sector agrícola colombiano, facilitando una conexión más directa y justa entre productores y consumidores.
