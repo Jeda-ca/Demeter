@@ -21,22 +21,23 @@ namespace GUI
         public int SelectedProductStock { get; private set; }
 
         private readonly IProductoService _productoService;
-        private readonly ICategoriaProductoService _categoriaService; // Para el filtro por categoría
-        private readonly int _idVendedorActual; // Para filtrar productos por el vendedor que registra la venta
+        private readonly ICategoriaProductoService _categoriaService;
+        private readonly int _idVendedorActual;
+        private readonly List<CarritoItemTemporal> _itemsEnCarritoActual;
 
-        // Constructor que acepta el ID del vendedor (de la tabla 'sellers')
-        public Frm_BusqProduct(int idVendedor)
+        public Frm_BusqProduct(int idVendedor, List<CarritoItemTemporal> itemsEnCarrito)
         {
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.StartPosition = FormStartPosition.CenterParent;
 
             _idVendedorActual = idVendedor;
+            _itemsEnCarritoActual = itemsEnCarrito ?? new List<CarritoItemTemporal>();
 
             if (_idVendedorActual <= 0)
             {
                 MessageBox.Show("ID de Vendedor no válido. No se pueden buscar productos.", "Error de Contexto", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                this.BeginInvoke(new MethodInvoker(this.Close)); // Cierra de forma segura
+                this.BeginInvoke(new MethodInvoker(this.Close));
                 return;
             }
 
@@ -50,40 +51,38 @@ namespace GUI
             catch (Exception ex)
             {
                 MessageBox.Show($"Error al inicializar búsqueda de productos: {ex.Message}", "Error Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Deshabilitar controles si es necesario
                 if (ibtn_Buscar != null) ibtn_Buscar.Enabled = false;
                 if (ibtn_OK != null) ibtn_OK.Enabled = false;
+                if (ibtn_Clear != null) ibtn_Clear.Enabled = false;
             }
         }
 
-        // Constructor por defecto (necesario para el diseñador de Windows Forms)
         public Frm_BusqProduct()
         {
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.StartPosition = FormStartPosition.CenterParent;
-            _idVendedorActual = 0; // Valor inválido, el formulario no funcionará correctamente en ejecución
+            _idVendedorActual = 0;
+            _itemsEnCarritoActual = new List<CarritoItemTemporal>();
             try
             {
                 _productoService = new ProductoService();
                 _categoriaService = new CategoriaProductoService();
                 InitializeControls();
-                // No cargar datos si no hay un vendedor válido
             }
-            catch (Exception ex) { /* Silencioso en modo diseño o loggear */ }
+            catch (Exception ex) { }
         }
 
         private void InitializeControls()
         {
             if (dgv_Product != null) dgv_Product.CellDoubleClick += dgv_Product_CellDoubleClick;
 
-            if (cbx_Busq != null) // cbx_Busq es tu ComboBox para criterios
+            if (cbx_Busq != null)
             {
                 cbx_Busq.Items.Clear();
                 cbx_Busq.Items.Add("-- Seleccione Criterio --");
                 cbx_Busq.Items.Add("Nombre");
-                cbx_Busq.Items.Add("Categoría (Nombre Exacto)");
-                // cbx_Busq.Items.Add("Stock Bajo"); // Podría no ser relevante aquí
+                cbx_Busq.Items.Add("Categoría");
                 cbx_Busq.SelectedIndex = 0;
             }
         }
@@ -93,41 +92,47 @@ namespace GUI
             try
             {
                 if (_productoService == null) { MessageBox.Show("Servicio de productos no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-                if (_idVendedorActual <= 0 && productos == null) { /* No cargar si no hay vendedor y no se pasan productos filtrados */ dgv_Product.DataSource = null; return; }
-
+                if (_idVendedorActual <= 0 && productos == null) { if (dgv_Product != null) dgv_Product.DataSource = null; return; }
 
                 if (productos == null)
                 {
-                    // Cargar solo productos activos del vendedor actual
                     productos = _productoService.ObtenerProductosPorVendedor(_idVendedorActual)
                                              .Where(p => p.Activo).ToList();
                 }
 
                 DataTable dt = new DataTable();
-                dt.Columns.Add("ID", typeof(int)); // IdProducto
+                dt.Columns.Add("ID", typeof(int));
                 dt.Columns.Add("Nombre", typeof(string));
                 dt.Columns.Add("Precio", typeof(decimal));
-                dt.Columns.Add("Stock", typeof(int));
+                dt.Columns.Add("StockDB", typeof(int));
+                dt.Columns.Add("StockDisponible", typeof(int));
                 dt.Columns.Add("Categoría", typeof(string));
                 dt.Columns.Add("Unidad", typeof(string));
 
-
                 foreach (var producto in productos.OrderBy(p => p.Nombre))
                 {
+                    var itemEnCarrito = _itemsEnCarritoActual.FirstOrDefault(item => item.IdProducto == producto.IdProducto);
+                    int cantidadEnCarrito = itemEnCarrito?.Cantidad ?? 0;
+
+                    int stockDisponible = producto.Stock - cantidadEnCarrito;
+
                     dt.Rows.Add(
                         producto.IdProducto,
                         producto.Nombre,
                         producto.Precio,
                         producto.Stock,
+                        stockDisponible < 0 ? 0 : stockDisponible,
                         producto.Categoria?.Nombre ?? "N/A",
                         producto.UnidadMedida?.Nombre ?? "N/A"
                         );
                 }
-                if (dgv_Product != null) // dgv_Product es tu DataGridView
+                if (dgv_Product != null)
                 {
                     dgv_Product.DataSource = dt;
                     if (dgv_Product.Columns["ID"] != null) dgv_Product.Columns["ID"].Visible = false;
+                    if (dgv_Product.Columns["StockDB"] != null) dgv_Product.Columns["StockDB"].Visible = false;
                     if (dgv_Product.Columns["Precio"] != null) dgv_Product.Columns["Precio"].DefaultCellStyle.Format = "C2";
+                    if (dgv_Product.Columns["StockDisponible"] != null) dgv_Product.Columns["StockDisponible"].HeaderText = "Stock Disp.";
                 }
             }
             catch (Exception ex) { MessageBox.Show($"Error al cargar productos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
@@ -143,13 +148,12 @@ namespace GUI
 
             if (string.IsNullOrEmpty(criterio) || criterio == "-- Seleccione Criterio --")
             {
-                if (string.IsNullOrWhiteSpace(textoBusqueda)) LoadProductsData(); // Carga todos los del vendedor
-                else criterio = "Nombre"; // Búsqueda por defecto si hay texto
+                if (string.IsNullOrWhiteSpace(textoBusqueda)) LoadProductsData();
+                else criterio = "Nombre";
             }
 
             try
             {
-                // Siempre filtrar sobre los productos activos del vendedor actual
                 var productosDelVendedorActivos = _productoService.ObtenerProductosPorVendedor(_idVendedorActual)
                                                                .Where(p => p.Activo);
                 switch (criterio)
@@ -159,14 +163,25 @@ namespace GUI
                             productosFiltrados = productosDelVendedorActivos.Where(p => p.Nombre.IndexOf(textoBusqueda, StringComparison.OrdinalIgnoreCase) >= 0);
                         else { LoadProductsData(); return; }
                         break;
-                    case "Categoría (Nombre Exacto)":
+                    case "Categoría":
                         if (!string.IsNullOrWhiteSpace(textoBusqueda) && _categoriaService != null)
                         {
-                            var categoria = _categoriaService.ObtenerPorNombre(textoBusqueda);
-                            if (categoria != null)
-                                productosFiltrados = productosDelVendedorActivos.Where(p => p.CategoriaId == categoria.IdCategoria);
+                            var todasLasCategorias = _categoriaService.ObtenerTodas();
+                            var categoriasCoincidentes = todasLasCategorias
+                                .Where(cat => cat.Nombre.IndexOf(textoBusqueda, StringComparison.OrdinalIgnoreCase) >= 0)
+                                .Select(cat => cat.IdCategoria)
+                                .ToList();
+
+                            if (categoriasCoincidentes.Any())
+                            {
+                                productosFiltrados = productosDelVendedorActivos
+                                    .Where(p => categoriasCoincidentes.Contains(p.CategoriaId));
+                            }
                             else
-                                MessageBox.Show($"Categoría '{textoBusqueda}' no encontrada.", "Búsqueda", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            {
+                                MessageBox.Show($"No se encontraron categorías que coincidan con '{textoBusqueda}'.", "Búsqueda de Categoría", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                productosFiltrados = new List<Producto>();
+                            }
                         }
                         else { LoadProductsData(); return; }
                         break;
@@ -209,7 +224,7 @@ namespace GUI
                     SelectedProductId = Convert.ToInt32(selectedRow.Cells["ID"].Value);
                     SelectedProductName = selectedRow.Cells["Nombre"].Value.ToString();
                     SelectedProductPrice = Convert.ToDecimal(selectedRow.Cells["Precio"].Value);
-                    SelectedProductStock = Convert.ToInt32(selectedRow.Cells["Stock"].Value);
+                    SelectedProductStock = Convert.ToInt32(selectedRow.Cells["StockDisponible"].Value);
 
                     this.DialogResult = DialogResult.OK;
                     this.Close();

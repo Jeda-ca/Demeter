@@ -165,7 +165,7 @@
             this.nud_Stock.Font = new System.Drawing.Font("Tahoma", 11.25F);
             this.nud_Stock.Location = new System.Drawing.Point(642, 150);
             this.nud_Stock.Maximum = new decimal(new int[] {
-            1000000,
+            100000000,
             0,
             0,
             0});

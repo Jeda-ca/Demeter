@@ -53,12 +53,17 @@
             this.tbx_NumDoc = new System.Windows.Forms.TextBox();
             this.tbx_SubTIItem = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
-            this.tbx_Desc = new System.Windows.Forms.TextBox();
+            this.tbx_DiscountValue = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.tbx_SubTVent = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
             this.ibtn_AddDV = new FontAwesome.Sharp.IconButton();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.lbl_CalculatedDiscountAmount = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.cbx_DiscountType = new System.Windows.Forms.ComboBox();
+            this.lbl_DiscountTypeSuffix = new System.Windows.Forms.Label();
             this.cbx_State = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -96,7 +101,7 @@
             this.groupBox3.Controls.Add(this.ibtn_Cancel);
             this.groupBox3.Controls.Add(this.ibtn_Clear);
             this.groupBox3.Controls.Add(this.ibtn_Register);
-            this.groupBox3.Location = new System.Drawing.Point(864, 425);
+            this.groupBox3.Location = new System.Drawing.Point(864, 561);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(493, 102);
             this.groupBox3.TabIndex = 28;
@@ -221,6 +226,7 @@
             this.tbx_UniPrice.ReadOnly = true;
             this.tbx_UniPrice.Size = new System.Drawing.Size(163, 30);
             this.tbx_UniPrice.TabIndex = 19;
+            this.tbx_UniPrice.TextChanged += new System.EventHandler(this.tbx_UniPrice_TextChanged);
             // 
             // label10
             // 
@@ -236,9 +242,15 @@
             // 
             this.nud_Cantidad.Font = new System.Drawing.Font("Tahoma", 11.25F);
             this.nud_Cantidad.Location = new System.Drawing.Point(34, 69);
+            this.nud_Cantidad.Maximum = new decimal(new int[] {
+            100000000,
+            0,
+            0,
+            0});
             this.nud_Cantidad.Name = "nud_Cantidad";
             this.nud_Cantidad.Size = new System.Drawing.Size(166, 30);
             this.nud_Cantidad.TabIndex = 33;
+            this.nud_Cantidad.ValueChanged += new System.EventHandler(this.nud_Cantidad_ValueChanged);
             // 
             // label5
             // 
@@ -376,19 +388,20 @@
             this.label15.TabIndex = 38;
             this.label15.Text = "Subtotal item";
             // 
-            // tbx_Desc
+            // tbx_DiscountValue
             // 
-            this.tbx_Desc.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbx_Desc.Location = new System.Drawing.Point(588, 144);
-            this.tbx_Desc.Margin = new System.Windows.Forms.Padding(4);
-            this.tbx_Desc.Name = "tbx_Desc";
-            this.tbx_Desc.Size = new System.Drawing.Size(175, 30);
-            this.tbx_Desc.TabIndex = 39;
+            this.tbx_DiscountValue.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbx_DiscountValue.Location = new System.Drawing.Point(588, 225);
+            this.tbx_DiscountValue.Margin = new System.Windows.Forms.Padding(4);
+            this.tbx_DiscountValue.Name = "tbx_DiscountValue";
+            this.tbx_DiscountValue.Size = new System.Drawing.Size(175, 30);
+            this.tbx_DiscountValue.TabIndex = 39;
+            this.tbx_DiscountValue.TextChanged += new System.EventHandler(this.tbx_DiscountValue_TextChanged);
             // 
             // label6
             // 
             this.label6.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(584, 112);
+            this.label6.Location = new System.Drawing.Point(584, 193);
             this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(179, 28);
@@ -434,6 +447,11 @@
             // groupBox5
             // 
             this.groupBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
+            this.groupBox5.Controls.Add(this.label12);
+            this.groupBox5.Controls.Add(this.lbl_CalculatedDiscountAmount);
+            this.groupBox5.Controls.Add(this.label11);
+            this.groupBox5.Controls.Add(this.cbx_DiscountType);
+            this.groupBox5.Controls.Add(this.lbl_DiscountTypeSuffix);
             this.groupBox5.Controls.Add(this.cbx_State);
             this.groupBox5.Controls.Add(this.label9);
             this.groupBox5.Controls.Add(this.label7);
@@ -446,22 +464,73 @@
             this.groupBox5.Controls.Add(this.label15);
             this.groupBox5.Controls.Add(this.label13);
             this.groupBox5.Controls.Add(this.tbx_SubTIItem);
-            this.groupBox5.Controls.Add(this.tbx_Desc);
+            this.groupBox5.Controls.Add(this.tbx_DiscountValue);
             this.groupBox5.Controls.Add(this.label6);
             this.groupBox5.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold);
             this.groupBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
             this.groupBox5.Location = new System.Drawing.Point(22, 179);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(836, 348);
+            this.groupBox5.Size = new System.Drawing.Size(836, 484);
             this.groupBox5.TabIndex = 29;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Detalle de venta";
             // 
+            // label12
+            // 
+            this.label12.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label12.Location = new System.Drawing.Point(653, 419);
+            this.label12.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(176, 28);
+            this.label12.TabIndex = 52;
+            this.label12.Text = "Descuento aplicado";
+            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lbl_CalculatedDiscountAmount
+            // 
+            this.lbl_CalculatedDiscountAmount.Font = new System.Drawing.Font("Tahoma", 11.25F);
+            this.lbl_CalculatedDiscountAmount.Location = new System.Drawing.Point(649, 447);
+            this.lbl_CalculatedDiscountAmount.Name = "lbl_CalculatedDiscountAmount";
+            this.lbl_CalculatedDiscountAmount.Size = new System.Drawing.Size(180, 21);
+            this.lbl_CalculatedDiscountAmount.TabIndex = 51;
+            this.lbl_CalculatedDiscountAmount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Font = new System.Drawing.Font("Tahoma", 11.25F);
+            this.label11.Location = new System.Drawing.Point(584, 117);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(138, 23);
+            this.label11.TabIndex = 50;
+            this.label11.Text = "Tipo descuento";
+            // 
+            // cbx_DiscountType
+            // 
+            this.cbx_DiscountType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbx_DiscountType.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbx_DiscountType.FormattingEnabled = true;
+            this.cbx_DiscountType.Location = new System.Drawing.Point(588, 149);
+            this.cbx_DiscountType.Name = "cbx_DiscountType";
+            this.cbx_DiscountType.Size = new System.Drawing.Size(175, 32);
+            this.cbx_DiscountType.TabIndex = 49;
+            // 
+            // lbl_DiscountTypeSuffix
+            // 
+            this.lbl_DiscountTypeSuffix.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_DiscountTypeSuffix.Location = new System.Drawing.Point(762, 222);
+            this.lbl_DiscountTypeSuffix.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lbl_DiscountTypeSuffix.Name = "lbl_DiscountTypeSuffix";
+            this.lbl_DiscountTypeSuffix.Size = new System.Drawing.Size(23, 30);
+            this.lbl_DiscountTypeSuffix.TabIndex = 48;
+            this.lbl_DiscountTypeSuffix.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // cbx_State
             // 
             this.cbx_State.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbx_State.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbx_State.FormattingEnabled = true;
-            this.cbx_State.Location = new System.Drawing.Point(588, 305);
+            this.cbx_State.Location = new System.Drawing.Point(588, 373);
             this.cbx_State.Name = "cbx_State";
             this.cbx_State.Size = new System.Drawing.Size(175, 32);
             this.cbx_State.TabIndex = 47;
@@ -469,7 +538,7 @@
             // label9
             // 
             this.label9.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(584, 273);
+            this.label9.Location = new System.Drawing.Point(584, 341);
             this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(179, 28);
@@ -479,7 +548,7 @@
             // label7
             // 
             this.label7.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(584, 192);
+            this.label7.Location = new System.Drawing.Point(584, 266);
             this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(179, 28);
@@ -489,7 +558,7 @@
             // tbx_Total
             // 
             this.tbx_Total.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbx_Total.Location = new System.Drawing.Point(588, 224);
+            this.tbx_Total.Location = new System.Drawing.Point(588, 298);
             this.tbx_Total.Margin = new System.Windows.Forms.Padding(4);
             this.tbx_Total.Name = "tbx_Total";
             this.tbx_Total.ReadOnly = true;
@@ -503,7 +572,7 @@
             this.dgv_SaleDetail.Name = "dgv_SaleDetail";
             this.dgv_SaleDetail.RowHeadersWidth = 51;
             this.dgv_SaleDetail.RowTemplate.Height = 24;
-            this.dgv_SaleDetail.Size = new System.Drawing.Size(507, 218);
+            this.dgv_SaleDetail.Size = new System.Drawing.Size(507, 342);
             this.dgv_SaleDetail.TabIndex = 0;
             // 
             // groupBox6
@@ -534,7 +603,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(248)))), ((int)(((byte)(233)))));
-            this.ClientSize = new System.Drawing.Size(1376, 549);
+            this.ClientSize = new System.Drawing.Size(1376, 675);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
@@ -590,7 +659,7 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TextBox tbx_SubTVent;
         private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.TextBox tbx_Desc;
+        private System.Windows.Forms.TextBox tbx_DiscountValue;
         private System.Windows.Forms.Label label6;
         private FontAwesome.Sharp.IconButton ibtn_AddDV;
         private System.Windows.Forms.GroupBox groupBox5;
@@ -601,5 +670,10 @@
         private System.Windows.Forms.ComboBox cbx_State;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.TextBox tbx_Observaciones;
+        private System.Windows.Forms.Label lbl_DiscountTypeSuffix;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.ComboBox cbx_DiscountType;
+        private System.Windows.Forms.Label lbl_CalculatedDiscountAmount;
+        private System.Windows.Forms.Label label12;
     }
 }

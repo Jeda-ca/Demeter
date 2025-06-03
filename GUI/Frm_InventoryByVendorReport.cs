@@ -17,6 +17,7 @@ namespace GUI
     {
         private readonly IReporteService _reporteService;
         private readonly IVendedorService _vendedorService;
+        private readonly IProductoService _productoService;
         private readonly int _idAdminLogueado;
         private Vendedor _vendedorSeleccionadoParaReporte = null;
 
@@ -40,6 +41,7 @@ namespace GUI
             {
                 _reporteService = new ReporteService();
                 _vendedorService = new VendedorService();
+                _productoService = new ProductoService();
             }
             catch (Exception ex)
             {
@@ -47,6 +49,7 @@ namespace GUI
                 if (ibtn_Buscar != null) ibtn_Buscar.Enabled = false;
                 if (ibtn_Add != null) ibtn_Add.Enabled = false;
                 if (tbx_Busqueda != null) tbx_Busqueda.Enabled = false;
+                if (cbx_FiltroV != null) cbx_FiltroV.Enabled = false;
                 if (dtp_FInicio != null) dtp_FInicio.Enabled = false;
                 if (dtp_FFin != null) dtp_FFin.Enabled = false;
             }
@@ -63,18 +66,27 @@ namespace GUI
 
         private void ConfigurarControlesIniciales()
         {
-            // El ComboBox cbx_FiltroV no se usa en este formulario según el Designer.cs proporcionado.
-            // Los DateTimePickers son para la metadata del reporte.
+            if (cbx_FiltroV != null)
+            {
+                cbx_FiltroV.Items.Clear();
+                cbx_FiltroV.Items.Add("Inventario Actual");
+                cbx_FiltroV.Items.Add("Por Rango de Fechas (Últ. Act. Stock)");
+                cbx_FiltroV.SelectedIndex = 0;
+                cbx_FiltroV.SelectedIndexChanged += Cbx_FiltroV_SelectedIndexChanged;
+            }
+
             if (dtp_FInicio != null)
             {
-                dtp_FInicio.Value = DateTime.Today.AddMonths(-1); // Rango por defecto
+                dtp_FInicio.Value = DateTime.Today.AddMonths(-1);
+                dtp_FInicio.Visible = false;
             }
             if (dtp_FFin != null)
             {
                 dtp_FFin.Value = DateTime.Today;
+                dtp_FFin.Visible = false;
             }
-            // No hay PlaceholderText en System.Windows.Forms.TextBox
-            if (tbx_Busqueda != null) tbx_Busqueda.Text = ""; // Limpiar texto inicial
+
+            if (tbx_Busqueda != null) tbx_Busqueda.Text = "";
         }
 
         private void LimpiarGrilla()
@@ -82,19 +94,46 @@ namespace GUI
             if (dgv_ReportesVentxVend != null) dgv_ReportesVentxVend.DataSource = null;
         }
 
-        // ibtn_Buscar es para buscar al VENDEDOR
+        private void Cbx_FiltroV_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            bool mostrarDatePickers = cbx_FiltroV.SelectedItem?.ToString() == "Por Rango de Fechas (Últ. Act. Stock)";
+
+            if (dtp_FInicio != null) dtp_FInicio.Visible = mostrarDatePickers;
+            if (dtp_FFin != null) dtp_FFin.Visible = mostrarDatePickers;
+
+        }
+
+        // Botón para buscar VENDEDOR y APLICAR FILTROS DE FECHA
         private void ibtn_Buscar_Click(object sender, EventArgs e)
         {
             if (_vendedorService == null) { MessageBox.Show("Servicio de vendedores no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-            if (tbx_Busqueda == null || string.IsNullOrWhiteSpace(tbx_Busqueda.Text))
+
+            string textoBusquedaVendedor = tbx_Busqueda.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(textoBusquedaVendedor))
             {
+                // Si no hay texto de búsqueda de vendedor, pero se quiere aplicar un filtro de fecha a un vendedor ya seleccionado
+                if (_vendedorSeleccionadoParaReporte != null && cbx_FiltroV.SelectedItem?.ToString() == "Por Rango de Fechas (Últ. Act. Stock)")
+                {
+                    if (dtp_FInicio.Value.Date > dtp_FFin.Value.Date)
+                    {
+                        MessageBox.Show("La fecha de inicio no puede ser posterior a la fecha de fin.", "Rango de Fechas Inválido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                    GenerarReporteInventarioVendedor();
+                    return;
+                }
+                else if (_vendedorSeleccionadoParaReporte != null && cbx_FiltroV.SelectedItem?.ToString() == "Inventario Actual")
+                {
+                    GenerarReporteInventarioVendedor();
+                    return;
+                }
                 MessageBox.Show("Por favor, ingrese un código o nombre de vendedor para buscar.", "Información Requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 _vendedorSeleccionadoParaReporte = null;
                 LimpiarGrilla();
                 return;
             }
 
-            string textoBusquedaVendedor = tbx_Busqueda.Text.Trim();
             Vendedor vendedorEncontrado = _vendedorService.ObtenerVendedorPorCodigo(textoBusquedaVendedor);
 
             if (vendedorEncontrado == null)
@@ -109,45 +148,71 @@ namespace GUI
             if (vendedorEncontrado != null)
             {
                 _vendedorSeleccionadoParaReporte = vendedorEncontrado;
-                GenerarReporteInventarioVendedor();
             }
             else
             {
                 _vendedorSeleccionadoParaReporte = null;
                 MessageBox.Show($"No se encontró ningún vendedor con el código o nombre '{textoBusquedaVendedor}'.", "Búsqueda sin Resultados", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 LimpiarGrilla();
+                return; // si no se encuentra vendedor, no continuar a generar reporte
             }
+
+            // Si se encontró un vendedor (o se mantuvo el anterior y se quiere aplicar filtro de fecha), generar reporte.
+            if (cbx_FiltroV.SelectedItem?.ToString() == "Por Rango de Fechas (Últ. Act. Stock)")
+            {
+                if (dtp_FInicio.Value.Date > dtp_FFin.Value.Date)
+                {
+                    MessageBox.Show("La fecha de inicio no puede ser posterior a la fecha de fin.", "Rango de Fechas Inválido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+            }
+            GenerarReporteInventarioVendedor();
         }
 
         private void ibtn_Add_Click(object sender, EventArgs e)
         {
-            GenerarReporteInventarioVendedor();
+            // Futura lógica para generar PDF
+            MessageBox.Show("Función 'Generar PDF' aún no implementada.", "Próximamente", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void GenerarReporteInventarioVendedor()
         {
             if (_vendedorSeleccionadoParaReporte == null)
             {
-                MessageBox.Show("Por favor, primero busque y seleccione un vendedor.", "Vendedor Requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                // Si el usuario no ha buscado un vendedor aún, no se genera el reporte.
                 LimpiarGrilla();
                 return;
             }
-            if (_reporteService == null) { MessageBox.Show("Servicio de reportes no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-
-            // Las fechas son para la metadata del reporte, el inventario es el actual del vendedor.
-            // DateTime fechaInicio = dtp_FInicio.Value.Date; 
-            // DateTime fechaFin = dtp_FFin.Value.Date;
-
-            string mensajeError;
-            IEnumerable<Producto> productos = _reporteService.GenerarReporteInventarioPorVendedor(_idAdminLogueado, _vendedorSeleccionadoParaReporte.IdVendedor, out mensajeError);
-
-            if (!string.IsNullOrEmpty(mensajeError))
+            if (_reporteService == null || _productoService == null)
             {
-                MessageBox.Show(mensajeError, "Error al Generar Reporte", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Servicios no disponibles.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            IEnumerable<Producto> productosDelVendedor;
+
+            // Obtener productos del vendedor seleccionado. El servicio ya debería filtrar por activos si es la lógica.
+            // Si necesitas filtrar explícitamente por activos aquí:
+            // productosDelVendedor = _productoService.ObtenerProductosPorVendedor(_vendedorSeleccionadoParaReporte.IdVendedor).Where(p => p.Activo).ToList();
+            productosDelVendedor = _productoService.ObtenerProductosPorVendedor(_vendedorSeleccionadoParaReporte.IdVendedor);
+
+            if (productosDelVendedor == null)
+            {
+                MessageBox.Show("No se pudieron obtener los productos del vendedor.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 LimpiarGrilla();
                 return;
             }
-            LoadReportDataGrid(productos);
+
+            string filtroFechaSeleccionado = cbx_FiltroV.SelectedItem?.ToString();
+            if (filtroFechaSeleccionado == "Por Rango de Fechas (Últ. Act. Stock)")
+            {
+                DateTime fechaInicio = dtp_FInicio.Value.Date;
+                DateTime fechaFin = dtp_FFin.Value.Date.AddDays(1).AddTicks(-1);
+                // Filtrar los productos obtenidos por el rango de fechas de actualización de stock
+                productosDelVendedor = productosDelVendedor.Where(p => p.FechaActualizacionStock >= fechaInicio && p.FechaActualizacionStock <= fechaFin).ToList();
+            }
+
+            LoadReportDataGrid(productosDelVendedor);
         }
 
         private void LoadReportDataGrid(IEnumerable<Producto> productos)
@@ -185,14 +250,15 @@ namespace GUI
             }
         }
 
-        // ibtn_Clear en tu Designer
         private void ibtn_Clear_Click(object sender, EventArgs e)
         {
             if (tbx_Busqueda != null) tbx_Busqueda.Clear();
             _vendedorSeleccionadoParaReporte = null;
-            // No hay cbx_FiltroV para resetear en este formulario
-            // dtp_FInicio.Value = DateTime.Today.AddMonths(-1); // Opcional resetear fechas
-            // dtp_FFin.Value = DateTime.Today;
+
+            if (cbx_FiltroV != null && cbx_FiltroV.Items.Count > 0)
+            {
+                cbx_FiltroV.SelectedIndex = 0; // disparará Cbx_FiltroV_SelectedIndexChanged y ocultará los DateTimePickers
+            }
             LimpiarGrilla();
         }
     }

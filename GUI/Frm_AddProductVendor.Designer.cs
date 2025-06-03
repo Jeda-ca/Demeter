@@ -164,6 +164,11 @@
             // 
             this.nud_Stock.Font = new System.Drawing.Font("Tahoma", 11.25F);
             this.nud_Stock.Location = new System.Drawing.Point(642, 150);
+            this.nud_Stock.Maximum = new decimal(new int[] {
+            100000000,
+            0,
+            0,
+            0});
             this.nud_Stock.Name = "nud_Stock";
             this.nud_Stock.Size = new System.Drawing.Size(279, 30);
             this.nud_Stock.TabIndex = 27;
@@ -193,6 +198,11 @@
             // 
             this.nud_Price.Font = new System.Drawing.Font("Tahoma", 11.25F);
             this.nud_Price.Location = new System.Drawing.Point(642, 238);
+            this.nud_Price.Maximum = new decimal(new int[] {
+            100000000,
+            0,
+            0,
+            0});
             this.nud_Price.Name = "nud_Price";
             this.nud_Price.Size = new System.Drawing.Size(279, 30);
             this.nud_Price.TabIndex = 24;
