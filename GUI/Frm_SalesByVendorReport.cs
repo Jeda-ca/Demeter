@@ -1,6 +1,7 @@
 ﻿using BLL.Interfaces;
 using BLL.Services;
 using ENTITY;
+using GUI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,6 +20,7 @@ namespace GUI
         private readonly IVendedorService _vendedorService;
         private readonly int _idAdminLogueado;
         private Vendedor _vendedorSeleccionadoParaReporte = null;
+        private IEnumerable<Venta> _ventasActualesDelVendedor; // Para guardar los datos del reporte
 
         public Frm_SalesByVendorReport(int idAdminLogueado)
         {
@@ -28,6 +30,7 @@ namespace GUI
             this.Dock = DockStyle.Fill;
 
             _idAdminLogueado = idAdminLogueado;
+            _ventasActualesDelVendedor = new List<Venta>(); // Inicializar
 
             if (_idAdminLogueado <= 0)
             {
@@ -45,7 +48,7 @@ namespace GUI
             {
                 MessageBox.Show($"Error crítico al inicializar servicios: {ex.Message}", "Error de Inicialización", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 if (ibtn_Buscar != null) ibtn_Buscar.Enabled = false;
-                if (ibtn_Add != null) ibtn_Add.Enabled = false;
+                if (ibtn_Add != null) ibtn_Add.Enabled = false; // Este es el botón "Generar PDF"
                 if (cbx_FiltroV != null) cbx_FiltroV.Enabled = false;
                 if (tbx_Busqueda != null) tbx_Busqueda.Enabled = false;
             }
@@ -56,7 +59,7 @@ namespace GUI
             if (_idAdminLogueado > 0 && _reporteService != null)
             {
                 ConfigurarControlesIniciales();
-                LimpiarGrilla();
+                LimpiarGrillaYDatos(); // Limpia la grilla y _ventasActualesDelVendedor
             }
         }
 
@@ -68,7 +71,7 @@ namespace GUI
                 cbx_FiltroV.Items.Add("-- Sin Filtro de Fecha --");
                 cbx_FiltroV.Items.Add("Fecha Específica");
                 cbx_FiltroV.Items.Add("Rango de Fechas");
-                cbx_FiltroV.SelectedIndex = 0; // Por defecto, sin filtro de fecha
+                cbx_FiltroV.SelectedIndex = 0;
             }
 
             if (dtp_FInicio != null)
@@ -84,20 +87,15 @@ namespace GUI
             if (tbx_Busqueda != null) tbx_Busqueda.Text = "";
         }
 
-        private void LimpiarGrilla()
+        private void LimpiarGrillaYDatos()
         {
             if (dgv_ReportesVentxVend != null) dgv_ReportesVentxVend.DataSource = null;
+            _ventasActualesDelVendedor = new List<Venta>();
         }
 
-        // Evento del ComboBox de filtro de fecha
         private void cbx_FiltroV_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateDateTimePickerVisibility();
-            // Opcional: Si hay un vendedor seleccionado, regenerar el reporte con el nuevo filtro de fecha
-            // if (_vendedorSeleccionadoParaReporte != null)
-            // {
-            //     GenerarReporteParaVendedor();
-            // }
         }
 
         private void UpdateDateTimePickerVisibility()
@@ -119,15 +117,21 @@ namespace GUI
             }
         }
 
-        // Botón para BUSCAR VENDEDOR
         private void ibtn_Buscar_Click(object sender, EventArgs e)
         {
-            if (_vendedorService == null) { MessageBox.Show("Servicio de vendedores no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-            if (tbx_Busqueda == null || string.IsNullOrWhiteSpace(tbx_Busqueda.Text))
+            // Este botón ahora solo carga/filtra los datos en el DataGridView.
+            // La exportación a PDF se hará con el botón "Generar" (ibtn_Add).
+            CargarDatosReporteVendedor();
+        }
+
+        private void CargarDatosReporteVendedor()
+        {
+            if (_vendedorService == null) { MessageBox.Show("Servicio de vendedores no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); LimpiarGrillaYDatos(); return; }
+            if (string.IsNullOrWhiteSpace(tbx_Busqueda.Text))
             {
                 MessageBox.Show("Por favor, ingrese un código o nombre de vendedor para buscar.", "Información Requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 _vendedorSeleccionadoParaReporte = null;
-                LimpiarGrilla();
+                LimpiarGrillaYDatos();
                 return;
             }
 
@@ -139,81 +143,99 @@ namespace GUI
                 var vendedoresPorNombre = _vendedorService.BuscarVendedoresPorNombreOApellido(textoBusquedaVendedor);
                 if (vendedoresPorNombre.Any())
                 {
-                    // Si hay múltiples, podrías mostrar un diálogo para seleccionar uno.
-                    // Por simplicidad, tomamos el primero.
-                    vendedorEncontrado = vendedoresPorNombre.First();
+                    vendedorEncontrado = vendedoresPorNombre.First(); // Podría mejorarse para seleccionar de una lista si hay múltiples
                 }
             }
 
             if (vendedorEncontrado != null)
             {
                 _vendedorSeleccionadoParaReporte = vendedorEncontrado;
-                // MODIFICADO: Generar reporte inmediatamente después de encontrar el vendedor
-                GenerarReporteParaVendedor();
+                // Proceder a cargar las ventas de este vendedor
+                if (_reporteService == null) { MessageBox.Show("Servicio de reportes no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); LimpiarGrillaYDatos(); return; }
+
+                string filtroFecha = cbx_FiltroV.SelectedItem?.ToString();
+                DateTime fechaInicio = dtp_FInicio.Value.Date;
+                DateTime fechaFin = dtp_FFin.Value.Date.AddDays(1).AddTicks(-1);
+                string mensajeError;
+
+                if (filtroFecha == "Fecha Específica")
+                {
+                    _ventasActualesDelVendedor = _reporteService.GenerarReporteVentasPorVendedorYFechas(_idAdminLogueado, _vendedorSeleccionadoParaReporte.IdVendedor, fechaInicio, fechaInicio.AddDays(1).AddTicks(-1), out mensajeError);
+                }
+                else if (filtroFecha == "Rango de Fechas")
+                {
+                    if (fechaInicio > fechaFin.Date.AddDays(-1).AddTicks(1))
+                    {
+                        MessageBox.Show("La fecha de inicio no puede ser posterior a la fecha de fin.", "Rango de Fechas Inválido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        LimpiarGrillaYDatos();
+                        return;
+                    }
+                    _ventasActualesDelVendedor = _reporteService.GenerarReporteVentasPorVendedorYFechas(_idAdminLogueado, _vendedorSeleccionadoParaReporte.IdVendedor, fechaInicio, fechaFin, out mensajeError);
+                }
+                else
+                {
+                    _ventasActualesDelVendedor = _reporteService.GenerarReporteVentasPorVendedor(_idAdminLogueado, _vendedorSeleccionadoParaReporte.IdVendedor, out mensajeError);
+                }
+
+                if (!string.IsNullOrEmpty(mensajeError))
+                {
+                    MessageBox.Show(mensajeError, "Error al Generar Reporte", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    LimpiarGrillaYDatos();
+                    return;
+                }
+                if (_ventasActualesDelVendedor == null) // Verificación adicional
+                {
+                    _ventasActualesDelVendedor = new List<Venta>();
+                }
+                LoadReportDataGrid(_ventasActualesDelVendedor);
+
             }
             else
             {
                 _vendedorSeleccionadoParaReporte = null;
                 MessageBox.Show($"No se encontró ningún vendedor con el código o nombre '{textoBusquedaVendedor}'.", "Búsqueda sin Resultados", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                LimpiarGrilla();
+                LimpiarGrillaYDatos();
             }
         }
 
-        // Botón "Generar" (ibtn_Add en tu Designer) - Ahora principalmente para aplicar/refrescar filtros de fecha
-        private void ibtn_Add_Click(object sender, EventArgs e)
-        {
-            GenerarReporteParaVendedor();
-        }
-
-        private void GenerarReporteParaVendedor()
+        private void ibtn_Add_Click(object sender, EventArgs e) // Este es el botón "Generar PDF"
         {
             if (_vendedorSeleccionadoParaReporte == null)
             {
-                // Este mensaje ya no debería aparecer si la búsqueda de vendedor es el único trigger inicial
-                // MessageBox.Show("Por favor, primero busque y seleccione un vendedor.", "Vendedor Requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                LimpiarGrilla(); // Si no hay vendedor, limpiar la grilla
+                MessageBox.Show("Por favor, primero busque y seleccione un vendedor para generar el reporte.", "Vendedor no Seleccionado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            if (_reporteService == null) { MessageBox.Show("Servicio de reportes no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-
-            string filtroFecha = cbx_FiltroV.SelectedItem?.ToString();
-            DateTime fechaInicio = dtp_FInicio.Value.Date;
-            DateTime fechaFin = dtp_FFin.Value.Date.AddDays(1).AddTicks(-1);
-            string mensajeError;
-            IEnumerable<Venta> ventas;
-
-            if (filtroFecha == "Fecha Específica")
+            if (_ventasActualesDelVendedor == null || !_ventasActualesDelVendedor.Any())
             {
-                ventas = _reporteService.GenerarReporteVentasPorVendedorYFechas(_idAdminLogueado, _vendedorSeleccionadoParaReporte.IdVendedor, fechaInicio, fechaInicio.AddDays(1).AddTicks(-1), out mensajeError);
-            }
-            else if (filtroFecha == "Rango de Fechas")
-            {
-                if (fechaInicio > fechaFin.Date.AddDays(-1).AddTicks(1))
+                // Intentar cargar los datos si están vacíos, por si el usuario solo quiere exportar sin cambiar filtros de fecha
+                CargarDatosReporteVendedor();
+                if (_ventasActualesDelVendedor == null || !_ventasActualesDelVendedor.Any())
                 {
-                    MessageBox.Show("La fecha de inicio no puede ser posterior a la fecha de fin.", "Rango de Fechas Inválido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    LimpiarGrilla();
+                    MessageBox.Show("No hay datos de ventas para este vendedor en el período seleccionado.", "Datos Vacíos", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
-                ventas = _reporteService.GenerarReporteVentasPorVendedorYFechas(_idAdminLogueado, _vendedorSeleccionadoParaReporte.IdVendedor, fechaInicio, fechaFin, out mensajeError);
-            }
-            else // "-- Sin Filtro de Fecha --" o no seleccionado
-            {
-                ventas = _reporteService.GenerarReporteVentasPorVendedor(_idAdminLogueado, _vendedorSeleccionadoParaReporte.IdVendedor, out mensajeError);
             }
 
-            if (!string.IsNullOrEmpty(mensajeError))
+            string nombreAdmin = SessionManager.CurrentUser?.NombreUsuario ?? "Admin Desconocido";
+            string reporteId = Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();
+            string tituloReporte = "Reporte de Ventas por Vendedor";
+            string infoAdicional = $"Vendedor: {_vendedorSeleccionadoParaReporte.Nombre} {_vendedorSeleccionadoParaReporte.Apellido} (Cód: {_vendedorSeleccionadoParaReporte.CodigoVendedor})";
+
+            try
             {
-                MessageBox.Show(mensajeError, "Error al Generar Reporte", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                LimpiarGrilla();
-                return;
+                ReportePdfExporter exporter = new ReportePdfExporter();
+                exporter.GenerarReporteVentasPdf(_ventasActualesDelVendedor, nombreAdmin, reporteId, tituloReporte, infoAdicional);
             }
-            LoadReportDataGrid(ventas);
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al intentar exportar a PDF: {ex.Message}", "Error de Exportación", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void LoadReportDataGrid(IEnumerable<Venta> ventas)
         {
             DataTable dt = new DataTable();
-            dt.Columns.Add("ID Venta", typeof(int));
+            dt.Columns.Add("IdVenta", typeof(int));
             dt.Columns.Add("Fecha", typeof(DateTime));
             dt.Columns.Add("Total Venta", typeof(decimal));
             dt.Columns.Add("Cliente", typeof(string));
@@ -236,7 +258,7 @@ namespace GUI
             if (dgv_ReportesVentxVend != null)
             {
                 dgv_ReportesVentxVend.DataSource = dt;
-                if (dgv_ReportesVentxVend.Columns["ID Venta"] != null) dgv_ReportesVentxVend.Columns["ID Venta"].Visible = false;
+                if (dgv_ReportesVentxVend.Columns["IdVenta"] != null) dgv_ReportesVentxVend.Columns["IdVenta"].Visible = false;
                 if (dgv_ReportesVentxVend.Columns["Total Venta"] != null) dgv_ReportesVentxVend.Columns["Total Venta"].DefaultCellStyle.Format = "C2";
             }
         }
@@ -244,10 +266,10 @@ namespace GUI
         private void ibtn_Clear_Click(object sender, EventArgs e)
         {
             if (tbx_Busqueda != null) tbx_Busqueda.Clear();
-            if (cbx_FiltroV != null && cbx_FiltroV.Items.Count > 0) cbx_FiltroV.SelectedIndex = 0; // Resetear filtro de fecha
+            if (cbx_FiltroV != null && cbx_FiltroV.Items.Count > 0) cbx_FiltroV.SelectedIndex = 0;
             _vendedorSeleccionadoParaReporte = null;
             UpdateDateTimePickerVisibility();
-            LimpiarGrilla();
+            LimpiarGrillaYDatos();
         }
     }
 }
