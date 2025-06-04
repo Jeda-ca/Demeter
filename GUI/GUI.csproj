@@ -55,6 +55,9 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="QuestPDF, Version=2025.5.0.0, Culture=neutral, PublicKeyToken=0f3c2b2315ff52c8, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuestPDF.2025.5.0\lib\netstandard2.0\QuestPDF.dll</HintPath>
+    </Reference>
     <Reference Include="RJCodeAdvance.RJControls, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RJCodeAdvance.RJControls.1.0.0\lib\net45\RJCodeAdvance.RJControls.dll</HintPath>
     </Reference>
@@ -312,6 +315,7 @@
     <Compile Include="Frm_SalesByVendorReport.Designer.cs">
       <DependentUpon>Frm_SalesByVendorReport.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\ReportPdfExporter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SessionManager.cs" />
@@ -479,5 +483,7 @@
       <ErrorText>Este proyecto hace referencia a los paquetes NuGet que faltan en este equipo. Use la restauración de paquetes NuGet para descargarlos. Para obtener más información, consulte http://go.microsoft.com/fwlink/?LinkID=322105. El archivo que falta es {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets'))" />
+    <Error Condition="!Exists('..\packages\QuestPDF.2025.5.0\build\net4\QuestPDF.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\QuestPDF.2025.5.0\build\net4\QuestPDF.targets'))" />
   </Target>
+  <Import Project="..\packages\QuestPDF.2025.5.0\build\net4\QuestPDF.targets" Condition="Exists('..\packages\QuestPDF.2025.5.0\build\net4\QuestPDF.targets')" />
 </Project>
