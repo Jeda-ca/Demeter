@@ -28,22 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle21 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle22 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle23 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle24 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label1 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.ibtn_GenReport = new FontAwesome.Sharp.IconButton();
             this.label3 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.ibtn_OKCustomDate = new FontAwesome.Sharp.IconButton();
+            this.label2 = new System.Windows.Forms.Label();
+            this.cbx_DateFilter = new System.Windows.Forms.ComboBox();
             this.dtp_FFin = new System.Windows.Forms.DateTimePicker();
             this.dtp_FInicio = new System.Windows.Forms.DateTimePicker();
             this.label5 = new System.Windows.Forms.Label();
             this.dgv_ReportesVentxVend = new System.Windows.Forms.DataGridView();
-            this.cbx_DateFilter = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.ibtn_OKCustomDate = new FontAwesome.Sharp.IconButton();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_ReportesVentxVend)).BeginInit();
@@ -96,6 +96,7 @@
             this.ibtn_GenReport.Text = "Generar";
             this.ibtn_GenReport.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.ibtn_GenReport.UseVisualStyleBackColor = false;
+            this.ibtn_GenReport.Click += new System.EventHandler(this.ibtn_GenReport_Click);
             // 
             // label3
             // 
@@ -126,6 +127,47 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1064, 381);
             this.panel1.TabIndex = 25;
+            // 
+            // ibtn_OKCustomDate
+            // 
+            this.ibtn_OKCustomDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ibtn_OKCustomDate.BackColor = System.Drawing.Color.Teal;
+            this.ibtn_OKCustomDate.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ibtn_OKCustomDate.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+            this.ibtn_OKCustomDate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ibtn_OKCustomDate.IconChar = FontAwesome.Sharp.IconChar.Check;
+            this.ibtn_OKCustomDate.IconColor = System.Drawing.Color.White;
+            this.ibtn_OKCustomDate.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            this.ibtn_OKCustomDate.IconSize = 30;
+            this.ibtn_OKCustomDate.Location = new System.Drawing.Point(995, 14);
+            this.ibtn_OKCustomDate.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.ibtn_OKCustomDate.Name = "ibtn_OKCustomDate";
+            this.ibtn_OKCustomDate.Size = new System.Drawing.Size(48, 38);
+            this.ibtn_OKCustomDate.TabIndex = 14;
+            this.ibtn_OKCustomDate.UseVisualStyleBackColor = false;
+            this.ibtn_OKCustomDate.Click += new System.EventHandler(this.ibtn_OKCustomDate_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.label2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
+            this.label2.Location = new System.Drawing.Point(18, 8);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(90, 18);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "Filtrar por:";
+            // 
+            // cbx_DateFilter
+            // 
+            this.cbx_DateFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbx_DateFilter.Font = new System.Drawing.Font("Tahoma", 11F);
+            this.cbx_DateFilter.FormattingEnabled = true;
+            this.cbx_DateFilter.Location = new System.Drawing.Point(21, 28);
+            this.cbx_DateFilter.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.cbx_DateFilter.Name = "cbx_DateFilter";
+            this.cbx_DateFilter.Size = new System.Drawing.Size(251, 30);
+            this.cbx_DateFilter.TabIndex = 13;
             // 
             // dtp_FFin
             // 
@@ -167,9 +209,9 @@
             // 
             this.dgv_ReportesVentxVend.AllowUserToAddRows = false;
             this.dgv_ReportesVentxVend.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle21.Font = new System.Drawing.Font("Tahoma", 10F);
-            dataGridViewCellStyle21.ForeColor = System.Drawing.Color.Black;
-            this.dgv_ReportesVentxVend.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle21;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Tahoma", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Black;
+            this.dgv_ReportesVentxVend.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dgv_ReportesVentxVend.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -178,24 +220,24 @@
             this.dgv_ReportesVentxVend.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dgv_ReportesVentxVend.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
             this.dgv_ReportesVentxVend.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle22.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle22.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
-            dataGridViewCellStyle22.Font = new System.Drawing.Font("Tahoma", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle22.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle22.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
-            dataGridViewCellStyle22.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle22.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgv_ReportesVentxVend.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle22;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Tahoma", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv_ReportesVentxVend.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dgv_ReportesVentxVend.ColumnHeadersHeight = 30;
             this.dgv_ReportesVentxVend.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dataGridViewCellStyle23.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle23.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(248)))), ((int)(((byte)(233)))));
-            dataGridViewCellStyle23.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle23.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
-            dataGridViewCellStyle23.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(203)))), ((int)(((byte)(91)))));
-            dataGridViewCellStyle23.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
-            dataGridViewCellStyle23.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgv_ReportesVentxVend.DefaultCellStyle = dataGridViewCellStyle23;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(248)))), ((int)(((byte)(233)))));
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(203)))), ((int)(((byte)(91)))));
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgv_ReportesVentxVend.DefaultCellStyle = dataGridViewCellStyle3;
             this.dgv_ReportesVentxVend.EnableHeadersVisualStyles = false;
             this.dgv_ReportesVentxVend.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
             this.dgv_ReportesVentxVend.Location = new System.Drawing.Point(21, 62);
@@ -204,56 +246,15 @@
             this.dgv_ReportesVentxVend.ReadOnly = true;
             this.dgv_ReportesVentxVend.RowHeadersVisible = false;
             this.dgv_ReportesVentxVend.RowHeadersWidth = 51;
-            dataGridViewCellStyle24.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
-            dataGridViewCellStyle24.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
-            dataGridViewCellStyle24.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(203)))), ((int)(((byte)(91)))));
-            dataGridViewCellStyle24.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
-            this.dgv_ReportesVentxVend.RowsDefaultCellStyle = dataGridViewCellStyle24;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(203)))), ((int)(((byte)(91)))));
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
+            this.dgv_ReportesVentxVend.RowsDefaultCellStyle = dataGridViewCellStyle4;
             this.dgv_ReportesVentxVend.RowTemplate.Height = 24;
             this.dgv_ReportesVentxVend.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgv_ReportesVentxVend.Size = new System.Drawing.Size(1022, 269);
             this.dgv_ReportesVentxVend.TabIndex = 6;
-            // 
-            // cbx_DateFilter
-            // 
-            this.cbx_DateFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbx_DateFilter.Font = new System.Drawing.Font("Tahoma", 11F);
-            this.cbx_DateFilter.FormattingEnabled = true;
-            this.cbx_DateFilter.Location = new System.Drawing.Point(21, 28);
-            this.cbx_DateFilter.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.cbx_DateFilter.Name = "cbx_DateFilter";
-            this.cbx_DateFilter.Size = new System.Drawing.Size(251, 30);
-            this.cbx_DateFilter.TabIndex = 13;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
-            this.label2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
-            this.label2.Location = new System.Drawing.Point(18, 8);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(90, 18);
-            this.label2.TabIndex = 10;
-            this.label2.Text = "Filtrar por:";
-            // 
-            // ibtn_OKCustomDate
-            // 
-            this.ibtn_OKCustomDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ibtn_OKCustomDate.BackColor = System.Drawing.Color.Teal;
-            this.ibtn_OKCustomDate.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.ibtn_OKCustomDate.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
-            this.ibtn_OKCustomDate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ibtn_OKCustomDate.IconChar = FontAwesome.Sharp.IconChar.Check;
-            this.ibtn_OKCustomDate.IconColor = System.Drawing.Color.White;
-            this.ibtn_OKCustomDate.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            this.ibtn_OKCustomDate.IconSize = 30;
-            this.ibtn_OKCustomDate.Location = new System.Drawing.Point(995, 14);
-            this.ibtn_OKCustomDate.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.ibtn_OKCustomDate.Name = "ibtn_OKCustomDate";
-            this.ibtn_OKCustomDate.Size = new System.Drawing.Size(48, 38);
-            this.ibtn_OKCustomDate.TabIndex = 14;
-            this.ibtn_OKCustomDate.UseVisualStyleBackColor = false;
-            this.ibtn_OKCustomDate.Click += new System.EventHandler(this.ibtn_OKCustomDate_Click);
             // 
             // Frm_ClientsReport
             // 

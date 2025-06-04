@@ -1,6 +1,7 @@
 ﻿using BLL.Interfaces;
 using BLL.Services;
 using ENTITY;
+using GUI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,8 +18,7 @@ namespace GUI
     {
         private readonly IVendedorService _vendedorService;
         private readonly int _idAdminLogueado;
-        // Asume que tienes un ComboBox llamado cbx_DateFilter 
-        // y un IconButton llamado ibtn_OKCustomDate en tu Frm_VendorsReport.Designer.cs
+        private IEnumerable<Vendedor> _vendedoresActualesParaReporte;
 
         public Frm_VendorsReport(int idAdminLogueado)
         {
@@ -28,6 +28,7 @@ namespace GUI
             this.Dock = DockStyle.Fill;
 
             _idAdminLogueado = idAdminLogueado;
+            _vendedoresActualesParaReporte = new List<Vendedor>();
 
             if (_idAdminLogueado <= 0)
             {
@@ -43,12 +44,11 @@ namespace GUI
             catch (Exception ex)
             {
                 MessageBox.Show($"Error crítico al inicializar servicios: {ex.Message}", "Error de Inicialización", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                var btnGenerar = this.Controls.Find("ibtn_Add", true).FirstOrDefault(); // Este será el botón PDF
-                if (btnGenerar != null) btnGenerar.Enabled = false; // O mantenerlo activo y manejar PDF
+                if (ibtn_GenReport != null) ibtn_GenReport.Enabled = false;
                 if (dtp_FInicio != null) dtp_FInicio.Enabled = false;
                 if (dtp_FFin != null) dtp_FFin.Enabled = false;
                 if (cbx_DateFilter != null) cbx_DateFilter.Enabled = false;
-                if (ibtn_OKCustomDate != null) ibtn_OKCustomDate.Enabled = false; // Deshabilitar también
+                if (ibtn_OKCustomDate != null) ibtn_OKCustomDate.Enabled = false;
             }
         }
 
@@ -57,7 +57,7 @@ namespace GUI
             if (_idAdminLogueado > 0 && _vendedorService != null)
             {
                 ConfigurarFiltroFecha();
-                GenerarReporteVendedores(); // Carga inicial (general por defecto)
+                CargarDatosReporteVendedores();
             }
         }
 
@@ -68,24 +68,23 @@ namespace GUI
                 cbx_DateFilter.Items.Clear();
                 cbx_DateFilter.Items.Add("Todos los Vendedores");
                 cbx_DateFilter.Items.Add("Por Rango de Fechas de Registro");
-                cbx_DateFilter.SelectedIndex = 0; // Por defecto, mostrar todos
+                cbx_DateFilter.SelectedIndex = 0;
                 cbx_DateFilter.SelectedIndexChanged += Cbx_DateFilter_SelectedIndexChanged;
             }
 
             if (dtp_FInicio != null)
             {
                 dtp_FInicio.Value = DateTime.Today.AddYears(-1).Date;
-                dtp_FInicio.Visible = false; // Oculto inicialmente
+                dtp_FInicio.Visible = false;
             }
             if (dtp_FFin != null)
             {
                 dtp_FFin.Value = DateTime.Today.Date;
-                dtp_FFin.Visible = false; // Oculto inicialmente
+                dtp_FFin.Visible = false;
             }
-            // MODIFICADO: Ocultar el botón OK inicialmente
             if (ibtn_OKCustomDate != null)
             {
-                ibtn_OKCustomDate.Visible = false; // Oculto inicialmente
+                ibtn_OKCustomDate.Visible = false;
             }
         }
 
@@ -94,21 +93,26 @@ namespace GUI
             bool mostrarDatePickers = cbx_DateFilter.SelectedItem?.ToString() == "Por Rango de Fechas de Registro";
             if (dtp_FInicio != null) dtp_FInicio.Visible = mostrarDatePickers;
             if (dtp_FFin != null) dtp_FFin.Visible = mostrarDatePickers;
-            // MODIFICADO: Mostrar/Ocultar el botón OK junto con los DateTimePickers
             if (ibtn_OKCustomDate != null) ibtn_OKCustomDate.Visible = mostrarDatePickers;
 
-            // Si se vuelve a "Todos", recargar la grilla
             if (!mostrarDatePickers)
             {
-                GenerarReporteVendedores();
+                CargarDatosReporteVendedores(); // Recargar con "Todos" si se desactiva el filtro de fecha
             }
         }
 
-        private void GenerarReporteVendedores()
+        // Método renombrado y modificado para claridad
+        private void CargarDatosReporteVendedores()
         {
             try
             {
-                if (_vendedorService == null) { MessageBox.Show("Servicio de vendedores no inicializado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (_vendedorService == null)
+                {
+                    MessageBox.Show("Servicio de vendedores no inicializado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _vendedoresActualesParaReporte = new List<Vendedor>();
+                    if (dgv_ReportesVentxVend != null) dgv_ReportesVentxVend.DataSource = null;
+                    return;
+                }
 
                 IEnumerable<Vendedor> vendedores = _vendedorService.ObtenerTodosLosVendedores();
 
@@ -122,30 +126,38 @@ namespace GUI
                     if (fechaInicio > fechaFin.Date.AddDays(-1).AddTicks(1))
                     {
                         MessageBox.Show("La fecha de inicio no puede ser posterior a la fecha de fin.", "Rango de Fechas Inválido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        _vendedoresActualesParaReporte = new List<Vendedor>();
                         if (dgv_ReportesVentxVend != null) dgv_ReportesVentxVend.DataSource = null;
                         return;
                     }
                     vendedores = vendedores.Where(v => v.FechaRegistro.Date >= fechaInicio && v.FechaRegistro.Date <= fechaFin.Date.AddDays(-1).AddTicks(1));
                 }
 
+                _vendedoresActualesParaReporte = vendedores.ToList(); // Guardar los datos para el PDF
+                if (_vendedoresActualesParaReporte == null) // Verificación adicional
+                {
+                    _vendedoresActualesParaReporte = new List<Vendedor>();
+                }
+
+
                 DataTable dt = new DataTable();
-                dt.Columns.Add("ID Vendedor", typeof(int));
+                dt.Columns.Add("IdVendedor", typeof(int)); // Oculta, para referencia si es necesario
                 dt.Columns.Add("Nombre Completo", typeof(string));
                 dt.Columns.Add("Código Vendedor", typeof(string));
                 dt.Columns.Add("Teléfono", typeof(string));
                 dt.Columns.Add("Fecha Registro", typeof(DateTime));
                 dt.Columns.Add("Estado", typeof(string));
 
-                if (vendedores != null)
+                if (_vendedoresActualesParaReporte != null)
                 {
-                    foreach (var vendedor in vendedores.OrderBy(v => v.Apellido).ThenBy(v => v.Nombre))
+                    foreach (var vendedor in _vendedoresActualesParaReporte.OrderBy(v => v.Apellido).ThenBy(v => v.Nombre))
                     {
                         dt.Rows.Add(
                             vendedor.IdVendedor,
                             $"{vendedor.Nombre} {vendedor.Apellido}",
                             vendedor.CodigoVendedor,
                             vendedor.Telefono,
-                            vendedor.FechaRegistro,
+                            vendedor.FechaRegistro, // Asegúrate que FechaRegistro esté disponible en Vendedor
                             vendedor.Activo ? "Activo" : "Inactivo"
                         );
                     }
@@ -154,26 +166,47 @@ namespace GUI
                 if (dgv_ReportesVentxVend != null)
                 {
                     dgv_ReportesVentxVend.DataSource = dt;
-                    if (dgv_ReportesVentxVend.Columns["ID Vendedor"] != null) dgv_ReportesVentxVend.Columns["ID Vendedor"].Visible = false;
+                    if (dgv_ReportesVentxVend.Columns["IdVendedor"] != null) dgv_ReportesVentxVend.Columns["IdVendedor"].Visible = false;
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error al cargar el reporte de vendedores: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _vendedoresActualesParaReporte = new List<Vendedor>();
             }
         }
 
-        // Este es el botón que llamas "Generar" (el verde) y se usará para PDF
-        private void ibtn_Add_Click(object sender, EventArgs e)
+        private void ibtn_GenReport_Click(object sender, EventArgs e) // Cambiado de ibtn_Add_Click a ibtn_GenReport_Click
         {
-            // Aquí irá la lógica para generar el PDF en el futuro
-            MessageBox.Show("Función 'Generar PDF' aún no implementada.", "Próximamente", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            if (_vendedoresActualesParaReporte == null || !_vendedoresActualesParaReporte.Any())
+            {
+                // Intentar cargar los datos si están vacíos
+                CargarDatosReporteVendedores();
+                if (_vendedoresActualesParaReporte == null || !_vendedoresActualesParaReporte.Any())
+                {
+                    MessageBox.Show("No hay datos de vendedores para exportar. Por favor, genere el reporte primero.", "Datos Vacíos", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+            }
+
+            string nombreAdmin = SessionManager.CurrentUser?.NombreUsuario ?? "Admin Desconocido";
+            string reporteId = Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();
+            string tituloReporte = "Reporte de Vendedores";
+
+            try
+            {
+                ReportePdfExporter exporter = new ReportePdfExporter();
+                exporter.GenerarReporteVendedoresPdf(_vendedoresActualesParaReporte, nombreAdmin, reporteId, tituloReporte);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al intentar exportar a PDF: {ex.Message}", "Error de Exportación", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        // Este es tu NUEVO botón para confirmar la fecha
         private void ibtn_OKCustomDate_Click(object sender, EventArgs e)
         {
-            GenerarReporteVendedores(); // Llama al método que carga/filtra la grilla
+            CargarDatosReporteVendedores();
         }
     }
 }

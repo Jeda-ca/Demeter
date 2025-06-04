@@ -1,6 +1,7 @@
 ﻿using BLL.Interfaces;
 using BLL.Services;
 using ENTITY;
+using GUI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,10 +17,9 @@ namespace GUI
     public partial class Frm_ClientsReport : Form
     {
         private readonly IClienteService _clienteService;
-        private readonly ITipoDocumentoService _tipoDocumentoService;
+        private readonly ITipoDocumentoService _tipoDocumentoService; // Para obtener el nombre del tipo de documento
         private readonly int _idAdminLogueado;
-        // Asume que tienes un ComboBox llamado cbx_DateFilter 
-        // y un IconButton llamado ibtn_OKCustomDate en tu Frm_ClientsReport.Designer.cs
+        private IEnumerable<Cliente> _clientesActualesParaReporte; // Variable para guardar los datos
 
         public Frm_ClientsReport(int idAdminLogueado)
         {
@@ -29,6 +29,7 @@ namespace GUI
             this.Dock = DockStyle.Fill;
 
             _idAdminLogueado = idAdminLogueado;
+            _clientesActualesParaReporte = new List<Cliente>(); // Inicializar
 
             if (_idAdminLogueado <= 0)
             {
@@ -40,13 +41,13 @@ namespace GUI
             try
             {
                 _clienteService = new ClienteService();
-                _tipoDocumentoService = new TipoDocumentoService();
+                _tipoDocumentoService = new TipoDocumentoService(); // Inicializar
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error crítico al inicializar servicios: {ex.Message}", "Error de Inicialización", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                var btnGenerar = this.Controls.Find("ibtn_Add", true).FirstOrDefault();
-                if (btnGenerar != null) btnGenerar.Enabled = false;
+                // En Frm_ClientsReport.Designer.cs, el botón para generar PDF parece ser ibtn_GenReport
+                if (ibtn_GenReport != null) ibtn_GenReport.Enabled = false;
                 if (dtp_FInicio != null) dtp_FInicio.Enabled = false;
                 if (dtp_FFin != null) dtp_FFin.Enabled = false;
                 if (cbx_DateFilter != null) cbx_DateFilter.Enabled = false;
@@ -56,10 +57,10 @@ namespace GUI
 
         private void Frm_ClientsReport_Load(object sender, EventArgs e)
         {
-            if (_idAdminLogueado > 0 && _clienteService != null)
+            if (_idAdminLogueado > 0 && _clienteService != null && _tipoDocumentoService != null)
             {
                 ConfigurarFiltroFecha();
-                GenerarReporteClientes(); // Carga inicial (general por defecto)
+                CargarDatosReporteClientes();
             }
         }
 
@@ -84,10 +85,9 @@ namespace GUI
                 dtp_FFin.Value = DateTime.Today.Date;
                 dtp_FFin.Visible = false;
             }
-            // MODIFICADO: Ocultar el botón OK inicialmente
             if (ibtn_OKCustomDate != null)
             {
-                ibtn_OKCustomDate.Visible = false; // Oculto inicialmente
+                ibtn_OKCustomDate.Visible = false;
             }
         }
 
@@ -96,20 +96,25 @@ namespace GUI
             bool mostrarDatePickers = cbx_DateFilter.SelectedItem?.ToString() == "Por Rango de Fechas de Registro";
             if (dtp_FInicio != null) dtp_FInicio.Visible = mostrarDatePickers;
             if (dtp_FFin != null) dtp_FFin.Visible = mostrarDatePickers;
-            // MODIFICADO: Mostrar/Ocultar el botón OK junto con los DateTimePickers
             if (ibtn_OKCustomDate != null) ibtn_OKCustomDate.Visible = mostrarDatePickers;
 
             if (!mostrarDatePickers)
             {
-                GenerarReporteClientes();
+                CargarDatosReporteClientes();
             }
         }
 
-        private void GenerarReporteClientes()
+        private void CargarDatosReporteClientes() // Renombrado desde GenerarReporteClientes para claridad
         {
             try
             {
-                if (_clienteService == null) { MessageBox.Show("Servicio de clientes no inicializado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (_clienteService == null)
+                {
+                    MessageBox.Show("Servicio de clientes no inicializado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _clientesActualesParaReporte = new List<Cliente>();
+                    if (dgv_ReportesVentxVend != null) dgv_ReportesVentxVend.DataSource = null;
+                    return;
+                }
 
                 IEnumerable<Cliente> clientes = _clienteService.ObtenerTodosLosClientes();
 
@@ -122,11 +127,19 @@ namespace GUI
                     if (fechaInicio > fechaFin.Date.AddDays(-1).AddTicks(1))
                     {
                         MessageBox.Show("La fecha de inicio no puede ser posterior a la fecha de fin.", "Rango de Fechas Inválido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        _clientesActualesParaReporte = new List<Cliente>();
                         if (dgv_ReportesVentxVend != null) dgv_ReportesVentxVend.DataSource = null;
                         return;
                     }
                     clientes = clientes.Where(c => c.FechaRegistro.Date >= fechaInicio && c.FechaRegistro.Date <= fechaFin.Date.AddDays(-1).AddTicks(1));
                 }
+
+                _clientesActualesParaReporte = clientes.ToList();
+                if (_clientesActualesParaReporte == null)
+                {
+                    _clientesActualesParaReporte = new List<Cliente>();
+                }
+
 
                 DataTable dt = new DataTable();
                 dt.Columns.Add("ID Cliente", typeof(int));
@@ -138,10 +151,12 @@ namespace GUI
                 dt.Columns.Add("Fecha Registro", typeof(DateTime));
                 dt.Columns.Add("Estado", typeof(string));
 
-                if (clientes != null)
+                if (_clientesActualesParaReporte != null)
                 {
-                    foreach (var cliente in clientes.OrderBy(c => c.Apellido).ThenBy(c => c.Nombre))
+                    foreach (var cliente in _clientesActualesParaReporte.OrderBy(c => c.Apellido).ThenBy(c => c.Nombre))
                     {
+                        // Obtener el nombre del tipo de documento. Asumiendo que TipoDocumento se carga en la entidad Cliente.
+                        // Si no, se necesitaría una llamada a _tipoDocumentoService.ObtenerPorId(cliente.TipoDocumentoId).Nombre
                         string nombreTipoDoc = cliente.TipoDocumento?.Nombre ?? _tipoDocumentoService?.ObtenerPorId(cliente.TipoDocumentoId)?.Nombre ?? cliente.TipoDocumentoId.ToString();
                         dt.Rows.Add(
                             cliente.IdCliente,
@@ -165,20 +180,40 @@ namespace GUI
             catch (Exception ex)
             {
                 MessageBox.Show($"Error al cargar el reporte de clientes: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _clientesActualesParaReporte = new List<Cliente>();
             }
         }
 
-        // Este es el botón que llamas "Generar" y se usará para PDF
-        private void ibtn_Add_Click(object sender, EventArgs e)
+        private void ibtn_GenReport_Click(object sender, EventArgs e)
         {
-            // Aquí irá la lógica para generar el PDF en el futuro
-            MessageBox.Show("Función 'Generar PDF' aún no implementada.", "Próximamente", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            if (_clientesActualesParaReporte == null || !_clientesActualesParaReporte.Any())
+            {
+                CargarDatosReporteClientes(); // Intenta cargar datos si no hay
+                if (_clientesActualesParaReporte == null || !_clientesActualesParaReporte.Any())
+                {
+                    MessageBox.Show("No hay datos de clientes para exportar. Por favor, genere el reporte primero.", "Datos Vacíos", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+            }
+
+            string nombreAdmin = SessionManager.CurrentUser?.NombreUsuario ?? "Admin Desconocido";
+            string reporteId = Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();
+            string tituloReporte = "Reporte de Clientes";
+
+            try
+            {
+                ReportePdfExporter exporter = new ReportePdfExporter();
+                exporter.GenerarReporteClientesPdf(_clientesActualesParaReporte, nombreAdmin, reporteId, tituloReporte);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al intentar exportar a PDF: {ex.Message}", "Error de Exportación", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        // Este es tu NUEVO botón para confirmar la fecha
         private void ibtn_OKCustomDate_Click(object sender, EventArgs e)
         {
-            GenerarReporteClientes(); // Llama al método que carga/filtra la grilla
+            CargarDatosReporteClientes();
         }
     }
 }

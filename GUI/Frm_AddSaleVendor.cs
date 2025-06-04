@@ -1,6 +1,7 @@
 ﻿using BLL.Interfaces;
 using BLL.Services;
 using ENTITY;
+using GUI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,6 +24,7 @@ namespace GUI
         private readonly IClienteService _clienteService;
         private readonly IProductoService _productoService;
         private readonly IEstadoVentaService _estadoVentaService;
+        private readonly IVendedorService _vendedorService; // Para obtener datos del vendedor actual
 
         private DataTable saleDetailsDataTable;
         private Cliente _clienteSeleccionado = null;
@@ -50,6 +52,7 @@ namespace GUI
                 _clienteService = new ClienteService();
                 _productoService = new ProductoService();
                 _estadoVentaService = new EstadoVentaService();
+                _vendedorService = new VendedorService(); // Inicializar servicio de vendedor
 
                 InitializeSaleDetailsDataGridView();
                 CargarEstadosVentaComboBox();
@@ -63,26 +66,25 @@ namespace GUI
             }
         }
 
+        // Constructor por defecto para el diseñador (si es necesario, aunque es mejor evitarlo si se puede)
         public Frm_AddSaleVendor()
         {
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.StartPosition = FormStartPosition.CenterParent;
+            // Valores por defecto o manejo para el modo diseño
             _idUsuarioVendedorLogueado = 0;
             _idVendedorTabla = 0;
-
             try
             {
-                _ventaService = new VentaService();
-                _clienteService = new ClienteService();
-                _productoService = new ProductoService();
+                // Inicializaciones mínimas para que el diseñador no falle
                 _estadoVentaService = new EstadoVentaService();
                 InitializeSaleDetailsDataGridView();
                 CargarEstadosVentaComboBox();
                 ConfigurarTipoDescuentoComboBox();
                 if (tbx_DateV != null) tbx_DateV.Text = DateTime.Now.ToShortDateString();
             }
-            catch (Exception) { /* Silenciar errores en modo diseño */ }
+            catch (Exception) { /* Silenciar para el diseñador */ }
         }
 
 
@@ -387,14 +389,15 @@ namespace GUI
                 descuentoFinalAplicado = descCalculado;
             }
 
-            var venta = new Venta
+            Venta venta = new Venta // Crear una nueva instancia de Venta
             {
                 FechaOcurrencia = DateTime.Parse(tbx_DateV.Text),
                 ClienteId = _clienteSeleccionado.IdCliente,
-                VendedorId = _idVendedorTabla,
+                VendedorId = _idVendedorTabla, // Usar el ID de la tabla 'sellers'
                 EstadoId = (int)cbx_State.SelectedValue,
                 Observaciones = tbx_Observaciones.Text.Trim(),
                 Descuento = descuentoFinalAplicado,
+                DetallesVenta = new List<DetalleVenta>() // Inicializar la colección de detalles
             };
 
             foreach (DataRow row in saleDetailsDataTable.Rows)
@@ -407,27 +410,54 @@ namespace GUI
                     TotalLinea = Convert.ToDecimal(row["SubtotalItem"])
                 });
             }
+            // Calcular Subtotal y Total aquí, justo antes de enviar al servicio
+            venta.Subtotal = venta.DetallesVenta.Sum(d => d.TotalLinea);
+            venta.Total = venta.Subtotal - venta.Descuento;
+
 
             try
             {
                 if (_ventaService == null) { MessageBox.Show("Servicio de ventas no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-                string resultado = _ventaService.RegistrarNuevaVenta(venta, _idVendedorTabla);
+                string resultado = _ventaService.RegistrarNuevaVenta(venta, _idVendedorTabla); // Pasar el IdVendedorTabla
 
                 MessageBox.Show(resultado, "Registrar Venta", MessageBoxButtons.OK,
                                 resultado.ToLower().Contains("exitosamente") ? MessageBoxIcon.Information : MessageBoxIcon.Error);
 
                 if (resultado.ToLower().Contains("exitosamente"))
                 {
-                    // Limpiar el formulario en lugar de cerrarlo
+
+                    Venta ventaCompletaParaFactura = _ventaService.ObtenerVentaPorId(venta.IdVenta);
+
+                    if (ventaCompletaParaFactura != null)
+                    {
+                        string nombreEmisor = SessionManager.CurrentUser?.NombreUsuario ?? "Vendedor Desconocido";
+                        if (SessionManager.CurrentUser is Vendedor vend) // Para un nombre más amigable
+                        {
+                            nombreEmisor = $"{vend.Nombre} {vend.Apellido}".Trim();
+                            if (string.IsNullOrWhiteSpace(nombreEmisor)) nombreEmisor = vend.NombreUsuario;
+                        }
+
+                        DialogResult dr = MessageBox.Show("Venta registrada exitosamente. ¿Desea generar el comprobante en PDF?",
+                                                          "Generar Comprobante",
+                                                          MessageBoxButtons.YesNo,
+                                                          MessageBoxIcon.Question);
+                        if (dr == DialogResult.Yes)
+                        {
+                            ReportePdfExporter exporter = new ReportePdfExporter();
+                            exporter.GenerarFacturaVentaPdf(ventaCompletaParaFactura, nombreEmisor);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo obtener la información completa de la venta para generar la factura.", "Error Factura", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+
                     ResetSaleFormFields();
-                    // this.DialogResult = DialogResult.OK; // Mantener para que el padre sepa
-                    // this.Close(); // NO CERRAR
                 }
             }
             catch (Exception ex) { MessageBox.Show($"Error al registrar venta: {ex.Message}", "Error Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
 
-        // NUEVO MÉTODO para limpiar/resetear el formulario
         private void ResetSaleFormFields()
         {
             _clienteSeleccionado = null;
@@ -468,7 +498,7 @@ namespace GUI
 
             if (confirmResult == DialogResult.Yes)
             {
-                ResetSaleFormFields(); 
+                ResetSaleFormFields();
             }
         }
 
