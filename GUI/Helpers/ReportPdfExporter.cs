@@ -90,7 +90,7 @@ namespace GUI.Helpers
             {
                 row.RelativeItem(1).Column(column =>
                 {
-                    var logoStream = typeof(ReportePdfExporter).Assembly.GetManifestResourceStream("GUI.image.LogoDemeter_ORIGINAL.png");
+                    var logoStream = typeof(ReportePdfExporter).Assembly.GetManifestResourceStream("GUI.image.LogoDemeter-removebg-preview.png");
                     if (logoStream != null)
                     {
                         using (var ms = new MemoryStream())
@@ -505,7 +505,7 @@ namespace GUI.Helpers
             {
                 row.RelativeItem(2).Column(column =>
                 {
-                    var logoStream = typeof(ReportePdfExporter).Assembly.GetManifestResourceStream("GUI.image.LogoDemeter_ORIGINAL.png");
+                    var logoStream = typeof(ReportePdfExporter).Assembly.GetManifestResourceStream("GUI.image.LogoDemeter-removebg-preview.png");
                     if (logoStream != null)
                     {
                         using (var ms = new MemoryStream())
