@@ -48,7 +48,6 @@
             this.dgv_ListaVentas = new System.Windows.Forms.DataGridView();
             this.cbx_TipoV = new System.Windows.Forms.ComboBox();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.ibtn_ViewSaleDetail = new FontAwesome.Sharp.IconButton();
             this.ibtn_Add = new FontAwesome.Sharp.IconButton();
             this.label4 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
@@ -308,7 +307,6 @@
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
-            this.panel2.Controls.Add(this.ibtn_ViewSaleDetail);
             this.panel2.Controls.Add(this.ibtn_Add);
             this.panel2.Controls.Add(this.label4);
             this.panel2.Location = new System.Drawing.Point(43, 424);
@@ -316,30 +314,6 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1064, 202);
             this.panel2.TabIndex = 16;
-            // 
-            // ibtn_ViewSaleDetail
-            // 
-            this.ibtn_ViewSaleDetail.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
-            this.ibtn_ViewSaleDetail.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.ibtn_ViewSaleDetail.FlatAppearance.BorderSize = 0;
-            this.ibtn_ViewSaleDetail.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
-            this.ibtn_ViewSaleDetail.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ibtn_ViewSaleDetail.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
-            this.ibtn_ViewSaleDetail.ForeColor = System.Drawing.Color.White;
-            this.ibtn_ViewSaleDetail.IconChar = FontAwesome.Sharp.IconChar.CircleInfo;
-            this.ibtn_ViewSaleDetail.IconColor = System.Drawing.Color.White;
-            this.ibtn_ViewSaleDetail.IconFont = FontAwesome.Sharp.IconFont.Solid;
-            this.ibtn_ViewSaleDetail.IconSize = 33;
-            this.ibtn_ViewSaleDetail.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.ibtn_ViewSaleDetail.Location = new System.Drawing.Point(374, 54);
-            this.ibtn_ViewSaleDetail.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.ibtn_ViewSaleDetail.Name = "ibtn_ViewSaleDetail";
-            this.ibtn_ViewSaleDetail.Size = new System.Drawing.Size(228, 95);
-            this.ibtn_ViewSaleDetail.TabIndex = 5;
-            this.ibtn_ViewSaleDetail.Text = "Ver detalles de venta";
-            this.ibtn_ViewSaleDetail.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.ibtn_ViewSaleDetail.UseVisualStyleBackColor = false;
-            this.ibtn_ViewSaleDetail.Click += new System.EventHandler(this.ibtn_ViewSaleDetail_Click);
             // 
             // ibtn_Add
             // 
@@ -418,6 +392,5 @@
         private System.Windows.Forms.Panel panel2;
         private FontAwesome.Sharp.IconButton ibtn_Add;
         private System.Windows.Forms.Label label4;
-        private FontAwesome.Sharp.IconButton ibtn_ViewSaleDetail;
     }
 }

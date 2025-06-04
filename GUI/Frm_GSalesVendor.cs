@@ -47,7 +47,6 @@ namespace GUI
                 if (ibtn_Buscar != null) ibtn_Buscar.Enabled = false;
                 if (ibtn_Add != null) ibtn_Add.Enabled = false;
                 if (cbx_TipoV != null) cbx_TipoV.Enabled = false;
-                if (ibtn_ViewSaleDetail != null) ibtn_ViewSaleDetail.Enabled = false;
             }
         }
 
@@ -272,47 +271,6 @@ namespace GUI
         {
             if (cbx_TipoV != null && cbx_TipoV.Items.Count > 0) cbx_TipoV.SelectedIndex = 0;
             LoadSalesData();
-        }
-
-        private void ibtn_ViewSaleDetail_Click(object sender, EventArgs e)
-        {
-            if (dgv_ListaVentas.SelectedRows.Count > 0)
-            {
-                try
-                {
-                    int idVenta = Convert.ToInt32(dgv_ListaVentas.SelectedRows[0].Cells["IdVenta"].Value);
-                    if (_ventaService == null) { MessageBox.Show("Servicio de ventas no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-
-                    Venta ventaCompleta = _ventaService.ObtenerVentaPorId(idVenta);
-
-                    if (ventaCompleta != null)
-                    {
-                        if (ventaCompleta.VendedorId == _idVendedorTabla)
-                        {
-                            using (Frm_ViewSaleDetail frmViewDetail = new Frm_ViewSaleDetail(ventaCompleta))
-                            {
-                                frmViewDetail.ShowDialog();
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show("Esta venta no pertenece a este vendedor.", "Acceso Denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show("No se pudo encontrar la información detallada de la venta seleccionada.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error al mostrar detalle de venta: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            else
-            {
-                MessageBox.Show("Seleccione una venta para ver su detalle.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
         }
     }
 }

@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new System.Windows.Forms.Panel();
             this.ibtn_Clear = new FontAwesome.Sharp.IconButton();
             this.ibtn_Buscar = new FontAwesome.Sharp.IconButton();
@@ -52,7 +52,6 @@
             this.ibtn_AdminAddSale = new FontAwesome.Sharp.IconButton();
             this.ibtn_CancelVenta = new FontAwesome.Sharp.IconButton();
             this.ibtn_StatusVenta = new FontAwesome.Sharp.IconButton();
-            this.ibtn_ViewSaleDetail = new FontAwesome.Sharp.IconButton();
             this.panel1.SuspendLayout();
             this.panelFiltro.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_ListaVentas)).BeginInit();
@@ -77,7 +76,7 @@
             this.panel1.Location = new System.Drawing.Point(43, 68);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1336, 376);
+            this.panel1.Size = new System.Drawing.Size(1080, 376);
             this.panel1.TabIndex = 11;
             // 
             // ibtn_Clear
@@ -93,7 +92,7 @@
             this.ibtn_Clear.IconColor = System.Drawing.Color.White;
             this.ibtn_Clear.IconFont = FontAwesome.Sharp.IconFont.Solid;
             this.ibtn_Clear.IconSize = 30;
-            this.ibtn_Clear.Location = new System.Drawing.Point(1276, 128);
+            this.ibtn_Clear.Location = new System.Drawing.Point(1020, 128);
             this.ibtn_Clear.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.ibtn_Clear.Name = "ibtn_Clear";
             this.ibtn_Clear.Size = new System.Drawing.Size(39, 32);
@@ -115,7 +114,7 @@
             this.ibtn_Buscar.IconColor = System.Drawing.Color.White;
             this.ibtn_Buscar.IconFont = FontAwesome.Sharp.IconFont.Solid;
             this.ibtn_Buscar.IconSize = 23;
-            this.ibtn_Buscar.Location = new System.Drawing.Point(1134, 128);
+            this.ibtn_Buscar.Location = new System.Drawing.Point(878, 128);
             this.ibtn_Buscar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.ibtn_Buscar.Name = "ibtn_Buscar";
             this.ibtn_Buscar.Size = new System.Drawing.Size(133, 33);
@@ -133,7 +132,7 @@
             this.tbx_Busqueda.Location = new System.Drawing.Point(21, 128);
             this.tbx_Busqueda.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tbx_Busqueda.Name = "tbx_Busqueda";
-            this.tbx_Busqueda.Size = new System.Drawing.Size(1115, 32);
+            this.tbx_Busqueda.Size = new System.Drawing.Size(859, 32);
             this.tbx_Busqueda.TabIndex = 13;
             // 
             // label10
@@ -224,7 +223,7 @@
             this.label5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
             this.label5.Location = new System.Drawing.Point(17, 338);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(1298, 25);
+            this.label5.Size = new System.Drawing.Size(1042, 25);
             this.label5.TabIndex = 5;
             this.label5.Text = "Si no se encuentra lo que necesita, lo más seguro es que no se encuentra registra" +
     "do en el sistema";
@@ -234,9 +233,9 @@
             // 
             this.dgv_ListaVentas.AllowUserToAddRows = false;
             this.dgv_ListaVentas.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Tahoma", 10F);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.Black;
-            this.dgv_ListaVentas.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Tahoma", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Black;
+            this.dgv_ListaVentas.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dgv_ListaVentas.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -245,24 +244,24 @@
             this.dgv_ListaVentas.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dgv_ListaVentas.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
             this.dgv_ListaVentas.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Tahoma", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgv_ListaVentas.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Tahoma", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv_ListaVentas.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dgv_ListaVentas.ColumnHeadersHeight = 30;
             this.dgv_ListaVentas.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(248)))), ((int)(((byte)(233)))));
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(203)))), ((int)(((byte)(91)))));
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgv_ListaVentas.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(248)))), ((int)(((byte)(233)))));
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(203)))), ((int)(((byte)(91)))));
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgv_ListaVentas.DefaultCellStyle = dataGridViewCellStyle3;
             this.dgv_ListaVentas.EnableHeadersVisualStyles = false;
             this.dgv_ListaVentas.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
             this.dgv_ListaVentas.Location = new System.Drawing.Point(21, 185);
@@ -271,14 +270,14 @@
             this.dgv_ListaVentas.ReadOnly = true;
             this.dgv_ListaVentas.RowHeadersVisible = false;
             this.dgv_ListaVentas.RowHeadersWidth = 51;
-            dataGridViewCellStyle8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
-            dataGridViewCellStyle8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(203)))), ((int)(((byte)(91)))));
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
-            this.dgv_ListaVentas.RowsDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(203)))), ((int)(((byte)(91)))));
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
+            this.dgv_ListaVentas.RowsDefaultCellStyle = dataGridViewCellStyle4;
             this.dgv_ListaVentas.RowTemplate.Height = 24;
             this.dgv_ListaVentas.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgv_ListaVentas.Size = new System.Drawing.Size(1294, 141);
+            this.dgv_ListaVentas.Size = new System.Drawing.Size(1038, 141);
             this.dgv_ListaVentas.TabIndex = 6;
             // 
             // cbx_TipoV
@@ -300,7 +299,7 @@
             this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
             this.label1.Location = new System.Drawing.Point(0, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(1427, 50);
+            this.label1.Size = new System.Drawing.Size(1171, 50);
             this.label1.TabIndex = 13;
             this.label1.Text = "  Gestor de Ventas";
             this.label1.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
@@ -312,7 +311,7 @@
             this.label4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(60)))), ((int)(((byte)(48)))));
             this.label4.Location = new System.Drawing.Point(0, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(1336, 37);
+            this.label4.Size = new System.Drawing.Size(1080, 37);
             this.label4.TabIndex = 0;
             this.label4.Text = "Controles de gestión";
             // 
@@ -321,7 +320,6 @@
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
-            this.panel2.Controls.Add(this.ibtn_ViewSaleDetail);
             this.panel2.Controls.Add(this.ibtn_AdminAddSale);
             this.panel2.Controls.Add(this.ibtn_CancelVenta);
             this.panel2.Controls.Add(this.ibtn_StatusVenta);
@@ -329,7 +327,7 @@
             this.panel2.Location = new System.Drawing.Point(43, 463);
             this.panel2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1336, 202);
+            this.panel2.Size = new System.Drawing.Size(1080, 202);
             this.panel2.TabIndex = 12;
             // 
             // ibtn_AdminAddSale
@@ -401,36 +399,12 @@
             this.ibtn_StatusVenta.UseVisualStyleBackColor = false;
             this.ibtn_StatusVenta.Click += new System.EventHandler(this.ibtn_StatusVenta_Click);
             // 
-            // ibtn_ViewSaleDetail
-            // 
-            this.ibtn_ViewSaleDetail.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
-            this.ibtn_ViewSaleDetail.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.ibtn_ViewSaleDetail.FlatAppearance.BorderSize = 0;
-            this.ibtn_ViewSaleDetail.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
-            this.ibtn_ViewSaleDetail.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ibtn_ViewSaleDetail.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
-            this.ibtn_ViewSaleDetail.ForeColor = System.Drawing.Color.White;
-            this.ibtn_ViewSaleDetail.IconChar = FontAwesome.Sharp.IconChar.CircleInfo;
-            this.ibtn_ViewSaleDetail.IconColor = System.Drawing.Color.White;
-            this.ibtn_ViewSaleDetail.IconFont = FontAwesome.Sharp.IconFont.Solid;
-            this.ibtn_ViewSaleDetail.IconSize = 33;
-            this.ibtn_ViewSaleDetail.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.ibtn_ViewSaleDetail.Location = new System.Drawing.Point(1079, 54);
-            this.ibtn_ViewSaleDetail.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.ibtn_ViewSaleDetail.Name = "ibtn_ViewSaleDetail";
-            this.ibtn_ViewSaleDetail.Size = new System.Drawing.Size(228, 95);
-            this.ibtn_ViewSaleDetail.TabIndex = 11;
-            this.ibtn_ViewSaleDetail.Text = "Ver detalles de venta";
-            this.ibtn_ViewSaleDetail.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.ibtn_ViewSaleDetail.UseVisualStyleBackColor = false;
-            this.ibtn_ViewSaleDetail.Click += new System.EventHandler(this.ibtn_ViewSaleDetail_Click);
-            // 
             // Frm_GSalesAdmin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(248)))), ((int)(((byte)(233)))));
-            this.ClientSize = new System.Drawing.Size(1427, 686);
+            this.ClientSize = new System.Drawing.Size(1171, 686);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -470,7 +444,6 @@
         private FontAwesome.Sharp.IconButton ibtn_Buscar;
         private System.Windows.Forms.TextBox tbx_Busqueda;
         private FontAwesome.Sharp.IconButton ibtn_AdminAddSale;
-        private FontAwesome.Sharp.IconButton ibtn_ViewSaleDetail;
     }
 }
 
