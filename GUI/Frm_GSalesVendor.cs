@@ -15,11 +15,10 @@ namespace GUI
 {
     public partial class Frm_GSalesVendor : Form
     {
+        private readonly IVentaService _ventaService;
+        private readonly IClienteService _clienteService;
         private readonly int _idUsuarioVendedorLogueado;
-        private readonly int _idVendedorTabla;
-        private IVentaService _ventaService;
-        private IClienteService _clienteService;
-        // private IProductoService _productoService; // Se instanciará en Frm_AddSaleVendor
+        private readonly int _idVendedorTabla; // PK de la tabla 'sellers'
 
         public Frm_GSalesVendor(int idUsuarioVendedor, int idVendedorTabla)
         {
@@ -33,11 +32,10 @@ namespace GUI
 
             if (_idUsuarioVendedorLogueado <= 0 || _idVendedorTabla <= 0)
             {
-                MessageBox.Show("Error: Información de vendedor no válida para el gestor de ventas.", "Error de Sesión", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error: Información de vendedor no válida. No se pueden realizar operaciones.", "Error de Sesión", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.BeginInvoke(new MethodInvoker(this.Close));
                 return;
             }
-
             try
             {
                 _ventaService = new VentaService();
@@ -45,24 +43,24 @@ namespace GUI
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al inicializar servicios en Gestor de Ventas Vendedor: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Deshabilitar controles principales si falla
-                if (ibtn_Add != null) ibtn_Add.Enabled = false;
+                MessageBox.Show($"Error crítico al inicializar servicios: {ex.Message}", "Error de Inicialización", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 if (ibtn_Buscar != null) ibtn_Buscar.Enabled = false;
-                if (ibtn_Clear != null) ibtn_Clear.Enabled = false;
+                if (ibtn_Add != null) ibtn_Add.Enabled = false;
                 if (cbx_TipoV != null) cbx_TipoV.Enabled = false;
-                if (cbx_FiltroV != null) cbx_FiltroV.Enabled = false;
+                if (ibtn_ViewSaleDetail != null) ibtn_ViewSaleDetail.Enabled = false;
             }
         }
 
         private void Frm_GSalesVendor_Load(object sender, EventArgs e)
         {
-            if (_idUsuarioVendedorLogueado > 0 && _idVendedorTabla > 0 && _ventaService != null)
+            if (_idVendedorTabla > 0 && _ventaService != null)
             {
-                CargarTiposConsultaComboBox(); // Para cbx_TipoV
-                // El panelFiltro, DateTimePickers y tbx_Busqueda se manejan en UpdateFilterPanelVisibility
-                UpdateFilterPanelVisibility(); // Llamar para establecer el estado inicial correcto
-                LoadSalesData();
+                CargarTiposConsultaComboBox();
+                panelFiltro.Visible = false;
+                dtp_FInicio.Visible = false;
+                dtp_FFin.Visible = false;
+                tbx_Busqueda.Visible = false;
+                LoadSalesData(); // Cargar ventas del vendedor por defecto
             }
         }
 
@@ -76,17 +74,13 @@ namespace GUI
             cbx_TipoV.SelectedIndex = 0;
         }
 
-        // Event handler para cbx_TipoV 
-        // Asegúrate que el nombre de este método coincida con Frm_GSalesVendor.Designer.cs
-        // Tu Designer espera: cbx_TipoReport_SelectedIndexChanged
+        // CORRECCIÓN: Renombrado para coincidir con el Designer
         private void cbx_TipoV_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateFilterPanelVisibility();
         }
 
-        // Event handler para cbx_FiltroV 
-        // Asegúrate que el nombre de este método coincida con Frm_GSalesVendor.Designer.cs
-        // Tu Designer espera: cbx_FiltroReport_SelectedIndexChanged O cbx_FiltroV_SelectedIndexChanged
+        // CORRECCIÓN: Renombrado para coincidir con el Designer
         private void cbx_FiltroV_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateDateTimePickerVisibility();
@@ -106,7 +100,7 @@ namespace GUI
 
             string selectedReportType = cbx_TipoV.SelectedItem?.ToString();
 
-            if (selectedReportType == "MIS VENTAS GENERALES" || selectedReportType == "MIS VENTAS POR CLIENTE")
+            if (selectedReportType == "MIS VENTAS GENERALES")
             {
                 panelFiltro.Visible = true;
                 cbx_FiltroV.Enabled = true;
@@ -114,11 +108,18 @@ namespace GUI
                 cbx_FiltroV.Items.Add("Por Fecha Específica");
                 cbx_FiltroV.Items.Add("Por Rango de Fechas");
                 cbx_FiltroV.SelectedIndex = 0;
-                if (selectedReportType == "MIS VENTAS POR CLIENTE")
-                {
-                    tbx_Busqueda.Visible = true;
-                }
             }
+            else if (selectedReportType == "MIS VENTAS POR CLIENTE")
+            {
+                panelFiltro.Visible = true;
+                cbx_FiltroV.Enabled = true;
+                cbx_FiltroV.Items.Add("-- Sin Filtro de Fecha --");
+                cbx_FiltroV.Items.Add("Por Fecha Específica");
+                cbx_FiltroV.Items.Add("Por Rango de Fechas");
+                cbx_FiltroV.SelectedIndex = 0;
+                tbx_Busqueda.Visible = true;
+            }
+            UpdateDateTimePickerVisibility();
         }
 
         private void UpdateDateTimePickerVisibility()
@@ -139,56 +140,57 @@ namespace GUI
                 dtp_FFin.Visible = true;
             }
         }
+
         private void LoadSalesData(IEnumerable<Venta> ventas = null)
         {
             try
             {
                 if (_ventaService == null) { MessageBox.Show("Servicio de ventas no inicializado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
                 if (ventas == null)
                 {
+                    // Cargar solo ventas del vendedor actual
                     ventas = _ventaService.ObtenerVentasPorVendedor(_idVendedorTabla);
                 }
 
                 DataTable dt = new DataTable();
                 dt.Columns.Add("IdVenta", typeof(int));
                 dt.Columns.Add("Fecha", typeof(DateTime));
+                dt.Columns.Add("Subtotal", typeof(decimal));
+                dt.Columns.Add("Descuento", typeof(decimal));
                 dt.Columns.Add("Total", typeof(decimal));
                 dt.Columns.Add("ClienteNombre", typeof(string));
                 dt.Columns.Add("Estado", typeof(string));
+                dt.Columns.Add("Observaciones", typeof(string));
 
                 foreach (var venta in ventas.OrderByDescending(v => v.FechaOcurrencia))
                 {
                     dt.Rows.Add(
                         venta.IdVenta,
                         venta.FechaOcurrencia,
+                        venta.Subtotal,
+                        venta.Descuento,
                         venta.Total,
                         (venta.Cliente != null) ? $"{venta.Cliente.Nombre} {venta.Cliente.Apellido}" : "N/A",
-                        venta.EstadoVenta?.Nombre ?? "N/A"
+                        venta.EstadoVenta?.Nombre ?? "N/A",
+                        venta.Observaciones
                     );
                 }
                 if (dgv_ListaVentas != null)
                 {
                     dgv_ListaVentas.DataSource = dt;
                     if (dgv_ListaVentas.Columns["IdVenta"] != null) dgv_ListaVentas.Columns["IdVenta"].Visible = false;
+                    if (dgv_ListaVentas.Columns["Subtotal"] != null) dgv_ListaVentas.Columns["Subtotal"].DefaultCellStyle.Format = "C2";
+                    if (dgv_ListaVentas.Columns["Descuento"] != null) dgv_ListaVentas.Columns["Descuento"].DefaultCellStyle.Format = "C2";
                     if (dgv_ListaVentas.Columns["Total"] != null) dgv_ListaVentas.Columns["Total"].DefaultCellStyle.Format = "C2";
                 }
             }
-            catch (Exception ex) { MessageBox.Show($"Error al cargar ventas: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
-        }
-
-        // Evento para el botón Agregar Venta (ibtn_Add)
-        private void ibtn_Add_Click(object sender, EventArgs e)
-        {
-            using (Frm_AddSaleVendor frmAddSale = new Frm_AddSaleVendor(_idUsuarioVendedorLogueado, _idVendedorTabla))
+            catch (Exception ex)
             {
-                if (frmAddSale.ShowDialog() == DialogResult.OK)
-                {
-                    LoadSalesData();
-                }
+                MessageBox.Show($"Error al cargar datos de ventas: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        // Evento para el botón Buscar (ibtn_Buscar)
         private void ibtn_Buscar_Click(object sender, EventArgs e)
         {
             if (_ventaService == null || cbx_TipoV.SelectedItem == null) return;
@@ -215,32 +217,31 @@ namespace GUI
                         break;
 
                     case "MIS VENTAS POR CLIENTE":
-                        if (string.IsNullOrWhiteSpace(textoBusqueda)) { MessageBox.Show("Ingrese nombre, apellido o documento del cliente.", "Información Requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning); LoadSalesData(new List<Venta>()); return; }
+                        if (string.IsNullOrWhiteSpace(textoBusqueda)) { MessageBox.Show("Ingrese nombre, apellido o documento del cliente.", "Información Requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
 
                         var clientes = _clienteService.BuscarClientesPorNombreOApellido(textoBusqueda).ToList();
-                        var clientePorDoc = _clienteService.ObtenerClientePorDocumento(0, textoBusqueda);
-                        if (clientePorDoc != null && !clientes.Any(c => c.IdCliente == clientePorDoc.IdCliente))
+                        if (!clientes.Any())
                         {
-                            clientes.Add(clientePorDoc);
+                            var clientePorDoc = _clienteService.ObtenerClientePorDocumento(0, textoBusqueda);
+                            if (clientePorDoc != null) clientes.Add(clientePorDoc);
                         }
                         clientes = clientes.Where(c => c != null).Distinct().ToList();
 
                         if (!clientes.Any()) { MessageBox.Show("Cliente no encontrado.", "Búsqueda", MessageBoxButtons.OK, MessageBoxIcon.Information); LoadSalesData(new List<Venta>()); return; }
 
                         var ventasClientes = new List<Venta>();
-                        var ventasDelVendedor = _ventaService.ObtenerVentasPorVendedor(_idVendedorTabla);
+                        IEnumerable<Venta> ventasDelVendedorEnPeriodo;
+
+                        if (filtroFecha == "Por Fecha Específica")
+                            ventasDelVendedorEnPeriodo = _ventaService.ObtenerVentasPorVendedorYFechas(_idVendedorTabla, fechaInicio, fechaInicio.AddDays(1).AddTicks(-1));
+                        else if (filtroFecha == "Por Rango de Fechas")
+                            ventasDelVendedorEnPeriodo = _ventaService.ObtenerVentasPorVendedorYFechas(_idVendedorTabla, fechaInicio, fechaFin);
+                        else
+                            ventasDelVendedorEnPeriodo = _ventaService.ObtenerVentasPorVendedor(_idVendedorTabla);
 
                         foreach (var cliente in clientes)
                         {
-                            IEnumerable<Venta> ventasFiltradasPorFecha;
-                            if (filtroFecha == "Por Fecha Específica")
-                                ventasFiltradasPorFecha = ventasDelVendedor.Where(v => v.FechaOcurrencia.Date == fechaInicio.Date);
-                            else if (filtroFecha == "Por Rango de Fechas")
-                                ventasFiltradasPorFecha = ventasDelVendedor.Where(v => v.FechaOcurrencia.Date >= fechaInicio.Date && v.FechaOcurrencia.Date <= fechaFin.Date);
-                            else
-                                ventasFiltradasPorFecha = ventasDelVendedor;
-
-                            ventasClientes.AddRange(ventasFiltradasPorFecha.Where(v => v.ClienteId == cliente.IdCliente));
+                            ventasClientes.AddRange(ventasDelVendedorEnPeriodo.Where(v => v.ClienteId == cliente.IdCliente));
                         }
                         ventasResultado = ventasClientes.Distinct().OrderByDescending(v => v.FechaOcurrencia);
                         break;
@@ -256,15 +257,62 @@ namespace GUI
             }
         }
 
-        // Evento para el botón Limpiar (ibtn_Clear)
+        private void ibtn_Add_Click(object sender, EventArgs e)
+        {
+            using (Frm_AddSaleVendor frmAddSale = new Frm_AddSaleVendor(_idUsuarioVendedorLogueado, _idVendedorTabla))
+            {
+                if (frmAddSale.ShowDialog() == DialogResult.OK)
+                {
+                    LoadSalesData();
+                }
+            }
+        }
+
         private void ibtn_Clear_Click(object sender, EventArgs e)
         {
             if (cbx_TipoV != null && cbx_TipoV.Items.Count > 0) cbx_TipoV.SelectedIndex = 0;
-            // El cambio en cbx_TipoV debería disparar UpdateFilterPanelVisibility
-            // que a su vez limpia cbx_FiltroV y oculta/limpia otros filtros.
-            // Si no lo hace automáticamente, llama explícitamente:
-            // UpdateFilterPanelVisibility();
             LoadSalesData();
+        }
+
+        private void ibtn_ViewSaleDetail_Click(object sender, EventArgs e)
+        {
+            if (dgv_ListaVentas.SelectedRows.Count > 0)
+            {
+                try
+                {
+                    int idVenta = Convert.ToInt32(dgv_ListaVentas.SelectedRows[0].Cells["IdVenta"].Value);
+                    if (_ventaService == null) { MessageBox.Show("Servicio de ventas no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                    Venta ventaCompleta = _ventaService.ObtenerVentaPorId(idVenta);
+
+                    if (ventaCompleta != null)
+                    {
+                        if (ventaCompleta.VendedorId == _idVendedorTabla)
+                        {
+                            using (Frm_ViewSaleDetail frmViewDetail = new Frm_ViewSaleDetail(ventaCompleta))
+                            {
+                                frmViewDetail.ShowDialog();
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Esta venta no pertenece a este vendedor.", "Acceso Denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo encontrar la información detallada de la venta seleccionada.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al mostrar detalle de venta: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Seleccione una venta para ver su detalle.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
     }
 }

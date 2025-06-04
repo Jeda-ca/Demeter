@@ -45,7 +45,8 @@ namespace GUI
                 if (ibtn_StatusVenta != null) ibtn_StatusVenta.Enabled = false;
                 if (ibtn_CancelVenta != null) ibtn_CancelVenta.Enabled = false;
                 if (cbx_TipoV != null) cbx_TipoV.Enabled = false;
-                // if (ibtn_AdminAddSale != null) ibtn_AdminAddSale.Enabled = false; // Si el botón ya existe en el designer
+                if (ibtn_AdminAddSale != null) ibtn_AdminAddSale.Enabled = false;
+                if (ibtn_ViewSaleDetail != null) ibtn_ViewSaleDetail.Enabled = false;
             }
         }
 
@@ -73,12 +74,12 @@ namespace GUI
             cbx_TipoV.SelectedIndex = 0;
         }
 
-        private void cbx_TipoReport_SelectedIndexChanged(object sender, EventArgs e) // Nombre del evento en el Designer
+        private void cbx_TipoReport_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateFilterPanelVisibility();
         }
 
-        private void cbx_FiltroReport_SelectedIndexChanged(object sender, EventArgs e) // Nombre del evento en el Designer
+        private void cbx_FiltroReport_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateDateTimePickerVisibility();
         }
@@ -105,7 +106,7 @@ namespace GUI
                 cbx_FiltroV.Items.Add("Por Fecha Específica");
                 cbx_FiltroV.Items.Add("Por Rango de Fechas");
                 cbx_FiltroV.SelectedIndex = 0;
-                UpdateDateTimePickerVisibility(); // Asegurar que los datepickers se oculten si es necesario
+                UpdateDateTimePickerVisibility();
             }
             else if (selectedReportType == "VENTAS POR VENDEDOR" || selectedReportType == "VENTAS POR CLIENTE")
             {
@@ -116,7 +117,7 @@ namespace GUI
                 cbx_FiltroV.Items.Add("Por Rango de Fechas");
                 cbx_FiltroV.SelectedIndex = 0;
                 tbx_Busqueda.Visible = true;
-                UpdateDateTimePickerVisibility(); // Asegurar que los datepickers se oculten si es necesario
+                UpdateDateTimePickerVisibility();
             }
         }
 
@@ -234,7 +235,7 @@ namespace GUI
                         var clientes = _clienteService.BuscarClientesPorNombreOApellido(textoBusqueda).ToList();
                         if (!clientes.Any())
                         {
-                            var clientePorDoc = _clienteService.ObtenerClientePorDocumento(0, textoBusqueda); // Asume que 0 busca en todos los tipos de doc
+                            var clientePorDoc = _clienteService.ObtenerClientePorDocumento(0, textoBusqueda);
                             if (clientePorDoc != null) clientes.Add(clientePorDoc);
                         }
                         clientes = clientes.Where(c => c != null).Distinct().ToList();
@@ -242,7 +243,6 @@ namespace GUI
                         if (!clientes.Any()) { MessageBox.Show("Cliente no encontrado.", "Búsqueda", MessageBoxButtons.OK, MessageBoxIcon.Information); LoadSalesData(new List<Venta>()); return; }
 
                         var ventasClientes = new List<Venta>();
-                        // Primero obtener todas las ventas del periodo para no consultar la BD repetidamente
                         IEnumerable<Venta> ventasDelPeriodo;
                         if (filtroFecha == "Por Fecha Específica")
                             ventasDelPeriodo = _ventaService.ObtenerVentasPorRangoFechas(fechaInicio, fechaInicio.AddDays(1).AddTicks(-1));
@@ -345,30 +345,25 @@ namespace GUI
         private void ibtn_Clear_Click(object sender, EventArgs e)
         {
             if (cbx_TipoV != null && cbx_TipoV.Items.Count > 0) cbx_TipoV.SelectedIndex = 0;
-            // El evento SelectedIndexChanged de cbx_TipoV llamará a UpdateFilterPanelVisibility,
-            // que a su vez limpiará cbx_FiltroV y tbx_Busqueda, y ocultará los filtros.
             LoadSalesData();
         }
 
-        // NUEVO: Evento para el botón "Registrar Nueva Venta" que debes crear en el diseñador
         private void ibtn_AdminAddSale_Click(object sender, EventArgs e)
         {
-            // Paso 1: Pedir al admin que seleccione un vendedor
             using (Frm_BusqVendedorParaVentaAdmin frmBusqVendedor = new Frm_BusqVendedorParaVentaAdmin())
             {
                 if (frmBusqVendedor.ShowDialog() == DialogResult.OK)
                 {
-                    int idVendedorSeleccionadoTabla = frmBusqVendedor.SelectedSellerIdTabla; // PK de la tabla 'sellers'
-                    int idUsuarioDelVendedor = frmBusqVendedor.SelectedSellerUserId;     // PK de la tabla 'users'
+                    int idVendedorSeleccionadoTabla = frmBusqVendedor.SelectedSellerIdTabla;
+                    int idUsuarioDelVendedor = frmBusqVendedor.SelectedSellerUserId;
 
                     if (idVendedorSeleccionadoTabla > 0 && idUsuarioDelVendedor > 0)
                     {
-                        // Paso 2: Abrir Frm_AddSaleVendor con los IDs del vendedor seleccionado
                         using (Frm_AddSaleVendor frmAddSale = new Frm_AddSaleVendor(idUsuarioDelVendedor, idVendedorSeleccionadoTabla))
                         {
                             if (frmAddSale.ShowDialog() == DialogResult.OK)
                             {
-                                LoadSalesData(); // Recargar la lista de ventas del admin
+                                LoadSalesData();
                             }
                         }
                     }
@@ -379,15 +374,50 @@ namespace GUI
                 }
             }
         }
+
+        // Evento para el botón "Ver Detalle" (ibtn_ViewSaleDetail)
+        private void ibtn_ViewSaleDetail_Click(object sender, EventArgs e)
+        {
+            if (dgv_ListaVentas.SelectedRows.Count > 0)
+            {
+                try
+                {
+                    int idVenta = Convert.ToInt32(dgv_ListaVentas.SelectedRows[0].Cells["IdVenta"].Value);
+                    if (_ventaService == null) { MessageBox.Show("Servicio de ventas no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                    Venta ventaCompleta = _ventaService.ObtenerVentaPorId(idVenta);
+
+                    if (ventaCompleta != null)
+                    {
+                        using (Frm_ViewSaleDetail frmViewDetail = new Frm_ViewSaleDetail(ventaCompleta))
+                        {
+                            frmViewDetail.ShowDialog();
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo encontrar la información detallada de la venta seleccionada.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al mostrar detalle de venta: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Seleccione una venta para ver su detalle.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
     }
 }
 
-    //public partial class Frm_GSalesAdmin : Form
+
+//public partial class Frm_GSalesAdmin : Form
     //{
     //    private readonly IVentaService _ventaService;
     //    private readonly IClienteService _clienteService;
     //    private readonly IVendedorService _vendedorService;
-    //    // private readonly IEstadoVentaService _estadoVentaService; // No se usa directamente aquí, sino en Frm_ModifyVentState
     //    private readonly int _idAdminLogueado;
 
     //    public Frm_GSalesAdmin(int idAdminLogueado)
@@ -402,7 +432,7 @@ namespace GUI
     //        if (_idAdminLogueado <= 0)
     //        {
     //            MessageBox.Show("Error: ID de administrador no válido. No se pueden realizar operaciones.", "Error de Sesión", MessageBoxButtons.OK, MessageBoxIcon.Error);
-    //            this.BeginInvoke(new MethodInvoker(this.Close)); // Cerrar de forma segura
+    //            this.BeginInvoke(new MethodInvoker(this.Close));
     //            return;
     //        }
 
@@ -411,16 +441,15 @@ namespace GUI
     //            _ventaService = new VentaService();
     //            _clienteService = new ClienteService();
     //            _vendedorService = new VendedorService();
-    //            // _estadoVentaService = new EstadoVentaService(); // No es necesario instanciarlo aquí
     //        }
     //        catch (Exception ex)
     //        {
     //            MessageBox.Show($"Error crítico al inicializar servicios: {ex.Message}", "Error de Inicialización", MessageBoxButtons.OK, MessageBoxIcon.Error);
-    //            // Deshabilitar controles si la inicialización falla
     //            if (ibtn_Buscar != null) ibtn_Buscar.Enabled = false;
     //            if (ibtn_StatusVenta != null) ibtn_StatusVenta.Enabled = false;
     //            if (ibtn_CancelVenta != null) ibtn_CancelVenta.Enabled = false;
     //            if (cbx_TipoV != null) cbx_TipoV.Enabled = false;
+    //            // if (ibtn_AdminAddSale != null) ibtn_AdminAddSale.Enabled = false; // Si el botón ya existe en el designer
     //        }
     //    }
 
@@ -428,14 +457,12 @@ namespace GUI
     //    {
     //        if (_idAdminLogueado > 0 && _ventaService != null)
     //        {
-    //            CargarTiposConsultaComboBox(); // Carga cbx_TipoV
+    //            CargarTiposConsultaComboBox();
     //            panelFiltro.Visible = false;
     //            dtp_FInicio.Visible = false;
     //            dtp_FFin.Visible = false;
     //            tbx_Busqueda.Visible = false;
-    //            // Si tienes un label para el placeholder de tbx_Busqueda, ocúltalo también.
-    //            // Ejemplo: if (label_tbx_busqueda_placeholder != null) label_tbx_busqueda_placeholder.Visible = false;
-    //            LoadSalesData(); // Cargar todas las ventas por defecto
+    //            LoadSalesData();
     //        }
     //    }
 
@@ -450,14 +477,12 @@ namespace GUI
     //        cbx_TipoV.SelectedIndex = 0;
     //    }
 
-    //    // Event handler para cbx_TipoV (nombre del Designer.cs)
-    //    private void cbx_TipoReport_SelectedIndexChanged(object sender, EventArgs e)
+    //    private void cbx_TipoReport_SelectedIndexChanged(object sender, EventArgs e) // Nombre del evento en el Designer
     //    {
     //        UpdateFilterPanelVisibility();
     //    }
 
-    //    // Event handler para cbx_FiltroV (nombre del Designer.cs)
-    //    private void cbx_FiltroReport_SelectedIndexChanged(object sender, EventArgs e)
+    //    private void cbx_FiltroReport_SelectedIndexChanged(object sender, EventArgs e) // Nombre del evento en el Designer
     //    {
     //        UpdateDateTimePickerVisibility();
     //    }
@@ -484,6 +509,7 @@ namespace GUI
     //            cbx_FiltroV.Items.Add("Por Fecha Específica");
     //            cbx_FiltroV.Items.Add("Por Rango de Fechas");
     //            cbx_FiltroV.SelectedIndex = 0;
+    //            UpdateDateTimePickerVisibility(); // Asegurar que los datepickers se oculten si es necesario
     //        }
     //        else if (selectedReportType == "VENTAS POR VENDEDOR" || selectedReportType == "VENTAS POR CLIENTE")
     //        {
@@ -494,6 +520,7 @@ namespace GUI
     //            cbx_FiltroV.Items.Add("Por Rango de Fechas");
     //            cbx_FiltroV.SelectedIndex = 0;
     //            tbx_Busqueda.Visible = true;
+    //            UpdateDateTimePickerVisibility(); // Asegurar que los datepickers se oculten si es necesario
     //        }
     //    }
 
@@ -538,7 +565,7 @@ namespace GUI
     //            dt.Columns.Add("Estado", typeof(string));
     //            dt.Columns.Add("Observaciones", typeof(string));
 
-    //            foreach (var venta in ventas.OrderByDescending(v => v.FechaOcurrencia)) // Ordenar por fecha más reciente
+    //            foreach (var venta in ventas.OrderByDescending(v => v.FechaOcurrencia))
     //            {
     //                dt.Rows.Add(
     //                    venta.IdVenta,
@@ -609,11 +636,9 @@ namespace GUI
     //                    if (string.IsNullOrWhiteSpace(textoBusqueda)) { MessageBox.Show("Ingrese nombre, apellido o documento del cliente.", "Información Requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
 
     //                    var clientes = _clienteService.BuscarClientesPorNombreOApellido(textoBusqueda).ToList();
-    //                    // Intenta buscar también por número de documento si no se encontraron por nombre/apellido
     //                    if (!clientes.Any())
     //                    {
-    //                        // Asumimos que el servicio puede manejar un tipo de documento 0 o null para buscar por número en todos los tipos
-    //                        var clientePorDoc = _clienteService.ObtenerClientePorDocumento(0, textoBusqueda);
+    //                        var clientePorDoc = _clienteService.ObtenerClientePorDocumento(0, textoBusqueda); // Asume que 0 busca en todos los tipos de doc
     //                        if (clientePorDoc != null) clientes.Add(clientePorDoc);
     //                    }
     //                    clientes = clientes.Where(c => c != null).Distinct().ToList();
@@ -621,17 +646,18 @@ namespace GUI
     //                    if (!clientes.Any()) { MessageBox.Show("Cliente no encontrado.", "Búsqueda", MessageBoxButtons.OK, MessageBoxIcon.Information); LoadSalesData(new List<Venta>()); return; }
 
     //                    var ventasClientes = new List<Venta>();
+    //                    // Primero obtener todas las ventas del periodo para no consultar la BD repetidamente
+    //                    IEnumerable<Venta> ventasDelPeriodo;
+    //                    if (filtroFecha == "Por Fecha Específica")
+    //                        ventasDelPeriodo = _ventaService.ObtenerVentasPorRangoFechas(fechaInicio, fechaInicio.AddDays(1).AddTicks(-1));
+    //                    else if (filtroFecha == "Por Rango de Fechas")
+    //                        ventasDelPeriodo = _ventaService.ObtenerVentasPorRangoFechas(fechaInicio, fechaFin);
+    //                    else
+    //                        ventasDelPeriodo = _ventaService.ObtenerTodasLasVentasParaAdmin();
+
     //                    foreach (var cliente in clientes)
     //                    {
-    //                        IEnumerable<Venta> ventasDeCliente;
-    //                        if (filtroFecha == "Por Fecha Específica")
-    //                            ventasDeCliente = _ventaService.ObtenerVentasPorRangoFechas(fechaInicio, fechaInicio.AddDays(1).AddTicks(-1));
-    //                        else if (filtroFecha == "Por Rango de Fechas")
-    //                            ventasDeCliente = _ventaService.ObtenerVentasPorRangoFechas(fechaInicio, fechaFin);
-    //                        else
-    //                            ventasDeCliente = _ventaService.ObtenerVentasPorCliente(cliente.IdCliente);
-
-    //                        ventasClientes.AddRange(ventasDeCliente.Where(v => v.ClienteId == cliente.IdCliente));
+    //                        ventasClientes.AddRange(ventasDelPeriodo.Where(v => v.ClienteId == cliente.IdCliente));
     //                    }
     //                    ventasResultado = ventasClientes.Distinct().OrderByDescending(v => v.FechaOcurrencia);
     //                    break;
@@ -663,7 +689,7 @@ namespace GUI
     //                    {
     //                        if (frmModifyState.ShowDialog() == DialogResult.OK)
     //                        {
-    //                            ibtn_Buscar_Click(sender, e); // Refrescar la vista actual
+    //                            ibtn_Buscar_Click(sender, e);
     //                        }
     //                    }
     //                }
@@ -706,7 +732,7 @@ namespace GUI
     //                    string motivo = $"Cancelada por Admin ID: {_idAdminLogueado} el {DateTime.Now.ToString("g")}";
     //                    string resultado = _ventaService.CancelarVenta(idVenta, motivo);
     //                    MessageBox.Show(resultado, "Cancelar Venta", MessageBoxButtons.OK, resultado.ToLower().Contains("exitosamente") ? MessageBoxIcon.Information : MessageBoxIcon.Error);
-    //                    ibtn_Buscar_Click(sender, e); // Refrescar la vista actual
+    //                    ibtn_Buscar_Click(sender, e);
     //                }
     //            }
     //            catch (Exception ex)
@@ -725,6 +751,36 @@ namespace GUI
     //        if (cbx_TipoV != null && cbx_TipoV.Items.Count > 0) cbx_TipoV.SelectedIndex = 0;
     //        // El evento SelectedIndexChanged de cbx_TipoV llamará a UpdateFilterPanelVisibility,
     //        // que a su vez limpiará cbx_FiltroV y tbx_Busqueda, y ocultará los filtros.
-    //        LoadSalesData(); // Cargar todas las ventas
+    //        LoadSalesData();
+    //    }
+
+    //    // NUEVO: Evento para el botón "Registrar Nueva Venta" que debes crear en el diseñador
+    //    private void ibtn_AdminAddSale_Click(object sender, EventArgs e)
+    //    {
+    //        // Paso 1: Pedir al admin que seleccione un vendedor
+    //        using (Frm_BusqVendedorParaVentaAdmin frmBusqVendedor = new Frm_BusqVendedorParaVentaAdmin())
+    //        {
+    //            if (frmBusqVendedor.ShowDialog() == DialogResult.OK)
+    //            {
+    //                int idVendedorSeleccionadoTabla = frmBusqVendedor.SelectedSellerIdTabla; // PK de la tabla 'sellers'
+    //                int idUsuarioDelVendedor = frmBusqVendedor.SelectedSellerUserId;     // PK de la tabla 'users'
+
+    //                if (idVendedorSeleccionadoTabla > 0 && idUsuarioDelVendedor > 0)
+    //                {
+    //                    // Paso 2: Abrir Frm_AddSaleVendor con los IDs del vendedor seleccionado
+    //                    using (Frm_AddSaleVendor frmAddSale = new Frm_AddSaleVendor(idUsuarioDelVendedor, idVendedorSeleccionadoTabla))
+    //                    {
+    //                        if (frmAddSale.ShowDialog() == DialogResult.OK)
+    //                        {
+    //                            LoadSalesData(); // Recargar la lista de ventas del admin
+    //                        }
+    //                    }
+    //                }
+    //                else
+    //                {
+    //                    MessageBox.Show("No se seleccionó un vendedor válido.", "Operación Cancelada", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+    //                }
+    //            }
+    //        }
     //    }
     //}
