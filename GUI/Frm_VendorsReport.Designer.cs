@@ -243,6 +243,7 @@
             this.ibtn_GenReport.Text = "Generar";
             this.ibtn_GenReport.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.ibtn_GenReport.UseVisualStyleBackColor = false;
+            this.ibtn_GenReport.Click += new System.EventHandler(this.ibtn_GenReport_Click);
             // 
             // label3
             // 

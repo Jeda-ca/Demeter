@@ -26,7 +26,6 @@ namespace GUI.Helpers
 
         public ReportePdfExporter()
         {
-            // QuestPDF.Settings.License = LicenseType.Community; 
         }
 
         public void GenerarReporteVentasPdf(IEnumerable<Venta> ventas, string nombreAdministrador, string reporteId, string tituloReporte, string infoAdicionalHeader = null)
@@ -60,10 +59,10 @@ namespace GUI.Helpers
                                     page.Content().Element(contentContainer => ComposeVentasTable(contentContainer, ventas));
                                     page.Footer().AlignCenter().Text(text =>
                                     {
-                                        // Aplicar estilo a cada parte del pie de página
-                                        text.CurrentPageNumber().FontSize(8f);
-                                        text.Span(" / ").FontSize(8f);
-                                        text.TotalPages().FontSize(8f);
+                                        var footerStyle = TextStyle.Default.FontSize(8f);
+                                        text.CurrentPageNumber().Style(footerStyle);
+                                        text.Span(" / ").Style(footerStyle);
+                                        text.TotalPages().Style(footerStyle);
                                     });
                                 });
                             });
@@ -90,7 +89,7 @@ namespace GUI.Helpers
             {
                 row.RelativeItem(1).Column(column =>
                 {
-                    var logoStream = typeof(ReportePdfExporter).Assembly.GetManifestResourceStream("GUI.image.LogoDemeter-removebg-preview.png");
+                    var logoStream = typeof(ReportePdfExporter).Assembly.GetManifestResourceStream("GUI.image.LogoDemeter_ORIGINAL.png");
                     if (logoStream != null)
                     {
                         using (var ms = new MemoryStream())
@@ -216,9 +215,10 @@ namespace GUI.Helpers
                                     page.Content().Element(contentContainer => ComposeInventarioTable(contentContainer, productos, tituloReporte.Contains("General")));
                                     page.Footer().AlignCenter().Text(text =>
                                     {
-                                        text.CurrentPageNumber().FontSize(8f);
-                                        text.Span(" / ").FontSize(8f);
-                                        text.TotalPages().FontSize(8f);
+                                        var footerStyle = TextStyle.Default.FontSize(8f);
+                                        text.CurrentPageNumber().Style(footerStyle);
+                                        text.Span(" / ").Style(footerStyle);
+                                        text.TotalPages().Style(footerStyle);
                                     });
                                 });
                             }).GeneratePdf(saveFileDialog.FileName);
@@ -308,9 +308,10 @@ namespace GUI.Helpers
                                     page.Content().Element(contentContainer => ComposeVendedoresTable(contentContainer, vendedores));
                                     page.Footer().AlignCenter().Text(text =>
                                     {
-                                        text.CurrentPageNumber().FontSize(8f);
-                                        text.Span(" / ").FontSize(8f);
-                                        text.TotalPages().FontSize(8f);
+                                        var footerStyle = TextStyle.Default.FontSize(8f);
+                                        text.CurrentPageNumber().Style(footerStyle);
+                                        text.Span(" / ").Style(footerStyle);
+                                        text.TotalPages().Style(footerStyle);
                                     });
                                 });
                             }).GeneratePdf(saveFileDialog.FileName);
@@ -383,9 +384,10 @@ namespace GUI.Helpers
                                     page.Content().Element(contentContainer => ComposeClientesTable(contentContainer, clientes));
                                     page.Footer().AlignCenter().Text(text =>
                                     {
-                                        text.CurrentPageNumber().FontSize(8f);
-                                        text.Span(" / ").FontSize(8f);
-                                        text.TotalPages().FontSize(8f);
+                                        var footerStyle = TextStyle.Default.FontSize(8f);
+                                        text.CurrentPageNumber().Style(footerStyle);
+                                        text.Span(" / ").Style(footerStyle);
+                                        text.TotalPages().Style(footerStyle);
                                     });
                                 });
                             }).GeneratePdf(saveFileDialog.FileName);
@@ -478,7 +480,7 @@ namespace GUI.Helpers
                                     });
                                     page.Footer().AlignCenter().PaddingTop(20f).Text(text =>
                                     {
-                                        text.Span("¡Gracias por su compra en Demeter!").Style(TextStyle.Default.FontSize(9f).Italic()); 
+                                        text.Span("¡Gracias por su compra en Demeter!").Style(TextStyle.Default.FontSize(9f).Italic());
                                     });
                                 });
                             });
@@ -505,7 +507,7 @@ namespace GUI.Helpers
             {
                 row.RelativeItem(2).Column(column =>
                 {
-                    var logoStream = typeof(ReportePdfExporter).Assembly.GetManifestResourceStream("GUI.image.LogoDemeter-removebg-preview.png");
+                    var logoStream = typeof(ReportePdfExporter).Assembly.GetManifestResourceStream("GUI.image.LogoDemeter_ORIGINAL.png");
                     if (logoStream != null)
                     {
                         using (var ms = new MemoryStream())
