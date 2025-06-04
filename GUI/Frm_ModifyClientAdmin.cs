@@ -18,7 +18,7 @@ namespace GUI
         private readonly IClienteService _clienteService;
         private readonly ITipoDocumentoService _tipoDocumentoService;
         private readonly Cliente _clienteAModificar;
-        private readonly int _idAdminLogueado;
+        private readonly int _idAdminLogueado; // Para registrar quién hizo el cambio de estado
 
         public Frm_ModifyClientAdmin(Cliente cliente, int idAdminLogueado)
         {
@@ -27,7 +27,7 @@ namespace GUI
             this.StartPosition = FormStartPosition.CenterParent;
 
             _clienteAModificar = cliente ?? throw new ArgumentNullException(nameof(cliente));
-            _idAdminLogueado = idAdminLogueado; // Se recibe pero no se usa directamente en este servicio de cliente
+            _idAdminLogueado = idAdminLogueado;
 
             try
             {
@@ -41,6 +41,7 @@ namespace GUI
                 MessageBox.Show($"Error crítico al inicializar servicios: {ex.Message}", "Error de Inicialización", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 if (ibtn_Modify != null) ibtn_Modify.Enabled = false;
                 if (ibtn_Clear != null) ibtn_Clear.Enabled = false;
+                if (ibtn_ReactivateClient != null) ibtn_ReactivateClient.Enabled = false; // Asume que este botón existe
             }
         }
 
@@ -48,7 +49,7 @@ namespace GUI
         {
             try
             {
-                if (_tipoDocumentoService == null) { /* Manejar error */ return; }
+                if (_tipoDocumentoService == null) { return; }
                 var tiposDocumento = _tipoDocumentoService.ObtenerTodos();
 
                 if (cbx_TypeDoc != null)
@@ -71,22 +72,36 @@ namespace GUI
         {
             if (_clienteAModificar != null)
             {
-                // Asegúrate que los nombres de los TextBox coincidan con tu .Designer.cs
                 tbx_Name.Text = _clienteAModificar.Nombre;
                 tbx_LastName.Text = _clienteAModificar.Apellido;
                 tbx_NumDoc.Text = _clienteAModificar.NumeroDocumento;
                 tbx_Cellphone.Text = _clienteAModificar.Telefono;
-                tbx_Email.Text = _clienteAModificar.Correo; // tbx_Email es el TextBox para el correo
+                tbx_Email.Text = _clienteAModificar.Correo;
 
                 if (cbx_TypeDoc.Items.Count > 0 && _clienteAModificar.TipoDocumentoId > 0)
                 {
                     cbx_TypeDoc.SelectedValue = _clienteAModificar.TipoDocumentoId;
                 }
+
+                // NUEVO: Controlar visibilidad del botón de reactivar
+                if (ibtn_ReactivateClient != null)
+                {
+                    ibtn_ReactivateClient.Visible = !_clienteAModificar.Activo;
+                }
+                // Opcional: Deshabilitar el botón de modificar si el cliente está inactivo,
+                // a menos que la modificación sea solo para reactivar.
+                // if (ibtn_Modify != null) ibtn_Modify.Enabled = _clienteAModificar.Activo;
             }
         }
 
-        private void ibtn_Modify_Click(object sender, EventArgs e) // Botón "Guardar Cambios"
+        private void ibtn_Modify_Click(object sender, EventArgs e)
         {
+            if (!_clienteAModificar.Activo)
+            {
+                MessageBox.Show("Este cliente está inactivo. Para realizar cambios, primero debe reactivarlo.", "Cliente Inactivo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(tbx_Name.Text) ||
                 string.IsNullOrWhiteSpace(tbx_LastName.Text) ||
                 cbx_TypeDoc.SelectedValue == null || !(cbx_TypeDoc.SelectedValue is int) || ((int)cbx_TypeDoc.SelectedValue) <= 0 ||
@@ -104,14 +119,13 @@ namespace GUI
             _clienteAModificar.NumeroDocumento = tbx_NumDoc.Text.Trim();
             _clienteAModificar.Telefono = string.IsNullOrWhiteSpace(tbx_Cellphone.Text) ? null : tbx_Cellphone.Text.Trim();
             _clienteAModificar.Correo = tbx_Email.Text.Trim();
-            // El estado Activo no se modifica aquí, se hace desde el gestor principal.
+            // El estado Activo no se modifica aquí directamente, se usa el botón de reactivar o el de inactivar en Frm_GClientsAdmin.
 
             try
             {
                 if (_clienteService == null) { MessageBox.Show("Servicio de clientes no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
-                // El idAdminLogueado no es usado por RegistrarOActualizarCliente, pero se mantiene por consistencia si se necesitara para auditoría.
-                string resultado = _clienteService.RegistrarOActualizarCliente(_clienteAModificar, false); // false porque estamos actualizando
+                string resultado = _clienteService.RegistrarOActualizarCliente(_clienteAModificar, false);
 
                 MessageBox.Show(resultado, "Modificación de Cliente", MessageBoxButtons.OK,
                                 resultado.ToLower().Contains("exitosamente") ? MessageBoxIcon.Information : MessageBoxIcon.Error);
@@ -131,10 +145,61 @@ namespace GUI
                 MessageBox.Show($"Se produjo un error inesperado: {ex.Message}", "Error Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        private void ibtn_ReactivateClient_Click(object sender, EventArgs e)
+        {
+            if (_clienteAModificar == null || _clienteAModificar.Activo)
+            {
+                MessageBox.Show("Este cliente ya está activo o no se ha cargado correctamente.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var confirmResult = MessageBox.Show($"¿Está seguro que desea reactivar al cliente '{_clienteAModificar.Nombre} {_clienteAModificar.Apellido}'?",
+                                                 "Confirmar Reactivación",
+                                                 MessageBoxButtons.YesNo,
+                                                 MessageBoxIcon.Question);
+
+            if (confirmResult == DialogResult.Yes)
+            {
+                try
+                {
+                    if (_clienteService == null) { MessageBox.Show("Servicio de clientes no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                    bool resultadoOp = _clienteService.CambiarEstadoActividadCliente(_clienteAModificar.IdCliente, true); // true para activar
+
+                    string mensajeResultado = resultadoOp ?
+                        $"Cliente '{_clienteAModificar.Nombre} {_clienteAModificar.Apellido}' reactivado exitosamente." :
+                        $"No se pudo reactivar al cliente.";
+
+                    MessageBox.Show(mensajeResultado, "Reactivar Cliente", MessageBoxButtons.OK,
+                                    resultadoOp ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+
+                    if (resultadoOp)
+                    {
+                        this.DialogResult = DialogResult.OK; // Indicar que hubo un cambio
+                        this.Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al reactivar cliente: {ex.Message}", "Error Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
 
         private void ibtn_Clear_Click(object sender, EventArgs e)
         {
-            LoadClientData();
+            // Solo recargar los datos originales si el cliente está activo.
+            // Si está inactivo, los campos deberían estar deshabilitados o mostrarse como solo lectura,
+            // excepto el botón de reactivar.
+            if (_clienteAModificar != null && _clienteAModificar.Activo)
+            {
+                LoadClientData(); // Recarga los datos originales del cliente
+            }
+            else if (_clienteAModificar != null && !_clienteAModificar.Activo)
+            {
+                // No hacer nada o mostrar un mensaje, ya que los campos no deberían ser editables.
+                MessageBox.Show("El cliente está inactivo. Use el botón 'Reactivar Cliente'.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private void ibtn_Cancel_Click(object sender, EventArgs e)

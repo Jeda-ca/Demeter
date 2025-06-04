@@ -49,6 +49,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.ibtn_AdminAddSale = new FontAwesome.Sharp.IconButton();
             this.ibtn_CancelVenta = new FontAwesome.Sharp.IconButton();
             this.ibtn_StatusVenta = new FontAwesome.Sharp.IconButton();
             this.panel1.SuspendLayout();
@@ -319,6 +320,7 @@
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
+            this.panel2.Controls.Add(this.ibtn_AdminAddSale);
             this.panel2.Controls.Add(this.ibtn_CancelVenta);
             this.panel2.Controls.Add(this.ibtn_StatusVenta);
             this.panel2.Controls.Add(this.label4);
@@ -327,6 +329,29 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1064, 202);
             this.panel2.TabIndex = 12;
+            // 
+            // ibtn_AdminAddSale
+            // 
+            this.ibtn_AdminAddSale.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
+            this.ibtn_AdminAddSale.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ibtn_AdminAddSale.FlatAppearance.BorderSize = 0;
+            this.ibtn_AdminAddSale.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
+            this.ibtn_AdminAddSale.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ibtn_AdminAddSale.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.ibtn_AdminAddSale.ForeColor = System.Drawing.Color.White;
+            this.ibtn_AdminAddSale.IconChar = FontAwesome.Sharp.IconChar.SquareCheck;
+            this.ibtn_AdminAddSale.IconColor = System.Drawing.Color.White;
+            this.ibtn_AdminAddSale.IconFont = FontAwesome.Sharp.IconFont.Solid;
+            this.ibtn_AdminAddSale.IconSize = 33;
+            this.ibtn_AdminAddSale.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.ibtn_AdminAddSale.Location = new System.Drawing.Point(21, 54);
+            this.ibtn_AdminAddSale.Name = "ibtn_AdminAddSale";
+            this.ibtn_AdminAddSale.Size = new System.Drawing.Size(228, 95);
+            this.ibtn_AdminAddSale.TabIndex = 10;
+            this.ibtn_AdminAddSale.Text = "Registrar nueva venta";
+            this.ibtn_AdminAddSale.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.ibtn_AdminAddSale.UseVisualStyleBackColor = false;
+            this.ibtn_AdminAddSale.Click += new System.EventHandler(this.ibtn_AdminAddSale_Click);
             // 
             // ibtn_CancelVenta
             // 
@@ -341,7 +366,7 @@
             this.ibtn_CancelVenta.IconColor = System.Drawing.Color.White;
             this.ibtn_CancelVenta.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.ibtn_CancelVenta.IconSize = 33;
-            this.ibtn_CancelVenta.Location = new System.Drawing.Point(374, 54);
+            this.ibtn_CancelVenta.Location = new System.Drawing.Point(726, 54);
             this.ibtn_CancelVenta.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.ibtn_CancelVenta.Name = "ibtn_CancelVenta";
             this.ibtn_CancelVenta.Size = new System.Drawing.Size(228, 95);
@@ -364,7 +389,7 @@
             this.ibtn_StatusVenta.IconColor = System.Drawing.Color.White;
             this.ibtn_StatusVenta.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.ibtn_StatusVenta.IconSize = 33;
-            this.ibtn_StatusVenta.Location = new System.Drawing.Point(21, 54);
+            this.ibtn_StatusVenta.Location = new System.Drawing.Point(373, 54);
             this.ibtn_StatusVenta.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.ibtn_StatusVenta.Name = "ibtn_StatusVenta";
             this.ibtn_StatusVenta.Size = new System.Drawing.Size(228, 95);
@@ -418,6 +443,7 @@
         private FontAwesome.Sharp.IconButton ibtn_Clear;
         private FontAwesome.Sharp.IconButton ibtn_Buscar;
         private System.Windows.Forms.TextBox tbx_Busqueda;
+        private FontAwesome.Sharp.IconButton ibtn_AdminAddSale;
     }
 }
 

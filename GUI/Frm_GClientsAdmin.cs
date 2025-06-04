@@ -18,7 +18,7 @@ namespace GUI
     public partial class Frm_GClientsAdmin : Form
     {
         private readonly IClienteService _clienteService;
-        private readonly ITipoDocumentoService _tipoDocumentoService; // Para mostrar nombre de tipo doc
+        private readonly ITipoDocumentoService _tipoDocumentoService;
         private readonly int _idAdminLogueado;
 
         public Frm_GClientsAdmin(int idAdminLogueado)
@@ -33,22 +33,23 @@ namespace GUI
             if (_idAdminLogueado <= 0)
             {
                 MessageBox.Show("Error: ID de administrador no válido. No se pueden realizar operaciones.", "Error de Sesión", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                this.BeginInvoke(new MethodInvoker(this.Close)); // Cerrar de forma segura
+                this.BeginInvoke(new MethodInvoker(this.Close));
                 return;
             }
 
             try
             {
                 _clienteService = new ClienteService();
-                _tipoDocumentoService = new TipoDocumentoService(); // Para obtener nombres de TipoDocumento
+                _tipoDocumentoService = new TipoDocumentoService();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error crítico al inicializar servicios: {ex.Message}", "Error de Inicialización", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Deshabilitar controles si la inicialización falla
                 if (ibtn_ModifyInfo != null) ibtn_ModifyInfo.Enabled = false;
                 if (ibtn_Delete != null) ibtn_Delete.Enabled = false;
                 if (ibtn_Buscar != null) ibtn_Buscar.Enabled = false;
+                // Deshabilitar el nuevo botón si se añade aquí
+                // if (ibtn_AddClientAdmin != null) ibtn_AddClientAdmin.Enabled = false; 
             }
         }
 
@@ -57,7 +58,7 @@ namespace GUI
             if (_idAdminLogueado > 0 && _clienteService != null)
             {
                 CargarFiltrosComboBox();
-                LoadClientsData(true); // Cargar solo activos por defecto
+                LoadClientsData(true);
             }
         }
 
@@ -84,7 +85,7 @@ namespace GUI
                 }
 
                 IEnumerable<Cliente> clientes;
-                if (soloActivos)
+                if (soloActivos && !(cbx_Buscar.SelectedItem?.ToString() == "Estado (Activo/Inactivo)" && tbx_Busqueda.Text.Trim().Equals("Inactivo", StringComparison.OrdinalIgnoreCase)))
                 {
                     clientes = _clienteService.ObtenerTodosLosClientes().Where(c => c.Activo).ToList();
                 }
@@ -102,11 +103,8 @@ namespace GUI
                 dt.Columns.Add("Email", typeof(string));
                 dt.Columns.Add("Estado", typeof(string));
 
-                foreach (var cliente in clientes)
+                foreach (var cliente in clientes.OrderBy(c => c.Apellido).ThenBy(c => c.Nombre))
                 {
-                    // Para obtener el nombre del TipoDocumento, necesitamos la entidad TipoDocumento poblada.
-                    // Si _clienteService.ObtenerTodosLosClientes() ya incluye esto (por eager loading en DAL), está bien.
-                    // Si no, necesitaríamos llamar a _tipoDocumentoService.ObtenerPorId(cliente.TipoDocumentoId).Nombre
                     string nombreTipoDoc = cliente.TipoDocumento?.Nombre ?? _tipoDocumentoService?.ObtenerPorId(cliente.TipoDocumentoId)?.Nombre ?? cliente.TipoDocumentoId.ToString();
 
                     dt.Rows.Add(
@@ -142,6 +140,19 @@ namespace GUI
             }
         }
 
+        private void ibtn_AddClientAdmin_Click(object sender, EventArgs e)
+        {
+            // El constructor de Frm_AddClientVendor espera el ID del usuario que realiza la operación.
+            // En este caso, es el administrador logueado.
+            using (Frm_AddClientVendor frmAddClient = new Frm_AddClientVendor(_idAdminLogueado))
+            {
+                if (frmAddClient.ShowDialog() == DialogResult.OK)
+                {
+                    LoadClientsData(true); // Recargar la lista, mostrando activos por defecto
+                }
+            }
+        }
+
         private void ibtn_ModifyInfo_Click(object sender, EventArgs e)
         {
             if (dgv_ListaClientes.SelectedRows.Count > 0)
@@ -155,7 +166,7 @@ namespace GUI
 
                     if (clienteAModificar != null)
                     {
-                        // Usar el nombre de tu formulario de modificación: Frm_ModifyClient o Frm_ModifyClientAdmin
+                        // Pasar el cliente y el ID del admin al formulario de modificación
                         using (Frm_ModifyClientAdmin frmModify = new Frm_ModifyClientAdmin(clienteAModificar, _idAdminLogueado))
                         {
                             if (frmModify.ShowDialog() == DialogResult.OK)
@@ -180,7 +191,7 @@ namespace GUI
             }
         }
 
-        private void ibtn_Delete_Click(object sender, EventArgs e) // Cambia estado Activo/Inactivo
+        private void ibtn_Delete_Click(object sender, EventArgs e)
         {
             if (dgv_ListaClientes.SelectedRows.Count > 0)
             {
@@ -191,27 +202,33 @@ namespace GUI
                     string estadoActualStr = dgv_ListaClientes.SelectedRows[0].Cells["Estado"].Value.ToString();
                     bool estaActivo = estadoActualStr.Equals("Activo", StringComparison.OrdinalIgnoreCase);
 
-                    string accion = estaActivo ? "inactivar" : "reactivar";
-                    DialogResult confirmacion = MessageBox.Show($"¿Está seguro que desea {accion} al cliente '{nombreCliente}'?", $"Confirmar {accion}", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    // El botón "Eliminar" ahora solo inactiva. La reactivación se hará desde Frm_ModifyClientAdmin.
+                    if (!estaActivo)
+                    {
+                        MessageBox.Show($"El cliente '{nombreCliente}' ya está inactivo.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+
+                    DialogResult confirmacion = MessageBox.Show($"¿Está seguro que desea inactivar al cliente '{nombreCliente}'?", $"Confirmar Inactivación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                     if (confirmacion == DialogResult.Yes)
                     {
                         if (_clienteService == null) { MessageBox.Show("Servicio de clientes no disponible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
-                        bool resultadoOp = _clienteService.CambiarEstadoActividadCliente(idCliente, !estaActivo);
+                        bool resultadoOp = _clienteService.CambiarEstadoActividadCliente(idCliente, false); // false para inactivar
 
                         string mensajeResultado = resultadoOp ?
-                            $"Estado del cliente '{nombreCliente}' cambiado exitosamente a {(!estaActivo ? "Activo" : "Inactivo")}." :
-                            $"No se pudo cambiar el estado del cliente '{nombreCliente}'.";
+                            $"Cliente '{nombreCliente}' inactivado exitosamente." :
+                            $"No se pudo inactivar al cliente '{nombreCliente}'.";
 
-                        MessageBox.Show(mensajeResultado, "Cambio de Estado", MessageBoxButtons.OK,
+                        MessageBox.Show(mensajeResultado, "Inactivar Cliente", MessageBoxButtons.OK,
                                         resultadoOp ? MessageBoxIcon.Information : MessageBoxIcon.Error);
-                        LoadClientsData(true);
+                        LoadClientsData(true); // Recargar mostrando activos (el inactivado ya no aparecerá por defecto)
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error al cambiar estado del cliente: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Error al inactivar cliente: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
@@ -225,7 +242,7 @@ namespace GUI
             string criterio = cbx_Buscar.SelectedItem?.ToString();
             string textoBusqueda = tbx_Busqueda.Text.Trim();
             IEnumerable<Cliente> clientesFiltrados = new List<Cliente>();
-            bool mostrarColumnaEstadoAlBuscar = false;
+            bool soloActivosParaEstaBusqueda = true; // Por defecto, las búsquedas muestran activos
 
             if (string.IsNullOrEmpty(criterio) || criterio == "-- Seleccione Criterio --")
             {
@@ -236,7 +253,7 @@ namespace GUI
 
             try
             {
-                var todosLosClientes = _clienteService.ObtenerTodosLosClientes();
+                var todosLosClientes = _clienteService.ObtenerTodosLosClientes(); // Obtener todos para filtrar
 
                 switch (criterio)
                 {
@@ -259,12 +276,12 @@ namespace GUI
                         else { LoadClientsData(true); return; }
                         break;
                     case "Estado (Activo/Inactivo)":
-                        mostrarColumnaEstadoAlBuscar = true;
+                        soloActivosParaEstaBusqueda = false; // Permitir ver inactivos
                         if (textoBusqueda.Equals("Activo", StringComparison.OrdinalIgnoreCase))
                             clientesFiltrados = todosLosClientes.Where(c => c.Activo).ToList();
                         else if (textoBusqueda.Equals("Inactivo", StringComparison.OrdinalIgnoreCase))
                             clientesFiltrados = todosLosClientes.Where(c => !c.Activo).ToList();
-                        else if (string.IsNullOrWhiteSpace(textoBusqueda))
+                        else if (string.IsNullOrWhiteSpace(textoBusqueda)) // Si el texto está vacío pero el filtro es Estado, mostrar todos.
                             clientesFiltrados = todosLosClientes.ToList();
                         else
                         {
@@ -276,6 +293,22 @@ namespace GUI
                         clientesFiltrados = todosLosClientes.Where(c => c.Activo).ToList();
                         break;
                 }
+                LoadClientsData(soloActivosParaEstaBusqueda, clientesFiltrados);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al buscar clientes: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private void LoadClientsData(bool soloActivos, IEnumerable<Cliente> clientesFiltrados)
+        {
+            try
+            {
+                if (_clienteService == null)
+                {
+                    MessageBox.Show("Servicio de clientes no inicializado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
                 DataTable dt = new DataTable();
                 dt.Columns.Add("IdCliente", typeof(int));
@@ -286,7 +319,7 @@ namespace GUI
                 dt.Columns.Add("Email", typeof(string));
                 dt.Columns.Add("Estado", typeof(string));
 
-                foreach (var cliente in clientesFiltrados)
+                foreach (var cliente in clientesFiltrados.OrderBy(c => c.Apellido).ThenBy(c => c.Nombre))
                 {
                     string nombreTipoDoc = cliente.TipoDocumento?.Nombre ?? _tipoDocumentoService?.ObtenerPorId(cliente.TipoDocumentoId)?.Nombre ?? cliente.TipoDocumentoId.ToString();
                     dt.Rows.Add(
@@ -299,26 +332,35 @@ namespace GUI
                         cliente.Activo ? "Activo" : "Inactivo"
                     );
                 }
-                dgv_ListaClientes.DataSource = dt;
 
-                if (dgv_ListaClientes.Columns["IdCliente"] != null)
-                    dgv_ListaClientes.Columns["IdCliente"].Visible = false;
-                if (dgv_ListaClientes.Columns["Estado"] != null)
-                    dgv_ListaClientes.Columns["Estado"].Visible = mostrarColumnaEstadoAlBuscar;
+                if (dgv_ListaClientes != null)
+                {
+                    dgv_ListaClientes.DataSource = dt;
+
+                    if (dgv_ListaClientes.Columns["IdCliente"] != null)
+                        dgv_ListaClientes.Columns["IdCliente"].Visible = false;
+
+                    bool mostrarColumnaEstadoActual = (cbx_Buscar.SelectedItem?.ToString() == "Estado (Activo/Inactivo)");
+                    if (dgv_ListaClientes.Columns["Estado"] != null)
+                        dgv_ListaClientes.Columns["Estado"].Visible = !soloActivos || mostrarColumnaEstadoActual;
+                }
+            }
+            catch (ApplicationException appEx)
+            {
+                MessageBox.Show(appEx.Message, "Error de Aplicación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al buscar clientes: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error al cargar datos de clientes: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        // Asegúrate de que el botón Limpiar(ibtn_Clear) esté conectado a este evento en el Designer.cs
+
         private void ibtn_Clear_Click(object sender, EventArgs e)
         {
             if (tbx_Busqueda != null) tbx_Busqueda.Clear();
             if (cbx_Buscar != null && cbx_Buscar.Items.Count > 0) cbx_Buscar.SelectedIndex = 0;
-            LoadClientsData(true); // Recargar solo activos
+            LoadClientsData(true);
         }
-
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace GUI
 {
-    partial class Frm_BusqClient
+    partial class Frm_BusqVendedorParaVentaAdmin
     {
         /// <summary>
         /// Required designer variable.
@@ -28,10 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Frm_BusqClient));
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.dgv_Client = new System.Windows.Forms.DataGridView();
+            this.dgv_Sellers = new System.Windows.Forms.DataGridView();
             this.ibtn_Clear = new FontAwesome.Sharp.IconButton();
             this.cbx_Busq = new System.Windows.Forms.ComboBox();
             this.ibtn_Buscar = new FontAwesome.Sharp.IconButton();
@@ -39,7 +38,7 @@
             this.tbx_Busq = new System.Windows.Forms.TextBox();
             this.ibtn_OK = new FontAwesome.Sharp.IconButton();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgv_Client)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgv_Sellers)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -51,8 +50,8 @@
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(997, 49);
-            this.label1.TabIndex = 20;
-            this.label1.Text = "Buscar cliente";
+            this.label1.TabIndex = 21;
+            this.label1.Text = "Buscar vendedor";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // groupBox1
@@ -61,7 +60,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
-            this.groupBox1.Controls.Add(this.dgv_Client);
+            this.groupBox1.Controls.Add(this.dgv_Sellers);
             this.groupBox1.Controls.Add(this.ibtn_Clear);
             this.groupBox1.Controls.Add(this.cbx_Busq);
             this.groupBox1.Controls.Add(this.ibtn_Buscar);
@@ -72,22 +71,22 @@
             this.groupBox1.Location = new System.Drawing.Point(12, 60);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(974, 506);
-            this.groupBox1.TabIndex = 53;
+            this.groupBox1.TabIndex = 54;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Información";
             // 
-            // dgv_Client
+            // dgv_Sellers
             // 
-            this.dgv_Client.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.dgv_Sellers.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dgv_Client.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgv_Client.Location = new System.Drawing.Point(11, 125);
-            this.dgv_Client.Name = "dgv_Client";
-            this.dgv_Client.RowHeadersWidth = 51;
-            this.dgv_Client.RowTemplate.Height = 24;
-            this.dgv_Client.Size = new System.Drawing.Size(936, 364);
-            this.dgv_Client.TabIndex = 55;
+            this.dgv_Sellers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgv_Sellers.Location = new System.Drawing.Point(11, 125);
+            this.dgv_Sellers.Name = "dgv_Sellers";
+            this.dgv_Sellers.RowHeadersWidth = 51;
+            this.dgv_Sellers.RowTemplate.Height = 24;
+            this.dgv_Sellers.Size = new System.Drawing.Size(936, 364);
+            this.dgv_Sellers.TabIndex = 55;
             // 
             // ibtn_Clear
             // 
@@ -160,7 +159,7 @@
             this.tbx_Busq.Location = new System.Drawing.Point(249, 65);
             this.tbx_Busq.Margin = new System.Windows.Forms.Padding(4);
             this.tbx_Busq.Name = "tbx_Busq";
-            this.tbx_Busq.Size = new System.Drawing.Size(521, 30);
+            this.tbx_Busq.Size = new System.Drawing.Size(522, 30);
             this.tbx_Busq.TabIndex = 14;
             // 
             // ibtn_OK
@@ -180,12 +179,12 @@
             this.ibtn_OK.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.ibtn_OK.Name = "ibtn_OK";
             this.ibtn_OK.Size = new System.Drawing.Size(106, 58);
-            this.ibtn_OK.TabIndex = 56;
+            this.ibtn_OK.TabIndex = 57;
             this.ibtn_OK.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
             this.ibtn_OK.UseVisualStyleBackColor = false;
             this.ibtn_OK.Click += new System.EventHandler(this.ibtn_OK_Click);
             // 
-            // Frm_BusqClient
+            // Frm_BusqVendedorParaVentaAdmin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
@@ -195,12 +194,12 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "Frm_BusqClient";
-            this.Text = "Demeter";
+            this.Name = "Frm_BusqVendedorParaVentaAdmin";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Frm_BusqVendedorParaVentaAdmin";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgv_Client)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgv_Sellers)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -209,7 +208,7 @@
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.DataGridView dgv_Client;
+        private System.Windows.Forms.DataGridView dgv_Sellers;
         private FontAwesome.Sharp.IconButton ibtn_Clear;
         private System.Windows.Forms.ComboBox cbx_Busq;
         private FontAwesome.Sharp.IconButton ibtn_Buscar;

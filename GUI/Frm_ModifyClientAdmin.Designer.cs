@@ -47,6 +47,7 @@
             this.tbx_Name = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.ibtn_ReactivateClient = new FontAwesome.Sharp.IconButton();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.SuspendLayout();
@@ -54,6 +55,7 @@
             // ibtn_Cancel
             // 
             this.ibtn_Cancel.BackColor = System.Drawing.Color.Teal;
+            this.ibtn_Cancel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.ibtn_Cancel.FlatAppearance.BorderColor = System.Drawing.Color.White;
             this.ibtn_Cancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ibtn_Cancel.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
@@ -73,6 +75,7 @@
             // ibtn_Clear
             // 
             this.ibtn_Clear.BackColor = System.Drawing.Color.Teal;
+            this.ibtn_Clear.Cursor = System.Windows.Forms.Cursors.Hand;
             this.ibtn_Clear.FlatAppearance.BorderColor = System.Drawing.Color.White;
             this.ibtn_Clear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ibtn_Clear.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
@@ -92,6 +95,7 @@
             // ibtn_Modify
             // 
             this.ibtn_Modify.BackColor = System.Drawing.Color.Teal;
+            this.ibtn_Modify.Cursor = System.Windows.Forms.Cursors.Hand;
             this.ibtn_Modify.FlatAppearance.BorderColor = System.Drawing.Color.White;
             this.ibtn_Modify.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ibtn_Modify.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
@@ -268,6 +272,7 @@
             // groupBox3
             // 
             this.groupBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
+            this.groupBox3.Controls.Add(this.ibtn_ReactivateClient);
             this.groupBox3.Controls.Add(this.ibtn_Modify);
             this.groupBox3.Controls.Add(this.ibtn_Clear);
             this.groupBox3.Controls.Add(this.ibtn_Cancel);
@@ -276,6 +281,26 @@
             this.groupBox3.Size = new System.Drawing.Size(948, 106);
             this.groupBox3.TabIndex = 48;
             this.groupBox3.TabStop = false;
+            // 
+            // ibtn_ReactivateClient
+            // 
+            this.ibtn_ReactivateClient.BackColor = System.Drawing.Color.Teal;
+            this.ibtn_ReactivateClient.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ibtn_ReactivateClient.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.ibtn_ReactivateClient.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ibtn_ReactivateClient.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.ibtn_ReactivateClient.ForeColor = System.Drawing.SystemColors.Control;
+            this.ibtn_ReactivateClient.IconChar = FontAwesome.Sharp.IconChar.None;
+            this.ibtn_ReactivateClient.IconColor = System.Drawing.Color.Black;
+            this.ibtn_ReactivateClient.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            this.ibtn_ReactivateClient.Location = new System.Drawing.Point(493, 16);
+            this.ibtn_ReactivateClient.Name = "ibtn_ReactivateClient";
+            this.ibtn_ReactivateClient.Size = new System.Drawing.Size(155, 73);
+            this.ibtn_ReactivateClient.TabIndex = 45;
+            this.ibtn_ReactivateClient.Text = "Reactivar cliente";
+            this.ibtn_ReactivateClient.UseVisualStyleBackColor = false;
+            this.ibtn_ReactivateClient.Visible = false;
+            this.ibtn_ReactivateClient.Click += new System.EventHandler(this.ibtn_ReactivateClient_Click);
             // 
             // Frm_ModifyClientAdmin
             // 
@@ -318,5 +343,6 @@
         private System.Windows.Forms.TextBox tbx_Name;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.GroupBox groupBox3;
+        private FontAwesome.Sharp.IconButton ibtn_ReactivateClient;
     }
 }

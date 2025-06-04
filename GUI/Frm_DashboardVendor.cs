@@ -1,4 +1,7 @@
-﻿using System;
+﻿using BLL.Interfaces;
+using BLL.Services;
+using ENTITY;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,10 +16,12 @@ namespace GUI
 {
     public partial class Frm_DashboardVendor : Form
     {
-        private readonly int _idVendedorTabla;
-        // Ejemplo de servicios que podrías necesitar:
-        // private readonly IVentaService _ventaService;
-        // private readonly IProductoService _productoService;
+        private readonly int _idVendedorTabla; // Este es el ID de la tabla 'sellers'
+        private readonly IVentaService _ventaService;
+        private readonly IProductoService _productoService;
+
+        private DateTime _fechaInicioActual;
+        private DateTime _fechaFinActual;
 
         public Frm_DashboardVendor(int idVendedorTabla)
         {
@@ -36,9 +41,8 @@ namespace GUI
 
             try
             {
-                // Aquí inicializarías tus servicios BLL
-                // _ventaService = new VentaService();
-                // _productoService = new ProductoService();
+                _ventaService = new VentaService();
+                _productoService = new ProductoService();
             }
             catch (Exception ex)
             {
@@ -49,47 +53,32 @@ namespace GUI
 
         private void Frm_DashboardVendor_Load(object sender, EventArgs e)
         {
-            if (_idVendedorTabla > 0)
+            if (_idVendedorTabla > 0 && _ventaService != null && _productoService != null)
             {
-                // Configuración inicial de fechas y UI
-                SetDateRange(DateTime.Today, DateTime.Today);
+                SetDateRange(DateTime.Today, DateTime.Today); // Rango inicial: solo hoy
                 DisableCustomDateControls();
-                ApplyChartStyles(); // Aplica estilos base a los gráficos
-                LoadDashboardData(); // Carga los datos (inicialmente placeholders o vacíos)
+                ApplyChartStyles();
+                LoadDashboardData();
             }
-        }
-
-        private void LoadDashboardData()
-        {
-            // Este método se encargará de llamar a los servicios BLL para obtener datos
-            // y actualizar los componentes del dashboard (labels, gráficos, grilla).
-            // Por ahora, usaremos datos de placeholder para que la UI se vea.
-
-            DateTime startDate = dtpStartDate.Value.Date; // Asegúrate que dtpStartDate existe en tu Designer
-            DateTime endDate = dtpEndDate.Value.Date.AddDays(1).AddTicks(-1); // Asegúrate que dtpEndDate existe
-
-            // Actualizar tarjetas de resumen (labels)
-            if (lblVentas != null) lblVentas.Text = "0"; // Placeholder
-            if (lblProducts != null) lblProducts.Text = "0"; // Placeholder
-            if (lblGanancias != null) lblGanancias.Text = "$0.00"; // Placeholder
-
-            // Cargar gráficos (con datos de placeholder o vacíos)
-            LoadSalesChart(startDate, endDate);
-            LoadTopSellingProductsChart();
-            LoadLowStockProducts();
+            else if (_ventaService == null || _productoService == null)
+            {
+                MessageBox.Show("Los servicios necesarios para el dashboard no pudieron ser inicializados.", "Error Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void SetDateRange(DateTime startDate, DateTime endDate)
         {
-            if (dtpStartDate != null) dtpStartDate.Value = startDate;
-            if (dtpEndDate != null) dtpEndDate.Value = endDate;
+            _fechaInicioActual = startDate.Date;
+            _fechaFinActual = endDate.Date.AddDays(1).AddTicks(-1); // Para incluir todo el día final
+
+            if (dtpStartDate != null) dtpStartDate.Value = _fechaInicioActual;
+            if (dtpEndDate != null) dtpEndDate.Value = _fechaFinActual.Date; // Mostrar solo la fecha en el picker
         }
 
         private void DisableCustomDateControls()
         {
             if (dtpStartDate != null) dtpStartDate.Enabled = false;
             if (dtpEndDate != null) dtpEndDate.Enabled = false;
-            // Asegúrate que ibtn_OKCustomDate exista en tu Designer y tenga este nombre
             if (ibtn_OKCustomDate != null) ibtn_OKCustomDate.Visible = false;
         }
 
@@ -102,8 +91,7 @@ namespace GUI
 
         private void ApplyChartStyles()
         {
-            // Estilos para chart_IngresoPorFecha
-            if (chart_IngresoPorFecha != null && chart_IngresoPorFecha.ChartAreas.Count > 0)
+            if (chart_IngresoPorFecha != null && chart_IngresoPorFecha.ChartAreas.Any())
             {
                 chart_IngresoPorFecha.Series.Clear();
                 chart_IngresoPorFecha.Titles.Clear();
@@ -116,8 +104,7 @@ namespace GUI
                 if (chart_IngresoPorFecha.Legends.Any()) chart_IngresoPorFecha.Legends[0].Enabled = false;
             }
 
-            // Estilos para chart_Top10Products
-            if (chart_Top10Products != null && chart_Top10Products.ChartAreas.Count > 0)
+            if (chart_Top10Products != null && chart_Top10Products.ChartAreas.Any())
             {
                 chart_Top10Products.Series.Clear();
                 chart_Top10Products.Titles.Clear();
@@ -133,28 +120,84 @@ namespace GUI
             }
         }
 
-        private void LoadSalesChart(DateTime startDate, DateTime endDate)
+        private void LoadDashboardData()
+        {
+            if (_ventaService == null || _productoService == null)
+            {
+                MessageBox.Show("Servicios no disponibles para cargar datos del dashboard.", "Error de Servicio", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // 1. Obtener ventas del vendedor en el rango de fechas
+            IEnumerable<Venta> ventasDelPeriodo = _ventaService.ObtenerVentasPorVendedorYFechas(_idVendedorTabla, _fechaInicioActual, _fechaFinActual);
+            List<Venta> ventasCompletadas = ventasDelPeriodo.Where(v => v.EstadoVenta != null && v.EstadoVenta.Nombre.ToUpper() == "COMPLETADA").ToList();
+
+            // 2. Actualizar tarjetas de resumen (labels)
+            if (lblVentas != null) lblVentas.Text = ventasCompletadas.Count().ToString();
+            if (lblGanancias != null) lblGanancias.Text = ventasCompletadas.Sum(v => v.Total).ToString("C");
+
+            var productosDelVendedor = _productoService.ObtenerProductosPorVendedor(_idVendedorTabla).Where(p => p.Activo).ToList();
+            if (lblProducts != null) lblProducts.Text = productosDelVendedor.Count().ToString();
+
+
+            // 3. Cargar gráfico de Ingresos por Fecha
+            LoadSalesChart(ventasCompletadas);
+
+            // 4. Cargar gráfico Top 10 Productos Vendidos
+            LoadTopSellingProductsChart(ventasCompletadas);
+
+            // 5. Cargar grilla de Productos con Bajo Stock
+            LoadLowStockProducts(productosDelVendedor);
+        }
+
+        private void LoadSalesChart(List<Venta> ventasCompletadas)
         {
             if (chart_IngresoPorFecha == null || !chart_IngresoPorFecha.IsHandleCreated) return;
             chart_IngresoPorFecha.Series.Clear();
 
             Series seriesIngresos = new Series("Ingresos")
             {
-                ChartType = SeriesChartType.Area,
-                Color = Color.FromArgb(150, 75, 150, 225), // Un azul más suave
+                ChartType = SeriesChartType.Area, // O Column, SplineArea, etc.
+                Color = Color.FromArgb(150, 75, 150, 225),
                 BorderColor = Color.FromArgb(45, 66, 98),
                 BorderWidth = 2
             };
-            // TODO: Reemplazar con datos reales del servicio BLL
-            // Ejemplo: var salesData = _ventaService.ObtenerIngresosPorFechaParaVendedor(_idVendedorTabla, startDate, endDate);
-            // foreach (var dataPoint in salesData) { seriesIngresos.Points.AddXY(dataPoint.Fecha, dataPoint.Ingreso); }
-            seriesIngresos.Points.AddXY(startDate.ToOADate(), 0); // Placeholder
-            seriesIngresos.Points.AddXY(endDate.ToOADate(), 0);   // Placeholder
+
+            var ingresosPorDia = ventasCompletadas
+                .GroupBy(v => v.FechaOcurrencia.Date)
+                .Select(g => new { Fecha = g.Key, TotalIngreso = g.Sum(v => v.Total) })
+                .OrderBy(x => x.Fecha);
+
+            if (ingresosPorDia.Any())
+            {
+                foreach (var dataPoint in ingresosPorDia)
+                {
+                    seriesIngresos.Points.AddXY(dataPoint.Fecha.ToShortDateString(), dataPoint.TotalIngreso);
+                }
+            }
+            else // Mostrar el rango aunque no haya datos
+            {
+                seriesIngresos.Points.AddXY(_fechaInicioActual.ToShortDateString(), 0);
+                if (_fechaInicioActual.Date != _fechaFinActual.Date.AddDays(-1).AddTicks(1)) // Evitar duplicar si es un solo día
+                    seriesIngresos.Points.AddXY(_fechaFinActual.Date.AddDays(-1).AddTicks(1).ToShortDateString(), 0);
+            }
+
             chart_IngresoPorFecha.Series.Add(seriesIngresos);
-            chart_IngresoPorFecha.ChartAreas[0].AxisX.LabelStyle.Format = "MMM dd"; // Formato de fecha
+            if (chart_IngresoPorFecha.ChartAreas.Any())
+            {
+                chart_IngresoPorFecha.ChartAreas[0].AxisX.LabelStyle.Format = "MMM dd";
+                chart_IngresoPorFecha.ChartAreas[0].AxisX.Interval = 1; // Mostrar cada día si el rango es pequeño
+                chart_IngresoPorFecha.ChartAreas[0].AxisX.IntervalType = DateTimeIntervalType.Days;
+                // Auto-ajustar intervalo si el rango es muy grande
+                if ((_fechaFinActual - _fechaInicioActual).TotalDays > 30)
+                {
+                    chart_IngresoPorFecha.ChartAreas[0].AxisX.Interval = 0; // Auto
+                    chart_IngresoPorFecha.ChartAreas[0].AxisX.IntervalType = DateTimeIntervalType.Auto;
+                }
+            }
         }
 
-        private void LoadTopSellingProductsChart()
+        private void LoadTopSellingProductsChart(List<Venta> ventasCompletadas)
         {
             if (chart_Top10Products == null || !chart_Top10Products.IsHandleCreated) return;
             chart_Top10Products.Series.Clear();
@@ -163,64 +206,100 @@ namespace GUI
             {
                 ChartType = SeriesChartType.Doughnut,
                 IsValueShownAsLabel = true,
-                LabelFormat = "#VALX (#PERCENT{P0})",
+                LabelFormat = "#VALX (#PERCENT{P0})", // Muestra nombre y porcentaje
                 Font = new Font("Tahoma", 8F),
                 LabelForeColor = Color.FromArgb(37, 60, 48)
             };
-            // TODO: Reemplazar con datos reales del servicio BLL
-            // Ejemplo: var topProducts = _productoService.ObtenerTopProductosVendidosPorVendedor(_idVendedorTabla, 10);
-            // foreach (var product in topProducts) { seriesProductos.Points.AddXY(product.Nombre, product.CantidadVendida); }
-            seriesProductos.Points.AddXY("Producto A", 0); // Placeholder
+
+            var topProductos = ventasCompletadas
+                .SelectMany(v => v.DetallesVenta) // Aplana todos los detalles de venta
+                .GroupBy(dv => dv.ProductoId)    // Agrupa por ID de producto
+                .Select(g => new
+                {
+                    // Intenta obtener el nombre del producto. Si el objeto Producto no está cargado en DetalleVenta,
+                    // se necesitaría una llamada a _productoService.ObtenerProductoPorId(g.Key).Nombre
+                    // Por ahora, asumimos que dv.Producto.Nombre está disponible o lo obtenemos.
+                    NombreProducto = g.First().Producto?.Nombre ?? _productoService.ObtenerProductoPorId(g.Key)?.Nombre ?? $"ID:{g.Key}",
+                    CantidadTotalVendida = g.Sum(dv => dv.Cantidad)
+                })
+                .OrderByDescending(p => p.CantidadTotalVendida)
+                .Take(10) // Tomar los 10 primeros
+                .ToList();
+
+            if (topProductos.Any())
+            {
+                foreach (var producto in topProductos)
+                {
+                    DataPoint dp = seriesProductos.Points.Add(producto.CantidadTotalVendida);
+                    dp.LegendText = producto.NombreProducto; // Para la leyenda
+                    dp.Label = $"{producto.NombreProducto}\n({producto.CantidadTotalVendida})"; // Para la etiqueta en el gráfico
+                }
+            }
+            else
+            {
+                DataPoint dp = seriesProductos.Points.Add(1);
+                dp.LegendText = "Sin datos";
+                dp.Label = "Sin datos";
+                dp.Color = Color.LightGray;
+            }
             chart_Top10Products.Series.Add(seriesProductos);
         }
 
-        private void LoadLowStockProducts()
+        private void LoadLowStockProducts(List<Producto> productosDelVendedor)
         {
-            if (dgv_PBajoStock == null) return; // dgv_PBajoStock es el DataGridView para productos con bajo stock
+            if (dgv_PBajoStock == null) return;
+
             DataTable dt = new DataTable();
             dt.Columns.Add("Producto", typeof(string));
             dt.Columns.Add("Stock Actual", typeof(int));
-            // TODO: Reemplazar con datos reales del servicio BLL
-            // Ejemplo: var lowStock = _productoService.ObtenerProductosBajoStockPorVendedor(_idVendedorTabla, 10); // umbral de 10
-            // foreach (var item in lowStock) { dt.Rows.Add(item.Nombre, item.Stock); }
+
+            var productosBajoStock = productosDelVendedor
+                .Where(p => p.Stock < 10) // Umbral de bajo stock
+                .OrderBy(p => p.Stock)   // Opcional: ordenar por el que menos stock tiene
+                .ToList();
+
+            if (productosBajoStock.Any())
+            {
+                foreach (var item in productosBajoStock)
+                {
+                    dt.Rows.Add(item.Nombre, item.Stock);
+                }
+            }
             dgv_PBajoStock.DataSource = dt;
         }
 
-        // --- MANEJADORES DE EVENTOS PARA BOTONES DE FECHA ---
-        // Asegúrate que los nombres de estos métodos coincidan con los de tu Frm_DashboardVendor.Designer.cs
-
         private void ibtn_Today_Click(object sender, EventArgs e)
         {
-            DisableCustomDateControls();
             SetDateRange(DateTime.Today, DateTime.Today);
+            DisableCustomDateControls();
             LoadDashboardData();
         }
         private void ibtn_7Days_Click(object sender, EventArgs e)
         {
-            DisableCustomDateControls();
             SetDateRange(DateTime.Today.AddDays(-6), DateTime.Today);
+            DisableCustomDateControls();
             LoadDashboardData();
         }
         private void ibtn_30Days_Click(object sender, EventArgs e)
         {
-            DisableCustomDateControls();
             SetDateRange(DateTime.Today.AddDays(-29), DateTime.Today);
+            DisableCustomDateControls();
             LoadDashboardData();
         }
         private void ibtn_ThisMonth_Click(object sender, EventArgs e)
         {
-            DisableCustomDateControls();
             DateTime today = DateTime.Today;
             DateTime firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
             SetDateRange(firstDayOfMonth, today);
+            DisableCustomDateControls();
             LoadDashboardData();
         }
         private void ibtn_CustomDate_Click(object sender, EventArgs e)
         {
             EnableCustomDateControls();
+            // No recargar datos aquí, esperar al botón OK
         }
 
-        // Este es el método que causaba el error CS1061
         private void ibtn_OKCustomDate_Click(object sender, EventArgs e)
         {
             if (dtpStartDate.Value.Date > dtpEndDate.Value.Date)
@@ -228,6 +307,7 @@ namespace GUI
                 MessageBox.Show("La fecha de inicio no puede ser posterior a la fecha de fin.", "Error de Fecha", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+            SetDateRange(dtpStartDate.Value, dtpEndDate.Value); // Actualiza _fechaInicioActual y _fechaFinActual
             LoadDashboardData();
         }
     }

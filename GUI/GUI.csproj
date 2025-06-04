@@ -144,6 +144,12 @@
     <Compile Include="Frm_BusqProduct.Designer.cs">
       <DependentUpon>Frm_BusqProduct.cs</DependentUpon>
     </Compile>
+    <Compile Include="Frm_BusqVendedorParaVentaAdmin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_BusqVendedorParaVentaAdmin.Designer.cs">
+      <DependentUpon>Frm_BusqVendedorParaVentaAdmin.cs</DependentUpon>
+    </Compile>
     <Compile Include="Frm_ClientsReport.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -329,6 +335,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Frm_BusqProduct.resx">
       <DependentUpon>Frm_BusqProduct.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_BusqVendedorParaVentaAdmin.resx">
+      <DependentUpon>Frm_BusqVendedorParaVentaAdmin.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Frm_ClientsReport.resx">
       <DependentUpon>Frm_ClientsReport.cs</DependentUpon>

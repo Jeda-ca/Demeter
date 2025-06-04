@@ -34,6 +34,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label3 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.ibtn_AddClientAdmin = new FontAwesome.Sharp.IconButton();
             this.ibtn_Delete = new FontAwesome.Sharp.IconButton();
             this.ibtn_ModifyInfo = new FontAwesome.Sharp.IconButton();
             this.label5 = new System.Windows.Forms.Label();
@@ -68,6 +69,7 @@
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(233)))), ((int)(((byte)(221)))));
+            this.panel2.Controls.Add(this.ibtn_AddClientAdmin);
             this.panel2.Controls.Add(this.ibtn_Delete);
             this.panel2.Controls.Add(this.ibtn_ModifyInfo);
             this.panel2.Controls.Add(this.label3);
@@ -76,6 +78,29 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1064, 202);
             this.panel2.TabIndex = 9;
+            // 
+            // ibtn_AddClientAdmin
+            // 
+            this.ibtn_AddClientAdmin.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(82)))), ((int)(((byte)(72)))));
+            this.ibtn_AddClientAdmin.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ibtn_AddClientAdmin.FlatAppearance.BorderSize = 0;
+            this.ibtn_AddClientAdmin.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(118)))), ((int)(((byte)(54)))), ((int)(((byte)(38)))));
+            this.ibtn_AddClientAdmin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ibtn_AddClientAdmin.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.ibtn_AddClientAdmin.ForeColor = System.Drawing.Color.White;
+            this.ibtn_AddClientAdmin.IconChar = FontAwesome.Sharp.IconChar.UserPlus;
+            this.ibtn_AddClientAdmin.IconColor = System.Drawing.Color.White;
+            this.ibtn_AddClientAdmin.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            this.ibtn_AddClientAdmin.IconSize = 38;
+            this.ibtn_AddClientAdmin.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.ibtn_AddClientAdmin.Location = new System.Drawing.Point(21, 56);
+            this.ibtn_AddClientAdmin.Name = "ibtn_AddClientAdmin";
+            this.ibtn_AddClientAdmin.Size = new System.Drawing.Size(228, 95);
+            this.ibtn_AddClientAdmin.TabIndex = 9;
+            this.ibtn_AddClientAdmin.Text = "Agregar";
+            this.ibtn_AddClientAdmin.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.ibtn_AddClientAdmin.UseVisualStyleBackColor = false;
+            this.ibtn_AddClientAdmin.Click += new System.EventHandler(this.ibtn_AddClientAdmin_Click);
             // 
             // ibtn_Delete
             // 
@@ -91,7 +116,7 @@
             this.ibtn_Delete.IconFont = FontAwesome.Sharp.IconFont.Solid;
             this.ibtn_Delete.IconSize = 38;
             this.ibtn_Delete.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.ibtn_Delete.Location = new System.Drawing.Point(382, 54);
+            this.ibtn_Delete.Location = new System.Drawing.Point(747, 54);
             this.ibtn_Delete.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.ibtn_Delete.Name = "ibtn_Delete";
             this.ibtn_Delete.Size = new System.Drawing.Size(228, 95);
@@ -115,12 +140,12 @@
             this.ibtn_ModifyInfo.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.ibtn_ModifyInfo.IconSize = 38;
             this.ibtn_ModifyInfo.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.ibtn_ModifyInfo.Location = new System.Drawing.Point(21, 54);
+            this.ibtn_ModifyInfo.Location = new System.Drawing.Point(386, 54);
             this.ibtn_ModifyInfo.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.ibtn_ModifyInfo.Name = "ibtn_ModifyInfo";
             this.ibtn_ModifyInfo.Size = new System.Drawing.Size(228, 95);
             this.ibtn_ModifyInfo.TabIndex = 7;
-            this.ibtn_ModifyInfo.Text = "Modificar información";
+            this.ibtn_ModifyInfo.Text = "Modificar";
             this.ibtn_ModifyInfo.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.ibtn_ModifyInfo.UseVisualStyleBackColor = false;
             this.ibtn_ModifyInfo.Click += new System.EventHandler(this.ibtn_ModifyInfo_Click);
@@ -360,5 +385,6 @@
         private FontAwesome.Sharp.IconButton ibtn_Clear;
         private FontAwesome.Sharp.IconButton ibtn_Buscar;
         private System.Windows.Forms.TextBox tbx_Busqueda;
+        private FontAwesome.Sharp.IconButton ibtn_AddClientAdmin;
     }
 }
