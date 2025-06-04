@@ -338,6 +338,14 @@
     <Compile Include="Frm_SalesByVendorReport.Designer.cs">
       <DependentUpon>Frm_SalesByVendorReport.cs</DependentUpon>
     </Compile>
+    <!-- Cambios locales (HEAD) -->
+    <Compile Include="Frm_ViewSaleDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_ViewSaleDetail.Designer.cs">
+      <DependentUpon>Frm_ViewSaleDetail.cs</DependentUpon>
+    </Compile>
+    <!-- Cambios remotos -->
     <Compile Include="Helpers\ReportPdfExporter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -448,6 +456,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Frm_SalesByVendorReport.resx">
       <DependentUpon>Frm_SalesByVendorReport.cs</DependentUpon>
+    </EmbeddedResource>
+    <!-- Recurso para el cambio local -->
+    <EmbeddedResource Include="Frm_ViewSaleDetail.resx">
+      <DependentUpon>Frm_ViewSaleDetail.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
